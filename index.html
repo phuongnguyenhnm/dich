@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dịch AI PWA</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { scope: './' }));
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Dịch<span>AI</span></div>
+    <div class="actions"><button id="installBtn" hidden>Cài đặt</button></div>
+  </header>
+  <main class="container">
+    <section class="panel">
+      <div class="lang-row">
+        <select id="sourceLang"></select>
+        <button id="swapBtn" title="Đổi chiều">⇄</button>
+        <select id="targetLang"></select>
+      </div>
+      <div class="io-row">
+        <textarea id="inputText" placeholder="Nhập văn bản..."></textarea>
+        <div class="tools">
+          <button id="micBtn">🎤</button>
+          <button id="imageBtn">🖼️</button>
+          <button id="conversationBtn">💬</button>
+        </div>
+      </div>
+      <div class="result-row">
+        <div id="outputText" class="output"></div>
+        <div class="result-tools">
+          <button id="speakBtn">🔊</button>
+          <button id="copyBtn">📋</button>
+        </div>
+      </div>
+      <div id="imagePane" class="image-pane" hidden>
+        <div class="image-controls">
+          <input type="file" id="imageFile" accept="image/*" />
+          <input type="url" id="imageUrl" placeholder="Dán URL ảnh..." />
+          <button id="loadUrlBtn">Tải ảnh từ URL</button>
+        </div>
+        <canvas id="imageCanvas"></canvas>
+        <pre id="ocrText" class="ocr-text"></pre>
+      </div>
+      <div id="conversationPane" class="conversation" hidden>
+        <div class="side left">
+          <h4>Ngôn ngữ A</h4>
+          <div class="transcript" id="transcriptA"></div>
+          <button id="micA">🎤</button>
+        </div>
+        <div class="side right">
+          <h4>Ngôn ngữ B</h4>
+          <div class="transcript" id="transcriptB"></div>
+          <button id="micB">🎤</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+:root { --bg:#f7f8fa; --primary:#4285f4; --text:#111; }
+body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); }
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#fff; border-bottom:1px solid #e5e7eb; }
+.logo { font-weight:700; font-size:18px; } .logo span { color: var(--primary); }
+.container { max-width: 1024px; margin: 24px auto; padding: 0 16px;}
+.panel { background:#fff; padding:16px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.lang-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+.io-row { display:flex; gap:12px; align-items:flex-start; }
+textarea#inputText { flex:1; min-height:140px; padding:12px; font-size:16px; }
+.tools button { margin-right:8px; }
+.result-row { margin-top:12px; display:flex; gap:12px; alignments:flex-start; }
+.output { flex:1; min-height:120px; padding:12px; font-size:16px; border:1px solid #e5e7eb; border-radius:8px; background:#fafafa; }
+.image-pane { margin-top:12px; }
+.image-controls { display:flex; gap:8px; margin-bottom:8px; }
+canvas#imageCanvas { width:100%; max-height:480px; border:1px solid #e5e7eb; border-radius:8px; background:#0001; }
+.conversation { display:flex; gap:12px; margin-top:12px; }
+.conversation .side { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:8px; }
+.transcript { min-height:120px; background:#fafafa; padding:8px; border-radius:6px; }
+button { cursor:pointer; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; background:#fff; }
+button:hover { background:#f3f4f6; }
