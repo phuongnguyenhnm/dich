@@ -116,10 +116,12 @@ textarea::placeholder{color:#81929c}
   color:var(--text);padding:5px 8.5px;font-size:11.5px;transition:all .15s;
   display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap
 }
+.btn.icon-only{
+  width:30px;height:30px;padding:0;border-radius:50%;
+}
 .btn:hover{border-color:#607988;background:var(--panel3)}
 .btn.primary{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700}
 .btn.ghost{background:transparent}
-/* 2 trạng thái rõ rệt cho các nút chế độ / thao tác: mặc định (tắt) vs is-active (đang bật/đang chạy) */
 .btn.mode-toggle.is-active,
 .btn.mic-chip.is-active{
   background:var(--accent);
@@ -194,6 +196,9 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .spinner{
   display:none;width:13px;height:13px;border:2px solid #092b4544;
   border-top-color:#092b45;border-radius:50%;animation:spin .65s linear infinite
+}
+.btn .spinner{
+  border-color:#edf3f644;border-top-color:var(--accent);
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 .feed{
@@ -302,25 +307,20 @@ a{color:var(--accent)}
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
           <span class="btn-label">Dán</span>
         </button>
-        <button class="btn mode-toggle" id="speakSourceBtn" aria-pressed="false">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
-          <span class="btn-label">Đọc</span>
+        <button class="btn icon-only mode-toggle" id="speakSourceBtn" aria-label="Đọc" title="Đọc" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
         </button>
-        <button class="btn mode-toggle" id="drawToggle" aria-pressed="false">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
-          <span class="btn-label">Viết tay</span>
+        <button class="btn icon-only mode-toggle" id="drawToggle" aria-label="Viết tay" title="Viết tay" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
         </button>
-        <button class="btn mode-toggle" id="imageToggle" aria-pressed="false">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
-          <span class="btn-label">Ảnh</span>
+        <button class="btn icon-only mode-toggle" id="imageToggle" aria-label="Ảnh" title="Ảnh" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
         </button>
-        <button class="btn mode-toggle" id="liveToggle" aria-pressed="false">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0-3-3m3 3-3 3"/><path d="M16 17H4m0 0 3-3m-3 3 3 3"/></svg></span>
-          <span class="btn-label">Hội thoại</span>
+        <button class="btn icon-only mode-toggle" id="liveToggle" aria-label="Hội thoại" title="Hội thoại" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0-3-3m3 3-3 3"/><path d="M16 17H4m0 0 3-3m-3 3 3 3"/></svg></span>
         </button>
-        <button class="btn mic-chip" id="micBtn" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói" aria-pressed="false">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></span>
-          <span class="btn-label">Mic</span>
+        <button class="btn icon-only mic-chip" id="micBtn" aria-label="Mic" title="Mic" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></span>
         </button>
       </div>
       <span class="small" id="charCount">0 ký tự</span>
@@ -383,18 +383,16 @@ a{color:var(--accent)}
       <div class="result-head">
         <span class="result-label" id="resultLabel">Bản dịch</span>
         <div class="tools">
-          <button class="btn" id="backTranslateBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></span>
-            <span class="btn-label">Dịch ngược</span>
+          <button class="btn icon-only" id="backTranslateBtn" aria-label="Dịch ngược" title="Dịch ngược">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></span>
             <i class="spinner" id="backSpin"></i>
           </button>
           <button class="btn" id="useResultBtn">
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
             <span class="btn-label">Đưa lên</span>
           </button>
-          <button class="btn" id="copyBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-            <span class="btn-label">Sao chép</span>
+          <button class="btn icon-only" id="copyBtn" aria-label="Sao chép" title="Sao chép">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
           </button>
           <button class="btn" id="speakBtn">
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
@@ -694,7 +692,9 @@ const CONFIG = {
   maxImageDimension: 1280,
   maxAudioBytes: 18 * 1024 * 1024,
   defaultModel: "gemini-3.5-flash-lite",
-  maxHistory: 5
+  maxHistory: 5,
+  maxCacheEntries: 80,
+  modelCooldownMs: 25000
 };
 
 const FALLBACK_MODELS = [
@@ -730,7 +730,7 @@ const LANGUAGES = [
 const I18N = {
   vi: {
     pageTitle: "AI Translation", ready: "Sẵn sàng", noKey: "Chưa có API Key",
-    tryingFallback: "Đang thử model dự phòng...", switchedModel: m => `Đã tự động đổi sang model ${m}.`,
+    tryingFallback: "Đang thử lại / đổi model...", switchedModel: m => `Đã tự động đổi sang model ${m}.`,
     sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ, không tốn token dịch.",
     placeholder: "Nhập nội dung cần dịch...", clear: "Xóa", paste: "Dán", draw: "Viết tay",
     image: "Ảnh", liveBtn: "Hội thoại", micChip: "Mic", charCount: n => `${n.toLocaleString("vi-VN")} ký tự`,
@@ -770,7 +770,7 @@ const I18N = {
   },
   en: {
     pageTitle: "AI Translation", ready: "Ready", noKey: "No API Key",
-    tryingFallback: "Trying fallback model...", switchedModel: m => `Switched to working model ${m}.`,
+    tryingFallback: "Retrying / switching model...", switchedModel: m => `Switched to working model ${m}.`,
     sameChineseNotice: "Source and target are both Chinese: kept as-is without translation tokens.",
     placeholder: "Enter text to translate...", clear: "Clear", paste: "Paste", draw: "Draw",
     image: "Image", liveBtn: "Live", micChip: "Mic", charCount: n => `${n.toLocaleString("en-US")} chars`,
@@ -810,7 +810,7 @@ const I18N = {
   },
   zh: {
     pageTitle: "AI Translation", ready: "就绪", noKey: "未设置 API Key",
-    tryingFallback: "正在尝试备用模型...", switchedModel: m => `已自动切换至可用模型 ${m}。`,
+    tryingFallback: "正在重试 / 切换模型...", switchedModel: m => `已自动切换至可用模型 ${m}。`,
     sameChineseNotice: "源语言和目标语言同为中文：直接保留原文，不消耗翻译 Token。",
     placeholder: "输入要翻译的内容...", clear: "清空", paste: "粘贴", draw: "手写",
     image: "图片", liveBtn: "对话", micChip: "麦克风", charCount: n => `${n.toLocaleString("zh-CN")} 字`,
@@ -865,6 +865,8 @@ const state = {
   uiLang: localStorage.getItem("smart_translate_ui_lang_v1") || "vi",
   apiKey: localStorage.getItem("smart_translate_key_v5") || "",
   model: localStorage.getItem("smart_translate_model_v5") || CONFIG.defaultModel,
+  modelCooldownUntil: {},
+  cache: new Map(),
   sourceLang: "auto",
   targetLang: "Chinese",
   openPickerType: null,
@@ -911,7 +913,8 @@ const el = {
   langMenu: $("langMenu"), drawPanel: $("drawPanel"), imagePanel: $("imagePanel"),
   canvas: $("drawCanvas"), livePanel: $("livePanel"), liveFeed: $("liveFeed"),
   liveStatus: $("liveStatus"), mic: $("micBtn"), speakSourceBtn: $("speakSourceBtn"),
-  drawToggle: $("drawToggle"), imageToggle: $("imageToggle"), liveToggle: $("liveToggle")
+  drawToggle: $("drawToggle"), imageToggle: $("imageToggle"), liveToggle: $("liveToggle"),
+  copyBtn: $("copyBtn"), backTranslateBtn: $("backTranslateBtn")
 };
 
 const setBtnLabel = (btnId, text) => {
@@ -1014,15 +1017,22 @@ function applyUILanguage() {
   el.source.placeholder = t("placeholder");
 
   const labels = {
-    clearTextBtn: "clear", pasteBtn: "paste", speakSourceBtn: "speak", drawToggle: "draw",
-    imageToggle: "image", liveToggle: "liveBtn", micBtn: "micChip", undoDraw: "undo",
+    clearTextBtn: "clear", pasteBtn: "paste", undoDraw: "undo",
     clearDraw: "clearDraw", translateDrawBtn: "translateDraw", chooseImageBtn: "chooseImage",
-    removeImageBtn: "removeImage", translateImageBtn: "translateImage", backTranslateBtn: "backTranslate",
-    useResultBtn: "useResult", copyBtn: "copy", speakBtn: "speak", clearLiveBtn: "clearLive",
+    removeImageBtn: "removeImage", translateImageBtn: "translateImage",
+    useResultBtn: "useResult", speakBtn: "speak", clearLiveBtn: "clearLive",
     stopLiveBtn: "stopLive", translateBtn: "translateBtn", closeInfoBtn: "close",
     cancelSettings: "close", saveSettings: "save"
   };
   Object.entries(labels).forEach(([id, key]) => setBtnLabel(id, t(key)));
+
+  el.speakSourceBtn.title = el.speakSourceBtn.ariaLabel = t("speak");
+  el.drawToggle.title = el.drawToggle.ariaLabel = t("draw");
+  el.imageToggle.title = el.imageToggle.ariaLabel = t("image");
+  el.liveToggle.title = el.liveToggle.ariaLabel = t("liveBtn");
+  el.mic.title = el.mic.ariaLabel = t("micChip");
+  el.copyBtn.title = el.copyBtn.ariaLabel = t("copy");
+  el.backTranslateBtn.title = el.backTranslateBtn.ariaLabel = t("backTranslate");
 
   $("brushThinOpt").textContent = t("thin");
   $("brushMedOpt").textContent = t("medium");
@@ -1056,7 +1066,6 @@ function applyUILanguage() {
   $("infoBtn").title = $("infoBtn").ariaLabel = t("infoLabel");
   $("settingsBtn").title = $("settingsBtn").ariaLabel = t("settingsLabel");
   $("swapBtn").title = $("swapBtn").ariaLabel = t("swapLabel");
-  el.mic.title = el.mic.ariaLabel = t("micLabel");
 
   renderLangButton("source");
   renderLangButton("target");
@@ -1142,7 +1151,7 @@ function refreshHanziStrokeBox(translationText) {
 el.hanziReplayBtn.addEventListener("click", e => { e.stopPropagation(); playHanziStrokeAnimation(); });
 el.hanziGridWrap.addEventListener("click", playHanziStrokeAnimation);
 
-/* ============================ UI HELPERS ============================ */
+/* ============================ UI HELPERS & CACHE ============================ */
 function showNotice(message) {
   if (state.noticeTimer) clearTimeout(state.noticeTimer);
   el.notice.textContent = String(message || "");
@@ -1200,10 +1209,48 @@ function ensureConfig() {
 
 const stopStream = stream => stream?.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const backoffDelay = attempt => Math.round(600 * Math.pow(1.85, attempt) + Math.random() * 220);
+
+function readCached(key) {
+  if (state.cache.has(key)) return state.cache.get(key);
+  try {
+    const raw = sessionStorage.getItem("st_c_" + key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    state.cache.set(key, parsed);
+    return parsed;
+  } catch (_) {
+    return null;
+  }
+}
+
+function writeCached(key, val) {
+  if (!key || !val) return;
+  if (state.cache.size >= CONFIG.maxCacheEntries) {
+    const oldest = state.cache.keys().next().value;
+    if (oldest) state.cache.delete(oldest);
+  }
+  state.cache.set(key, val);
+  try { sessionStorage.setItem("st_c_" + key, JSON.stringify(val)); } catch (_) {}
+}
+
+function markModelCoolingDown(modelName) {
+  state.modelCooldownUntil[modelName] = Date.now() + CONFIG.modelCooldownMs;
+}
+
+function orderModelsForRequest() {
+  const preferred = state.model.trim();
+  const all = [preferred, ...FALLBACK_MODELS.filter(m => m !== preferred)];
+  const now = Date.now();
+  const ready = all.filter(m => (state.modelCooldownUntil[m] || 0) <= now);
+  const cooling = all.filter(m => (state.modelCooldownUntil[m] || 0) > now);
+  return [...ready, ...cooling];
+}
 
 function persistModelSelection(newModel) {
   const clean = newModel.trim();
   if (!clean) return;
+  delete state.modelCooldownUntil[clean];
   const prev = state.model.trim();
   state.model = clean;
   try { localStorage.setItem("smart_translate_model_v5", clean); } catch (_) {}
@@ -1271,7 +1318,7 @@ async function optimizeImage(file) {
   return c.toDataURL("image/jpeg", 0.8);
 }
 
-/* ============================ GEMINI API & ULTRA-LEAN PROMPTS ============================ */
+/* ============================ GEMINI API & SMART ROUTING ============================ */
 function makeRetryError(message, retryable = true, status = 0) {
   const err = new Error(message);
   err.retryable = retryable;
@@ -1281,29 +1328,29 @@ function makeRetryError(message, retryable = true, status = 0) {
 
 async function rawGeminiRequest(modelName, parts, options) {
   const {
-    systemInstruction = "JSON only.",
+    systemInstruction = "",
     temperature = 0.1,
-    maxOutputTokens = 420,
-    timeoutMs = CONFIG.requestTimeoutMs
+    maxOutputTokens = 360,
+    timeoutMs = CONFIG.requestTimeoutMs,
+    expectJson = true
   } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = `${CONFIG.apiBase}${encodeURIComponent(modelName.trim())}:generateContent`;
+
+  const payload = {
+    contents: [{ role: "user", parts }],
+    generationConfig: { temperature, maxOutputTokens }
+  };
+  if (systemInstruction) payload.systemInstruction = { parts: [{ text: systemInstruction }] };
+  if (expectJson) payload.generationConfig.responseMimeType = "application/json";
 
   let response;
   try {
     response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": state.apiKey.trim() },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        contents: [{ role: "user", parts }],
-        generationConfig: {
-          temperature,
-          maxOutputTokens,
-          responseMimeType: "application/json"
-        }
-      }),
+      body: JSON.stringify(payload),
       signal: controller.signal
     });
   } catch (error) {
@@ -1360,7 +1407,8 @@ function normalizeModelPayload(rawObj) {
   };
 }
 
-function parseJsonResponse(text) {
+function parseModelOutput(text, expectJson) {
+  if (!expectJson) return { translation: text.trim() };
   const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   try { return normalizeModelPayload(JSON.parse(cleaned)); } catch (_) {
     const i = cleaned.indexOf("{"), j = cleaned.lastIndexOf("}");
@@ -1373,40 +1421,55 @@ function parseJsonResponse(text) {
 
 async function geminiRequest(parts, options = {}) {
   ensureConfig();
-  const models = [state.model.trim(), ...FALLBACK_MODELS.filter(m => m !== state.model.trim())];
+  const expectJson = options.expectJson !== false;
+  const models = orderModelsForRequest();
   let lastError = null;
+  let lastModel = models[0] || state.model.trim();
 
   for (let i = 0; i < models.length; i++) {
-    try {
-      const parsed = parseJsonResponse(await rawGeminiRequest(models[i], parts, options));
-      if (options.requireTranslation !== false && !parsed.translation) {
-        throw makeRetryError("Không có trường bản dịch hợp lệ.", true);
+    const m = models[i];
+    lastModel = m;
+    const sameModelRetries = i === 0 ? 1 : 0;
+
+    for (let attempt = 0; attempt <= sameModelRetries; attempt++) {
+      try {
+        const rawOut = await rawGeminiRequest(m, parts, { ...options, expectJson });
+        const parsed = parseModelOutput(rawOut, expectJson);
+        if (options.requireTranslation !== false && !parsed.translation) {
+          throw makeRetryError("Không có trường bản dịch hợp lệ.", true);
+        }
+        persistModelSelection(m);
+        return parsed;
+      } catch (err) {
+        lastError = err;
+        const retry = err.retryable || [404, 429, 500, 502, 503, 504].includes(err.status);
+        if ([429, 500, 502, 503, 504].includes(err.status)) markModelCoolingDown(m);
+
+        if (retry && attempt < sameModelRetries) {
+          el.status.textContent = t("tryingFallback");
+          await sleep(backoffDelay(attempt));
+          continue;
+        }
+        if (retry && i < models.length - 1) {
+          el.status.textContent = t("tryingFallback");
+          await sleep(backoffDelay(attempt + 1));
+        }
+        break;
       }
-      persistModelSelection(models[i]);
-      return parsed;
-    } catch (err) {
-      lastError = err;
-      const retry = err.retryable || [404, 429, 500, 502, 503, 504].includes(err.status);
-      if (retry && i < models.length - 1) {
-        el.status.textContent = t("tryingFallback");
-        await sleep(err.status === 429 ? 650 : 300);
-        continue;
-      }
-      break;
     }
   }
 
   setStatus();
   if (!lastError) throw new Error(t("errUnknown"));
-  const map = {
-    503: "Hệ thống Gemini đang quá tải (503). Vui lòng thử lại sau vài giây.",
-    400: "Yêu cầu không hợp lệ: " + lastError.message,
-    401: "API Key không hợp lệ hoặc chưa được cấp quyền: " + lastError.message,
-    403: "API Key không hợp lệ hoặc chưa được cấp quyền: " + lastError.message,
-    404: "Model không tồn tại hoặc không khả dụng: " + lastError.message,
-    429: "Đã vượt giới hạn tốc độ hoặc quota."
-  };
-  throw new Error(map[lastError.status] || ("Lỗi Gemini API: " + lastError.message));
+  const statusTag = lastError.status ? ` (${lastError.status})` : "";
+  const detail = lastError.message ? `: ${lastError.message}` : "";
+  if (lastError.status === 503) {
+    throw new Error(`Hệ thống Gemini đang quá tải${statusTag} trên ${lastModel}${detail}`);
+  }
+  if (lastError.status === 429) {
+    throw new Error(`Vượt giới hạn tốc độ / quota${statusTag} trên ${lastModel}${detail}`);
+  }
+  throw new Error(`Lỗi Gemini API${statusTag} [${lastModel}]${detail}`);
 }
 
 function isShortWordOrPhrase(text) {
@@ -1447,19 +1510,33 @@ function buildSameChineseLeanPrompt(input, toCode) {
   return `Keep ${toCode} text as tr. JSON:{"tr":${JSON.stringify(input)},"pr":"","py":"pinyin",${exRule}}`;
 }
 
-async function runTranslationTask({ spinnerId, parts, systemInstruction, maxOutputTokens = 420, sourceSample = "", forceExamples = false }) {
+async function runTranslationTask({
+  spinnerId, parts, systemInstruction = "", maxOutputTokens = 420,
+  sourceSample = "", forceExamples = false, expectJson = true, cacheKey = ""
+}) {
   if (state.isBusy) return showError(t("errBusy"));
   clearError();
+
+  if (cacheKey) {
+    const hit = readCached(cacheKey);
+    if (hit) {
+      renderResult({ ...hit, _sourceSample: sourceSample || hit._sourceSample || "" }, true);
+      return;
+    }
+  }
+
   try {
     setBusy(true, spinnerId);
     const result = await geminiRequest(parts, {
       systemInstruction,
       temperature: 0.1,
       maxOutputTokens,
-      requireTranslation: true
+      requireTranslation: true,
+      expectJson
     });
     if (sourceSample) result._sourceSample = sourceSample;
     if (!forceExamples && !shouldShowExamplesForResult(result, sourceSample)) result.examples = [];
+    if (cacheKey) writeCached(cacheKey, result);
     renderResult(result, true);
   } catch (e) {
     showError(e.message || e);
@@ -1485,33 +1562,55 @@ async function translateText(inputOverride = null) {
     showNotice(t("sameChineseNotice"));
 
     if (state.apiKey.trim() && Array.from(input).length <= 90) {
+      const ck = `zh_same|${targetLang()}|${meaningLangCode()}|${input}`;
+      const cached = readCached(ck);
+      if (cached) {
+        renderResult({ ...localResult, ...cached, translation: input, _sourceSample: input }, false);
+        return;
+      }
       try {
         const meta = await geminiRequest([{ text: input }], {
           systemInstruction: buildSameChineseLeanPrompt(input, langPrompt(targetLang())),
-          temperature: 0.1, maxOutputTokens: 360, requireTranslation: true
+          temperature: 0.1, maxOutputTokens: 360, requireTranslation: true, expectJson: true
         });
-        renderResult({
-          ...localResult,
-          translation: input,
+        const merged = {
           pronunciation: meta.pronunciation || meta.pinyin || "",
           pinyin: meta.pinyin || meta.pronunciation || "",
-          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : [],
-          _sourceSample: input
-        }, false);
+          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : []
+        };
+        writeCached(ck, merged);
+        renderResult({ ...localResult, ...merged, translation: input, _sourceSample: input }, false);
       } catch (_) {}
     }
     return;
   }
 
   const shortWord = isShortWordOrPhrase(input);
-  await runTranslationTask({
-    spinnerId: "translateSpinner",
-    parts: [{ text: input }],
-    systemInstruction: buildLeanPrompt({ sampleText: input }),
-    maxOutputTokens: shortWord ? 460 : 360,
-    sourceSample: input,
-    forceExamples: false
-  });
+  const cacheKey = `tx|${sourceLang()}|${targetLang()}|${meaningLangCode()}|${input}`;
+
+  if (shortWord) {
+    await runTranslationTask({
+      spinnerId: "translateSpinner",
+      parts: [{ text: input }],
+      systemInstruction: buildLeanPrompt({ sampleText: input }),
+      maxOutputTokens: 440,
+      sourceSample: input,
+      forceExamples: false,
+      expectJson: true,
+      cacheKey
+    });
+  } else {
+    await runTranslationTask({
+      spinnerId: "translateSpinner",
+      parts: [{ text: `Translate ${langPrompt(sourceLang())} to ${langPrompt(targetLang())}. Output translation only.\n${input}` }],
+      systemInstruction: "",
+      maxOutputTokens: 900,
+      sourceSample: input,
+      forceExamples: false,
+      expectJson: false,
+      cacheKey
+    });
+  }
 }
 
 async function backTranslateResult() {
@@ -1524,15 +1623,21 @@ async function backTranslateResult() {
   const fallbackLang = state.uiLang === "zh" ? "ZH-CN" : state.uiLang === "en" ? "EN" : "VI";
   const backTarget = srcCode === "auto" ? fallbackLang : langPrompt(srcCode);
   const backSource = langPrompt(tgtCode);
+  const cacheKey = `bt|${backSource}|${backTarget}|${translated}`;
 
   try {
     setBusy(true, "backSpin");
-    const res = await geminiRequest([{ text: translated }], {
-      systemInstruction: `${backSource}->${backTarget}. JSON:{"tr":""}`,
-      temperature: 0.1, maxOutputTokens: 320, requireTranslation: true
-    });
+    let outText = readCached(cacheKey)?.translation;
+    if (!outText) {
+      const res = await geminiRequest(
+        [{ text: `Translate ${backSource} to ${backTarget}. Output translation only.\n${translated}` }],
+        { systemInstruction: "", temperature: 0.1, maxOutputTokens: 320, requireTranslation: true, expectJson: false }
+      );
+      outText = res.translation || "";
+      if (outText) writeCached(cacheKey, { translation: outText });
+    }
     el.backTransLabel.textContent = `${t("backTransLabel")} (${srcCode === "auto" ? fallbackLang : backTarget})`;
-    el.backTransText.textContent = res.translation || "";
+    el.backTransText.textContent = outText;
     setShow(el.backTransBox, true);
     el.ioBox.scrollTop = el.ioBox.scrollHeight;
   } catch (e) {
@@ -1550,9 +1655,10 @@ async function translateImage() {
       { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "OCR" }) },
       { inlineData: { mimeType: "image/jpeg", data: state.imageData.split(",")[1] } }
     ],
-    systemInstruction: "JSON only.",
+    systemInstruction: "",
     maxOutputTokens: 460,
-    forceExamples: true
+    forceExamples: true,
+    expectJson: true
   });
 }
 
@@ -1564,9 +1670,10 @@ async function translateDrawing() {
       { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "Handwriting" }) },
       { inlineData: { mimeType: "image/png", data: el.canvas.toDataURL("image/png").split(",")[1] } }
     ],
-    systemInstruction: "JSON only.",
+    systemInstruction: "",
     maxOutputTokens: 460,
-    forceExamples: true
+    forceExamples: true,
+    expectJson: true
   });
 }
 
@@ -1750,8 +1857,8 @@ $("copyBtn").addEventListener("click", async () => {
       if (!document.execCommand("copy")) throw new Error("Trình duyệt không cho phép sao chép.");
       ta.remove();
     }
-    setBtnLabel("copyBtn", t("copied"));
-    setTimeout(() => setBtnLabel("copyBtn", t("copy")), 1500);
+    el.copyBtn.classList.add("is-active");
+    setTimeout(() => el.copyBtn.classList.remove("is-active"), 1200);
   } catch (e) {
     showError("Không thể sao chép: " + e.message);
   }
@@ -1970,11 +2077,11 @@ async function processLiveAudio(blob, mime, side) {
 
     el.liveStatus.textContent = "Đang nhận dạng và dịch…";
     const b64 = await blobToBase64(blob);
-    const prompt = `Audio ${from}->${to}. JSON:{"src":"transcript","tr":"translation","py":"pinyin if ZH"}`;
+    const prompt = `Transcribe ${from} and translate to ${to}. JSON:{"src":"","tr":"","py":"pinyin if ZH"}`;
 
     const result = await geminiRequest(
       [{ text: prompt }, { inlineData: { mimeType: safeMime, data: b64 } }],
-      { systemInstruction: "JSON only.", temperature: 0.1, maxOutputTokens: 360, timeoutMs: 50000, requireTranslation: false }
+      { systemInstruction: "", temperature: 0.1, maxOutputTokens: 360, timeoutMs: 50000, requireTranslation: false, expectJson: true }
     );
     if (!result.transcript && !result.translation) throw new Error("Không nhận dạng được lời nói.");
 
