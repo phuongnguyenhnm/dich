@@ -50,6 +50,7 @@ header{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   min-height:40px;flex-shrink:0;z-index:2
 }
+.header-left{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .brand{text-align:center;min-width:0;flex:1}
 .brand strong{font-size:16.5px;letter-spacing:.2px;display:block;line-height:1.15;color:var(--text)}
 .iconbtn{
@@ -59,7 +60,7 @@ header{
 .iconbtn:hover{background:var(--panel3);border-color:var(--accent)}
 .status{
   font-size:10.5px;color:var(--muted);padding:2px 9px;border:1px solid var(--line);
-  border-radius:99px;display:inline-block;margin-top:3px;max-width:260px;
+  border-radius:99px;display:inline-block;margin-top:3px;max-width:240px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;background:var(--panel)
 }
 .dot{display:block;width:8px;height:8px;border-radius:50%;background:var(--danger);pointer-events:none}
@@ -124,7 +125,7 @@ header{
   touch-action:pan-y;overscroll-behavior:contain
 }
 textarea{
-  width:100%;min-height:64px;max-height:104px;resize:none;border:0;outline:0;
+  width:100%;min-height:60px;max-height:100px;resize:none;border:0;outline:0;
   background:transparent;color:var(--text);font-size:15.5px;line-height:1.4;padding:2px;flex-shrink:0;
   overflow-y:auto;overflow-x:hidden;touch-action:pan-y
 }
@@ -209,19 +210,19 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 /* 3 ví dụ dùng từ trong câu */
 .examples-box{
   display:none;flex-direction:column;gap:5px;padding:8px 9px;
-  border:1px solid var(--line);border-radius:10px;background:#122029
+  border:1px solid #395566;border-radius:10px;background:#122029
 }
 .examples-title{
   font-size:10px;text-transform:uppercase;letter-spacing:.75px;
   color:var(--good);font-weight:700
 }
 .example-item{
-  padding:5px 7px;border-radius:8px;background:#192832;
+  padding:6px 8px;border-radius:8px;background:#192832;
   font-size:12px;line-height:1.4;overflow-wrap:anywhere
 }
 .example-sentence{font-weight:600;color:var(--text)}
-.example-reading{font-size:11px;color:var(--accent2);margin-top:1px}
-.example-meaning{font-size:11.5px;color:var(--muted);margin-top:1px}
+.example-reading{font-size:11px;color:var(--accent2);margin-top:2px}
+.example-meaning{font-size:11.5px;color:#b8c7d0;margin-top:2px}
 
 .back-trans{
   display:none;flex-direction:column;gap:3px;padding:7px 9px;
@@ -272,8 +273,8 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 }
 .turn.active{background:#48272c;border-color:#d77e84;color:#ffc1c1}
 .bottom{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
-.main-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.main-actions button{padding:9px 8px;font-size:12.5px}
+.main-actions{display:grid;grid-template-columns:1fr;gap:8px}
+.main-actions button{padding:9px 10px;font-size:12.5px;width:100%}
 .dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;padding:1px 4px 0}
 .dockbtn{
   display:flex;flex-direction:column;align-items:center;gap:2px;border:0;
@@ -309,18 +310,46 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 }
 .field input:focus,.field select:focus{border-color:var(--accent)}
 .modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.author-card{
+  display:flex;flex-direction:column;gap:10px;margin:10px 0 12px
+}
+.author-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#111a20
+}
+.author-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.author-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.author-value{font-size:13.5px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
+.contact-action{
+  width:38px;height:38px;border-radius:11px;border:1px solid #47687d;
+  background:#183242;color:var(--accent2);display:grid;place-items:center;
+  flex-shrink:0;text-decoration:none;transition:all .15s
+}
+.contact-action:hover{background:#21465c;border-color:var(--accent);color:#ffffff}
+.zalo-badge{
+  font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1
+}
 a{color:var(--accent)}
 </style>
 </head>
 <body>
 <main class="app" id="appRoot">
 <header>
-  <button class="iconbtn" id="resetBtn" aria-label="Làm mới" title="Làm mới">
-    <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
-      <path d="M3 3v5h5"/>
-    </svg>
-  </button>
+  <div class="header-left">
+    <button class="iconbtn" id="resetBtn" aria-label="Làm mới" title="Làm mới">
+      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+        <path d="M3 3v5h5"/>
+      </svg>
+    </button>
+    <button class="iconbtn" id="infoBtn" aria-label="Thông tin" title="Thông tin">
+      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 16v-4"/>
+        <path d="M12 8h.01"/>
+      </svg>
+    </button>
+  </div>
   <div class="brand">
     <strong>AI Translation</strong>
     <div><span class="status" id="statusPill">Đang tải...</span></div>
@@ -376,6 +405,10 @@ a{color:var(--accent)}
         <button class="btn" id="pasteBtn">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
           <span class="btn-label">Dán</span>
+        </button>
+        <button class="btn" id="speakSourceBtn">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
+          <span class="btn-label">Đọc</span>
         </button>
         <button class="btn" id="drawToggle">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
@@ -475,7 +508,7 @@ a{color:var(--accent)}
 
       <!-- 3 ví dụ dùng từ trong câu (chỉ hiện khi kết quả là từ / cụm từ ngắn) -->
       <div class="examples-box" id="examplesBox">
-        <span class="examples-title" id="examplesTitle">Ví dụ sử dụng trong câu</span>
+        <span class="examples-title" id="examplesTitle">3 ví dụ dùng từ trong câu</span>
         <div id="examplesList" style="display:flex;flex-direction:column;gap:5px"></div>
       </div>
 
@@ -515,9 +548,6 @@ a{color:var(--accent)}
       <span class="btn-label">Dịch văn bản</span>
       <i class="spinner" id="translateSpinner"></i>
     </button>
-    <button class="btn" id="polishBtn">
-      <span class="btn-label">Dịch tự nhiên hơn</span>
-    </button>
   </div>
   <div class="dock">
     <button class="dockbtn" id="liveToggle">
@@ -536,20 +566,50 @@ a{color:var(--accent)}
         <path d="M12 17v5m-3 0h6"/>
       </svg>
     </button>
-    <button class="dockbtn" id="ttsSourceBtn">
-      <span class="dockcircle">
-        <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 5 6 9H2v6h4l5 4V5z"/>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-        </svg>
-      </span>
-      <span id="ttsSourceLabel">Đọc nguồn</span>
-    </button>
+    <div aria-hidden="true"></div>
   </div>
   <div class="small" id="disclaimerText" style="text-align:center">Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.</div>
 </div>
 </main>
+
+<!-- Thông tin tác giả -->
+<div class="modal" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+ <div class="modalbox">
+  <h2 id="infoTitle">Thông tin tác giả</h2>
+  <p id="infoDesc">Thông tin liên hệ của tác giả ứng dụng AI Translation.</p>
+  <div class="author-card">
+    <div class="author-row">
+      <div class="author-info">
+        <span class="author-label" id="authorNameLabel">Tác giả</span>
+        <span class="author-value">Nguyễn Văn Phương</span>
+      </div>
+    </div>
+    <div class="author-row">
+      <div class="author-info">
+        <span class="author-label" id="authorPhoneLabel">Số điện thoại</span>
+        <span class="author-value">0845425888</span>
+      </div>
+      <a class="contact-action" href="tel:0845425888" id="callAuthorBtn" aria-label="Gọi điện 0845425888" title="Gọi điện 0845425888">
+        <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </a>
+    </div>
+    <div class="author-row">
+      <div class="author-info">
+        <span class="author-label">Zalo</span>
+        <span class="author-value">0974569711</span>
+      </div>
+      <a class="contact-action" href="https://zalo.me/0974569711" target="_blank" rel="noopener noreferrer" id="zaloAuthorBtn" aria-label="Kết bạn Zalo 0974569711" title="Kết bạn Zalo 0974569711">
+        <span class="zalo-badge">Zalo</span>
+      </a>
+    </div>
+  </div>
+  <div class="modalfoot">
+    <button class="btn primary" id="closeInfoBtn"><span class="btn-label">Đóng</span></button>
+  </div>
+ </div>
+</div>
 
 <!-- Cài đặt -->
 <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
@@ -917,10 +977,14 @@ const I18N = {
     liveWaiting: "Đang chờ người nói.",
     stopLive: "Dừng ghi âm",
     translateBtn: "Dịch văn bản",
-    polishBtn: "Dịch tự nhiên hơn",
     liveDock: "Hội thoại",
-    ttsSource: "Đọc nguồn",
     disclaimer: "Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.",
+    infoTitle: "Thông tin tác giả",
+    infoDesc: "Thông tin liên hệ của tác giả ứng dụng AI Translation.",
+    authorNameLabel: "Tác giả",
+    authorPhoneLabel: "Số điện thoại",
+    callAuthorTitle: "Gọi điện 0845425888",
+    zaloAuthorTitle: "Kết bạn Zalo 0974569711",
     settingsTitle: "Cài đặt Gemini API",
     settingsDesc: 'API Key được lưu trong trình duyệt của bạn (<code>localStorage</code>) và gửi trực tiếp tới Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Lấy API Key tại đây</a>.',
     uiLangLabel: "Ngôn ngữ giao diện",
@@ -931,6 +995,7 @@ const I18N = {
     close: "Đóng",
     save: "Lưu cài đặt",
     resetLabel: "Làm mới",
+    infoLabel: "Thông tin",
     settingsLabel: "Cài đặt",
     swapLabel: "Đổi ngôn ngữ",
     micLabel: "Nhập bằng giọng nói",
@@ -996,10 +1061,14 @@ const I18N = {
     liveWaiting: "Waiting for speaker.",
     stopLive: "Stop recording",
     translateBtn: "Translate text",
-    polishBtn: "More natural",
     liveDock: "Live",
-    ttsSource: "Read source",
     disclaimer: "AI translations may need verification in specialized or technical contexts.",
+    infoTitle: "Author Information",
+    infoDesc: "Contact information for the author of AI Translation.",
+    authorNameLabel: "Author",
+    authorPhoneLabel: "Phone number",
+    callAuthorTitle: "Call 0845425888",
+    zaloAuthorTitle: "Add Zalo 0974569711",
     settingsTitle: "Gemini API Settings",
     settingsDesc: 'Your API Key is stored locally in your browser (<code>localStorage</code>) and sent directly to Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Get an API Key here</a>.',
     uiLangLabel: "Interface Language",
@@ -1010,6 +1079,7 @@ const I18N = {
     close: "Close",
     save: "Save settings",
     resetLabel: "Reset",
+    infoLabel: "Info",
     settingsLabel: "Settings",
     swapLabel: "Swap languages",
     micLabel: "Voice input",
@@ -1075,10 +1145,14 @@ const I18N = {
     liveWaiting: "等待说话。",
     stopLive: "停止录音",
     translateBtn: "翻译文本",
-    polishBtn: "更自然表达",
     liveDock: "对话",
-    ttsSource: "朗读原文",
     disclaimer: "AI 译文在专业或技术场景下建议人工复核。",
+    infoTitle: "作者信息",
+    infoDesc: "AI Translation 作者联系方式。",
+    authorNameLabel: "作者",
+    authorPhoneLabel: "电话号码",
+    callAuthorTitle: "拨打电话 0845425888",
+    zaloAuthorTitle: "添加 Zalo 0974569711",
     settingsTitle: "Gemini API 设置",
     settingsDesc: 'API Key 保存在浏览器本地（<code>localStorage</code>）并直接发送至 Google。<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">点击此处获取 API Key</a>。',
     uiLangLabel: "界面语言",
@@ -1089,6 +1163,7 @@ const I18N = {
     close: "关闭",
     save: "保存设置",
     resetLabel: "重置",
+    infoLabel: "信息",
     settingsLabel: "设置",
     swapLabel: "切换语言",
     micLabel: "语音输入",
@@ -1291,6 +1366,7 @@ function applyUILanguage() {
   el.source.placeholder = t("placeholder");
   setBtnLabel("clearTextBtn", t("clear"));
   setBtnLabel("pasteBtn", t("paste"));
+  setBtnLabel("speakSourceBtn", t("speak"));
   setBtnLabel("drawToggle", t("draw"));
   setBtnLabel("imageToggle", t("image"));
   setBtnLabel("undoDraw", t("undo"));
@@ -1319,10 +1395,16 @@ function applyUILanguage() {
   if (emptyFeed) emptyFeed.textContent = t("liveEmpty");
   setBtnLabel("stopLiveBtn", t("stopLive"));
   setBtnLabel("translateBtn", t("translateBtn"));
-  setBtnLabel("polishBtn", t("polishBtn"));
   $("liveDockLabel").textContent = t("liveDock");
-  $("ttsSourceLabel").textContent = t("ttsSource");
   $("disclaimerText").textContent = t("disclaimer");
+
+  $("infoTitle").textContent = t("infoTitle");
+  $("infoDesc").textContent = t("infoDesc");
+  $("authorNameLabel").textContent = t("authorNameLabel");
+  $("authorPhoneLabel").textContent = t("authorPhoneLabel");
+  $("callAuthorBtn").title = $("callAuthorBtn").ariaLabel = t("callAuthorTitle");
+  $("zaloAuthorBtn").title = $("zaloAuthorBtn").ariaLabel = t("zaloAuthorTitle");
+  setBtnLabel("closeInfoBtn", t("close"));
 
   $("settingsTitle").textContent = t("settingsTitle");
   $("settingsDesc").innerHTML = t("settingsDesc");
@@ -1335,6 +1417,7 @@ function applyUILanguage() {
   setBtnLabel("saveSettings", t("save"));
 
   $("resetBtn").title = $("resetBtn").ariaLabel = t("resetLabel");
+  $("infoBtn").title = $("infoBtn").ariaLabel = t("infoLabel");
   $("settingsBtn").title = $("settingsBtn").ariaLabel = t("settingsLabel");
   $("swapBtn").title = $("swapBtn").ariaLabel = t("swapLabel");
   el.mic.title = el.mic.ariaLabel = t("micLabel");
@@ -1494,9 +1577,17 @@ function setStatus() {
 function setBusy(busy, spinnerId) {
   state.isBusy = busy;
   if (spinnerId && $(spinnerId)) $(spinnerId).style.display = busy ? "inline-block" : "none";
-  ["translateBtn", "polishBtn", "translateDrawBtn", "translateImageBtn", "backTranslateBtn"].forEach(id => {
+  ["translateBtn", "translateDrawBtn", "translateImageBtn", "backTranslateBtn"].forEach(id => {
     if ($(id)) $(id).disabled = busy;
   });
+}
+function openInfoModal() {
+  closeLangMenu();
+  $("infoModal").style.display = "flex";
+}
+function closeInfoModal() {
+  $("infoModal").style.display = "none";
+  syncVisualViewport();
 }
 function openSettings() {
   closeLangMenu();
@@ -1631,7 +1722,7 @@ async function optimizeImage(file) {
 
 /* ============================ GEMINI API (TỰ ĐỘNG ĐỔI MODEL OK) ============================ */
 async function rawGeminiRequest(modelName, parts, options) {
-  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1600, timeoutMs = CONFIG.requestTimeoutMs } = options;
+  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1800, timeoutMs = CONFIG.requestTimeoutMs } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = CONFIG.apiBase + encodeURIComponent(modelName.trim()) + ":generateContent";
@@ -1658,7 +1749,8 @@ async function rawGeminiRequest(modelName, parts, options) {
                 sentence: { type: "string" },
                 reading: { type: "string" },
                 meaning: { type: "string" }
-              }
+              },
+              required: ["sentence", "meaning"]
             }
           },
           explanation: { type: "string" },
@@ -1827,33 +1919,38 @@ function parseJsonResponse(text) {
 
 function isShortWordOrPhrase(text) {
   const s = String(text || "").trim();
-  if (!s || s.length > 48 || /\n/.test(s)) return false;
+  if (!s || s.length > 60 || /\n/.test(s)) return false;
   const words = s.split(/\s+/).filter(Boolean);
   if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) {
-    return Array.from(s).length <= 8;
+    return Array.from(s).length <= 12;
   }
-  return words.length <= 3;
+  return words.length <= 5;
 }
 
-function translationPrompt({ mode = "translate", extraContext = "", fromOverride = "", toOverride = "", sampleText = "" } = {}) {
+function shouldShowExamplesForResult(result, inputText = "") {
+  return isShortWordOrPhrase(result?.translation || "") || isShortWordOrPhrase(inputText || "");
+}
+
+function translationPrompt({ extraContext = "", fromOverride = "", toOverride = "", sampleText = "" } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
   const shortWord = isShortWordOrPhrase(sampleText);
+  const meaningLang = state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese";
   return `Dịch từ ${from} sang ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
 - Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng và bố cục.
 - Tiếng Trung Giản thể: dùng chữ giản thể tự nhiên, ưu tiên thuật ngữ nhà máy.
 - Tiếng Trung Phồn thể: dùng chữ phồn thể chuẩn tự nhiên, ưu tiên thuật ngữ nhà máy.
 - Giao tiếp: dùng sắc thái lịch sự, tự nhiên.
-- Luôn điền "pronunciation": cách đọc / phiên âm chuẩn của kết quả ở ${to} (VD tiếng Anh: IPA như "həˈlō"; tiếng Trung: Pinyin có dấu thanh như "Nǐ hǎo"; tiếng Nhật/Hàn/khác: phiên âm/cách đọc rõ ràng; nếu là chữ Latin/Việt đơn giản có thể ghi hướng dẫn phát âm ngắn gọn). Nếu là tiếng Trung cũng điền "pinyin".
+- Luôn điền "pronunciation": cách đọc / phiên âm chuẩn của kết quả ở ${to} (VD tiếng Anh: IPA như "həˈlō"; tiếng Trung: Pinyin có dấu thanh như "Nǐ hǎo"; tiếng Nhật/Hàn/khác: phiên âm/cách đọc rõ ràng). Nếu là tiếng Trung cũng điền "pinyin".
 ${shortWord
-  ? `- Kết quả là từ/cụm từ ngắn: hãy điền đúng 3 mục trong "examples" minh họa cách dùng từ trong câu ở ${to} (mỗi mục có "sentence", "reading", "meaning" bằng ${state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese"}).`
-  : `- Kết quả là văn bản dài hoặc đoạn văn: KHÔNG cần tạo ví dụ, đặt "examples" là mảng rỗng [].`}
-${mode === "polish" ? "- Ưu tiên văn phong mượt mà, tự nhiên hơn." : "- Ưu tiên tốc độ và độ chính xác cao, giữ explanation/alternatives ngắn gọn."}
+  ? `- BẮT BUỘC vì đầu vào là từ hoặc cụm từ ngắn: hãy điền ĐỦ 3 phần tử trong mảng "examples" (mỗi phần tử minh họa từ/cụm từ đó trong một câu hoàn chỉnh bằng ${to}, kèm "reading" là cách đọc/phiên âm câu đó, và "meaning" là nghĩa tiếng ${meaningLang}).`
+  : `- Văn bản dài hoặc đoạn văn: KHÔNG cần tạo ví dụ, đặt "examples" là mảng rỗng [].`}
+- Giữ explanation/alternatives ngắn gọn.
 ${extraContext}
 Trả về JSON đúng schema.`;
 }
 
-async function translateText(mode = "translate", inputOverride = null) {
+async function translateText(inputOverride = null) {
   if (state.isBusy) {
     showError(t("errBusy"));
     return;
@@ -1882,7 +1979,8 @@ async function translateText(mode = "translate", inputOverride = null) {
       pinyin: "",
       examples: [],
       explanation: "",
-      alternatives: []
+      alternatives: [],
+      _sourceSample: input
     };
     renderResult(localResult, true);
     showNotice(t("sameChineseNotice"));
@@ -1896,11 +1994,11 @@ async function translateText(mode = "translate", inputOverride = null) {
 - Đặt "translation" giống hệt đầu vào: "${input}".
 - Điền "pronunciation" và "pinyin" chuẩn có dấu thanh.
 ${shortWord
-  ? `- Vì là từ/cụm từ ngắn, hãy điền đúng 3 mục trong "examples" minh họa cách dùng trong câu ở ${langPrompt(targetLang())} (có "sentence", "reading", "meaning").`
+  ? `- BẮT BUỘC vì là từ/cụm từ ngắn: điền ĐỦ 3 phần tử trong mảng "examples" (mỗi phần tử có "sentence" là câu dùng từ này ở ${langPrompt(targetLang())}, "reading" là pinyin câu đó, "meaning" là nghĩa tiếng ${state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese"}).`
   : `- Văn bản dài: đặt "examples" là [].`}
 Trả về JSON đúng schema.`,
             temperature: 0.1,
-            maxOutputTokens: 900,
+            maxOutputTokens: 1100,
             requireTranslation: true
           }
         );
@@ -1909,7 +2007,8 @@ Trả về JSON đúng schema.`,
           translation: input,
           pronunciation: meta.pronunciation || meta.pinyin || "",
           pinyin: meta.pinyin || meta.pronunciation || "",
-          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : []
+          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : [],
+          _sourceSample: input
         }, false);
       } catch (_) {}
     }
@@ -1921,13 +2020,14 @@ Trả về JSON đúng schema.`,
     const result = await geminiRequest(
       [{ text: input }],
       {
-        systemInstruction: translationPrompt({ mode, sampleText: input }),
+        systemInstruction: translationPrompt({ sampleText: input }),
         temperature: 0.1,
-        maxOutputTokens: mode === "polish" ? 2100 : 1600,
+        maxOutputTokens: 1800,
         requireTranslation: true
       }
     );
-    if (!isShortWordOrPhrase(result.translation) && !isShortWordOrPhrase(input)) {
+    result._sourceSample = input;
+    if (!shouldShowExamplesForResult(result, input)) {
       result.examples = [];
     }
     renderResult(result, true);
@@ -1962,7 +2062,6 @@ async function backTranslateResult() {
       [{ text: translated }],
       {
         systemInstruction: translationPrompt({
-          mode: "translate",
           fromOverride: backSourcePrompt,
           toOverride: backTargetPrompt,
           sampleText: translated,
@@ -1998,16 +2097,17 @@ async function translateImage() {
     setBusy(true, "imageSpinner");
     const base64Data = state.imageData.split(",")[1];
     const prompt = translationPrompt({
-      extraContext: "OCR toàn bộ chữ trong ảnh rồi dịch. Nếu kết quả ngắn thì thêm 3 ví dụ dùng từ trong câu; nếu dài thì examples là []."
+      sampleText: "word",
+      extraContext: "OCR toàn bộ chữ trong ảnh rồi dịch. Nếu chữ trong ảnh là từ/cụm từ ngắn thì điền đủ 3 ví dụ dùng từ trong câu; nếu là đoạn/văn bản dài thì đặt examples là []."
     });
     const result = await geminiRequest(
       [
         { text: prompt },
         { inlineData: { mimeType: "image/jpeg", data: base64Data } }
       ],
-      { systemInstruction: "OCR và dịch nhanh chính xác. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1900, requireTranslation: true }
+      { systemInstruction: "OCR và dịch nhanh chính xác. Trả về JSON.", temperature: 0.1, maxOutputTokens: 2000, requireTranslation: true }
     );
-    if (!isShortWordOrPhrase(result.translation)) {
+    if (!shouldShowExamplesForResult(result, "")) {
       result.examples = [];
     }
     renderResult(result, true);
@@ -2032,16 +2132,17 @@ async function translateDrawing() {
     clearError();
     const base64Data = el.canvas.toDataURL("image/png").split(",")[1];
     const prompt = translationPrompt({
-      extraContext: "Nhận dạng chữ viết tay rồi dịch. Nếu kết quả ngắn thì thêm 3 ví dụ dùng từ trong câu; nếu dài thì examples là []."
+      sampleText: "word",
+      extraContext: "Nhận dạng chữ viết tay rồi dịch. Nếu nét vẽ là từ/cụm từ ngắn thì điền đủ 3 ví dụ dùng từ trong câu; nếu dài thì đặt examples là []."
     });
     const result = await geminiRequest(
       [
         { text: prompt },
         { inlineData: { mimeType: "image/png", data: base64Data } }
       ],
-      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1600, requireTranslation: true }
+      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1800, requireTranslation: true }
     );
-    if (!isShortWordOrPhrase(result.translation)) {
+    if (!shouldShowExamplesForResult(result, "")) {
       result.examples = [];
     }
     renderResult(result, true);
@@ -2054,13 +2155,13 @@ async function translateDrawing() {
 
 function renderExamples(result) {
   el.examplesList.replaceChildren();
-  const shortWord = isShortWordOrPhrase(result?.translation || "");
-  const list = shortWord && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [];
+  const showEx = shouldShowExamplesForResult(result, result?._sourceSample || "");
+  const list = showEx && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [];
   if (!list.length) {
     el.examplesBox.style.display = "none";
     return;
   }
-  list.forEach(ex => {
+  list.forEach((ex, idx) => {
     if (!ex || (!ex.sentence && !ex.meaning)) return;
     const card = document.createElement("div");
     card.className = "example-item";
@@ -2068,7 +2169,7 @@ function renderExamples(result) {
     if (ex.sentence) {
       const sent = document.createElement("div");
       sent.className = "example-sentence";
-      sent.textContent = ex.sentence;
+      sent.textContent = `${idx + 1}. ${ex.sentence}`;
       card.append(sent);
     }
     if (ex.reading) {
@@ -2302,7 +2403,7 @@ function speak(text, lang) {
   try { speechSynthesis.speak(utterance); } catch (_) {}
 }
 $("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang()));
-$("ttsSourceBtn").addEventListener("click", () => {
+$("speakSourceBtn").addEventListener("click", () => {
   const src = sourceLang();
   speak(el.source.value, src === "auto" ? "Vietnamese" : src);
 });
@@ -2640,7 +2741,13 @@ $("clearLiveBtn").addEventListener("click", () => {
   el.liveStatus.textContent = t("liveWaiting");
 });
 
-/* ============================ CÀI ĐẶT / ĐỔI NGÔN NGỮ / RESET ============================ */
+/* ============================ THÔNG TIN / CÀI ĐẶT / ĐỔI NGÔN NGỮ / RESET ============================ */
+$("infoBtn").addEventListener("click", openInfoModal);
+$("closeInfoBtn").addEventListener("click", closeInfoModal);
+$("infoModal").addEventListener("click", e => {
+  if (e.target === $("infoModal")) closeInfoModal();
+});
+
 $("settingsBtn").addEventListener("click", openSettings);
 $("cancelSettings").addEventListener("click", closeSettings);
 
@@ -2700,7 +2807,8 @@ function handleLangSelectionChanged() {
       pinyin: state.lastResult?.pinyin || "",
       examples: isShortWordOrPhrase(sameText) && Array.isArray(state.lastResult?.examples) ? state.lastResult.examples.slice(0, 3) : [],
       explanation: "",
-      alternatives: []
+      alternatives: [],
+      _sourceSample: sameText
     }, false);
     showNotice(t("sameChineseNotice"));
   } else if (state.lastResult?.translation) {
@@ -2754,8 +2862,7 @@ $("swapBtn").addEventListener("click", () => {
   syncVisualViewport();
 });
 
-$("translateBtn").addEventListener("click", () => translateText("translate"));
-$("polishBtn").addEventListener("click", () => translateText("polish"));
+$("translateBtn").addEventListener("click", () => translateText());
 el.source.addEventListener("input", updateCount);
 el.source.addEventListener("focus", () => {
   closeLangMenu();
@@ -2783,6 +2890,7 @@ $("pasteBtn").addEventListener("click", async () => {
 
 function resetApp() {
   closeLangMenu();
+  closeInfoModal();
   if (state.liveRecorder || state.liveStarting) stopLiveRecording();
   stopSpeechInput();
   if ("speechSynthesis" in window) {
