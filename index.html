@@ -12,6 +12,7 @@
 <link id="faviconLink" rel="icon" type="image/png" sizes="512x512">
 <link id="appleTouchIconLink" rel="apple-touch-icon" sizes="512x512">
 <link id="manifestLink" rel="manifest">
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <style>
 :root{
   color-scheme:dark;--bg:#101418;--panel:#192127;--panel2:#202b33;--panel3:#27343d;
@@ -158,6 +159,50 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .result-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--accent);font-weight:700}
 .result-text{font-size:15.5px;line-height:1.42;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .pinyin{color:var(--accent2);font-size:12.5px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word;display:none}
+
+/* Khung cách viết Hán tự kiểu mễ tự (1 ký tự) */
+.hanzi-stroke-box{
+  display:none;flex-direction:column;gap:6px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:12px;background:#111a20
+}
+.hanzi-stroke-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+.hanzi-stroke-title{
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--accent2);font-weight:700
+}
+.hanzi-stroke-meta{font-size:11px;color:var(--muted)}
+.hanzi-grid-wrap{
+  position:relative;width:184px;height:184px;margin:2px auto;
+  border-radius:16px;overflow:hidden;
+  background:#f4f5f6;border:1px solid #d5dbe0;
+  box-shadow:inset 0 0 0 1px #ffffff88,0 6px 18px #00000040;
+  cursor:pointer
+}
+.hanzi-grid-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(to right,transparent calc(50% - .5px),#d4dae0 calc(50% - .5px),#d4dae0 calc(50% + .5px),transparent calc(50% + .5px)),
+    linear-gradient(to bottom,transparent calc(50% - .5px),#d4dae0 calc(50% - .5px),#d4dae0 calc(50% + .5px),transparent calc(50% + .5px)),
+    linear-gradient(45deg,transparent calc(50% - .75px),#dfe4e8 calc(50% - .75px),#dfe4e8 calc(50% + .75px),transparent calc(50% + .75px)),
+    linear-gradient(-45deg,transparent calc(50% - .75px),#dfe4e8 calc(50% - .75px),#dfe4e8 calc(50% + .75px),transparent calc(50% + .75px));
+  background-size:100% 100%,100% 100%,100% 100%,100% 100%
+}
+.hanzi-writer-target{
+  position:relative;z-index:2;width:184px;height:184px
+}
+.hanzi-replay-btn{
+  position:absolute;right:8px;bottom:8px;z-index:4;
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid #cfd6dc;background:#ffffffeb;color:#394752;
+  display:grid;place-items:center;padding:0;box-shadow:0 2px 6px #00000024
+}
+.hanzi-replay-btn:hover{background:#ffffff;color:#111a20;border-color:#9fb0bd}
+.hanzi-stroke-status{
+  text-align:center;font-size:11px;color:var(--muted);min-height:15px
+}
+
 .back-trans{
   display:none;flex-direction:column;gap:3px;padding:7px 9px;
   border:1px dashed #4b697c;background:#12222c;border-radius:9px;
@@ -264,7 +309,7 @@ a{color:var(--accent)}
     <button class="iconbtn" id="settingsBtn" aria-label="Cài đặt" title="Cài đặt">
       <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
     </button>
     <i class="dot" id="keyDot" style="position:absolute; top:2px; right:2px;"></i>
@@ -388,6 +433,26 @@ a{color:var(--accent)}
       </div>
       <div class="result-text" id="resultText"></div>
       <div class="pinyin" id="pinyinText"></div>
+
+      <!-- Cách viết Hán tự (chỉ hiện khi bản dịch tiếng Trung có 1 ký tự) -->
+      <div class="hanzi-stroke-box" id="hanziStrokeBox">
+        <div class="hanzi-stroke-head">
+          <span class="hanzi-stroke-title" id="hanziStrokeTitle">Cách viết Hán tự</span>
+          <span class="hanzi-stroke-meta" id="hanziStrokeMeta"></span>
+        </div>
+        <div class="hanzi-grid-wrap" id="hanziGridWrap" title="Chạm để xem lại thứ tự nét viết">
+          <div class="hanzi-grid-bg"></div>
+          <div class="hanzi-writer-target" id="hanziWriterTarget"></div>
+          <button type="button" class="hanzi-replay-btn" id="hanziReplayBtn" aria-label="Viết lại" title="Viết lại">
+            <svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+        </div>
+        <div class="hanzi-stroke-status" id="hanziStrokeStatus"></div>
+      </div>
+
       <div class="back-trans" id="backTransBox">
         <span class="back-trans-label" id="backTransLabel">Kiểm tra dịch ngược</span>
         <div id="backTransText"></div>
@@ -540,7 +605,7 @@ function syncVisualViewport() {
 document.addEventListener("touchmove", e => {
   const target = e.target;
   if (!(target instanceof Element)) return;
-  if (target.closest("#drawCanvas")) return;
+  if (target.closest("#drawCanvas, #hanziGridWrap")) return;
   if (isEditableFocused() && target.closest("textarea, input")) return;
   const scrollBox = target.closest(".io-box, .feed, .modalbox, #errorBox, #langMenu, textarea");
   if (!scrollBox) {
@@ -801,6 +866,12 @@ const I18N = {
     resultLabel: "Bản dịch",
     backTranslate: "Dịch ngược",
     backTransLabel: "Kiểm tra dịch ngược",
+    hanziTitle: "Cách viết Hán tự",
+    hanziLoading: "Đang tải nét viết...",
+    hanziStrokeStep: (cur, total) => `Nét ${cur} / ${total}`,
+    hanziDone: total => `Hoàn tất ${total} nét • Chạm để xem lại`,
+    hanziUnavailable: "Không có dữ liệu nét viết cho ký tự này.",
+    hanziReplay: "Viết lại",
     useResult: "Đưa lên",
     copy: "Sao chép",
     copied: "Đã sao chép ✓",
@@ -871,6 +942,12 @@ const I18N = {
     resultLabel: "Translation",
     backTranslate: "Back-translate",
     backTransLabel: "Back-translation check",
+    hanziTitle: "Stroke order",
+    hanziLoading: "Loading strokes...",
+    hanziStrokeStep: (cur, total) => `Stroke ${cur} / ${total}`,
+    hanziDone: total => `${total} strokes • Tap to replay`,
+    hanziUnavailable: "Stroke data unavailable for this character.",
+    hanziReplay: "Replay",
     useResult: "To input",
     copy: "Copy",
     copied: "Copied ✓",
@@ -941,6 +1018,12 @@ const I18N = {
     resultLabel: "译文",
     backTranslate: "回译校验",
     backTransLabel: "回译核对",
+    hanziTitle: "汉字笔画顺序",
+    hanziLoading: "正在加载笔画...",
+    hanziStrokeStep: (cur, total) => `第 ${cur} / ${total} 画`,
+    hanziDone: total => `共 ${total} 画 • 点击重播`,
+    hanziUnavailable: "暂无该字的笔画数据。",
+    hanziReplay: "重播",
     useResult: "上屏",
     copy: "复制",
     copied: "已复制 ✓",
@@ -998,6 +1081,9 @@ const state = {
   targetLang: "Chinese",
   openPickerType: null,
   lastResult: null,
+  currentHanziChar: "",
+  hanziWriter: null,
+  hanziTotalStrokes: 0,
   history: [],
   imageData: null,
   isBusy: false,
@@ -1028,6 +1114,13 @@ const el = {
   resultSection: $("resultSection"),
   resultText: $("resultText"),
   pinyin: $("pinyinText"),
+  hanziStrokeBox: $("hanziStrokeBox"),
+  hanziStrokeTitle: $("hanziStrokeTitle"),
+  hanziStrokeMeta: $("hanziStrokeMeta"),
+  hanziGridWrap: $("hanziGridWrap"),
+  hanziWriterTarget: $("hanziWriterTarget"),
+  hanziReplayBtn: $("hanziReplayBtn"),
+  hanziStrokeStatus: $("hanziStrokeStatus"),
   backTransBox: $("backTransBox"),
   backTransLabel: $("backTransLabel"),
   backTransText: $("backTransText"),
@@ -1168,6 +1261,8 @@ function applyUILanguage() {
   $("imageHint").textContent = t("imageHint");
   $("resultLabel").textContent = t("resultLabel");
   setBtnLabel("backTranslateBtn", t("backTranslate"));
+  el.hanziStrokeTitle.textContent = t("hanziTitle");
+  el.hanziReplayBtn.title = el.hanziReplayBtn.ariaLabel = t("hanziReplay");
   el.backTransLabel.textContent = t("backTransLabel");
   setBtnLabel("useResultBtn", t("useResult"));
   setBtnLabel("copyBtn", t("copy"));
@@ -1204,8 +1299,123 @@ function applyUILanguage() {
   updateCount();
   updateLiveLabels();
   setStatus();
+  if (state.currentHanziChar) {
+    refreshHanziStrokeBox(state.currentHanziChar);
+  }
   syncVisualViewport();
 }
+
+/* ============================ CÁCH VIẾT HÁN TỰ (1 KÝ TỰ) ============================ */
+function extractSingleChineseChar(text) {
+  const cleaned = String(text || "")
+    .replace(/[\s\p{P}\p{S}]/gu, "");
+  const chars = Array.from(cleaned);
+  if (chars.length !== 1) return "";
+  const ch = chars[0];
+  return /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/.test(ch) ? ch : "";
+}
+
+function clearHanziStrokeBox() {
+  state.currentHanziChar = "";
+  state.hanziWriter = null;
+  state.hanziTotalStrokes = 0;
+  el.hanziWriterTarget.replaceChildren();
+  el.hanziStrokeMeta.textContent = "";
+  el.hanziStrokeStatus.textContent = "";
+  el.hanziStrokeBox.style.display = "none";
+}
+
+function playHanziStrokeAnimation() {
+  if (!state.hanziWriter) return;
+  const total = state.hanziTotalStrokes;
+  el.hanziStrokeStatus.textContent = total > 0 ? t("hanziStrokeStep", 1, total) : t("hanziLoading");
+  try {
+    state.hanziWriter.animateCharacter({
+      onComplete: () => {
+        if (state.hanziTotalStrokes > 0) {
+          el.hanziStrokeStatus.textContent = t("hanziDone", state.hanziTotalStrokes);
+        }
+      }
+    });
+  } catch (_) {}
+}
+
+function refreshHanziStrokeBox(translationText) {
+  const isChineseTarget = targetLang() === "Chinese" || targetLang() === "Traditional Chinese";
+  const singleChar = isChineseTarget ? extractSingleChineseChar(translationText) : "";
+
+  if (!singleChar) {
+    clearHanziStrokeBox();
+    return;
+  }
+
+  if (typeof window.HanziWriter !== "function") {
+    state.currentHanziChar = singleChar;
+    el.hanziWriterTarget.replaceChildren();
+    el.hanziStrokeMeta.textContent = singleChar;
+    el.hanziStrokeStatus.textContent = t("hanziUnavailable");
+    el.hanziStrokeBox.style.display = "flex";
+    return;
+  }
+
+  state.currentHanziChar = singleChar;
+  state.hanziWriter = null;
+  state.hanziTotalStrokes = 0;
+  el.hanziWriterTarget.replaceChildren();
+  el.hanziStrokeMeta.textContent = singleChar;
+  el.hanziStrokeStatus.textContent = t("hanziLoading");
+  el.hanziStrokeBox.style.display = "flex";
+
+  try {
+    const writer = window.HanziWriter.create(el.hanziWriterTarget, singleChar, {
+      width: 184,
+      height: 184,
+      padding: 16,
+      showOutline: true,
+      showCharacter: false,
+      strokeColor: "#1f3c68",
+      highlightColor: "#c82828",
+      outlineColor: "#cfd6dc",
+      radicalColor: "#c82828",
+      strokeAnimationSpeed: 1,
+      delayBetweenStrokes: 260,
+      charDataLoader: (char, onComplete) => {
+        const encoded = encodeURIComponent(char);
+        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encoded}.json`)
+          .then(res => {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          })
+          .then(data => {
+            if (state.currentHanziChar !== singleChar) return;
+            const strokeCount = Array.isArray(data?.strokes) ? data.strokes.length : 0;
+            state.hanziTotalStrokes = strokeCount;
+            el.hanziStrokeMeta.textContent = strokeCount ? `${singleChar} • ${strokeCount} nét` : singleChar;
+            onComplete(data);
+            setTimeout(() => {
+              if (state.currentHanziChar === singleChar) playHanziStrokeAnimation();
+            }, 80);
+          })
+          .catch(() => {
+            if (state.currentHanziChar !== singleChar) return;
+            el.hanziStrokeStatus.textContent = t("hanziUnavailable");
+          });
+      }
+    });
+    state.hanziWriter = writer;
+  } catch (_) {
+    el.hanziStrokeStatus.textContent = t("hanziUnavailable");
+  }
+}
+
+el.hanziReplayBtn.addEventListener("click", e => {
+  e.stopPropagation();
+  playHanziStrokeAnimation();
+});
+
+el.hanziGridWrap.addEventListener("click", () => {
+  playHanziStrokeAnimation();
+});
 
 /* ============================ TIỆN ÍCH UI ============================ */
 function showNotice(message) {
@@ -1721,6 +1931,7 @@ function renderResult(result, saveToHistory = false) {
   el.resultText.textContent = result.translation || "";
   el.pinyin.textContent = result.pinyin || "";
   el.pinyin.style.display = result.pinyin ? "block" : "none";
+  refreshHanziStrokeBox(result.translation || "");
   el.explanation.textContent = result.explanation || "";
   el.explanation.style.display = result.explanation ? "block" : "none";
 
@@ -2304,6 +2515,11 @@ function handleLangSelectionChanged() {
   if (sourceLang() !== "auto" && sourceLang() === targetLang()) showError(t("errSameLang"));
   else clearError();
   clearBackTranslation();
+  if (state.lastResult?.translation) {
+    refreshHanziStrokeBox(state.lastResult.translation);
+  } else {
+    clearHanziStrokeBox();
+  }
   updateLiveLabels();
   syncVisualViewport();
 }
@@ -2336,6 +2552,7 @@ $("swapBtn").addEventListener("click", () => {
   renderLangButton("source");
   renderLangButton("target");
   clearBackTranslation();
+  clearHanziStrokeBox();
   if (state.lastResult) {
     el.source.value = state.lastResult.translation;
     updateCount();
@@ -2384,6 +2601,7 @@ function resetApp() {
   updateCount();
   state.lastResult = null;
   clearBackTranslation();
+  clearHanziStrokeBox();
   el.resultSection.style.display = "none";
   el.resultText.textContent = "";
   el.pinyin.textContent = "";
