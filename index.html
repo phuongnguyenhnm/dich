@@ -1942,11 +1942,10 @@ function translationPrompt({ extraContext = "", fromOverride = "", toOverride = 
 - Trung Giản thể/Phồn thể: tự nhiên, ưu tiên thuật ngữ nhà máy; giao tiếp lịch sự, tự nhiên.
 - "pronunciation": cách đọc/IPA/Pinyin chuẩn ngắn gọn ở ${to}${isZhTarget ? '; điền cả "pinyin".' : '.'}
 ${shortWord
-  ? `- Đầu vào là từ/cụm từ ngắn: điền tối đa 3 phần tử "examples" (câu dùng từ/cụm đó ở ${to}: "sentence", "reading", "meaning" bằng ${meaningLang}); nếu rõ nghĩa/dài có thể để [].`
+  ? `- Từ/cụm ngắn: điền tối đa 3 "examples" (câu dùng từ/cụm đó ở ${to}: "sentence", "reading", "meaning" bằng ${meaningLang}); nếu rõ nghĩa/dài có thể để [].`
   : `- Văn bản dài: đặt "examples": [].`}
 - "explanation", "alternatives": ngắn gọn hoặc rỗng.
-${extraContext ? extraContext + "
-" : ""}Trả JSON đúng schema.`;
+${extraContext ? extraContext + "\n" : ""}Trả JSON đúng schema.`;
 }
 
 async function translateText(inputOverride = null) {
