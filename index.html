@@ -1240,26 +1240,26 @@ async function optimizeImage(file) {
 }
 
 /* ============================ GEMINI API & TOKEN-OPTIMIZED PROMPTS ============================ */
-function buildResponseSchema(requireThreeExamples = false) {
-  const exItems = {
-    type: "object",
-    properties: {
-      sentence: { type: "string" },
-      reading: { type: "string" },
-      meaning: { type: "string" }
-    },
-    required: ["sentence", "meaning"]
-  };
+function buildResponseSchema() {
   return {
-    type: "object",
+    type: "OBJECT",
     properties: {
-      transcript: { type: "string" },
-      translation: { type: "string" },
-      pronunciation: { type: "string" },
-      pinyin: { type: "string" },
-      examples: requireThreeExamples
-        ? { type: "array", items: exItems, minItems: 3, maxItems: 3 }
-        : { type: "array", items: exItems }
+      transcript: { type: "STRING" },
+      translation: { type: "STRING" },
+      pronunciation: { type: "STRING" },
+      pinyin: { type: "STRING" },
+      examples: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            sentence: { type: "STRING" },
+            reading: { type: "STRING" },
+            meaning: { type: "STRING" }
+          },
+          required: ["sentence", "meaning"]
+        }
+      }
     },
     required: ["translation"]
   };
@@ -1277,8 +1277,7 @@ async function rawGeminiRequest(modelName, parts, options) {
     systemInstruction,
     temperature = 0.1,
     maxOutputTokens = 900,
-    timeoutMs = CONFIG.requestTimeoutMs,
-    requireThreeExamples = false
+    timeoutMs = CONFIG.requestTimeoutMs
   } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -1296,8 +1295,7 @@ async function rawGeminiRequest(modelName, parts, options) {
           temperature,
           maxOutputTokens,
           responseMimeType: "application/json",
-          responseSchema: buildResponseSchema(requireThreeExamples),
-          thinkingConfig: { thinkingBudget: 0 }
+          responseSchema: buildResponseSchema()
         }
       }),
       signal: controller.signal
@@ -1406,7 +1404,6 @@ function normalizeExampleItem(ex) {
   };
 }
 
-/* Ultra-concise English prompts to save tokens and speed up responses */
 function buildTranslationSystemPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
@@ -1417,7 +1414,7 @@ function buildTranslationSystemPrompt({ fromOverride = "", toOverride = "", samp
     `Translate ${from}->${to} (general & factory/technical). Keep numbers, codes, names, units, symbols, line breaks.`,
     `Set "pronunciation" for ${to} (IPA/Pinyin/reading); also set "pinyin" for Chinese.`,
     needExamples
-      ? `Return 3 "examples" using the word/phrase in ${to} sentences: {"sentence","reading","meaning" in ${mLang}}.`
+      ? `Return exactly 3 items in "examples" using the word/phrase in ${to} sentences: {"sentence","reading","meaning" in ${mLang}}.`
       : `Long text: "examples":[].`
   ].join(" ");
 }
@@ -1427,7 +1424,7 @@ function buildSameChineseMetaPrompt(input, targetPrompt) {
   return [
     `Keep ${targetPrompt} text unchanged as "translation":${JSON.stringify(input)}. Add "pronunciation" & "pinyin".`,
     needExamples
-      ? `Return 3 "examples" in ${targetPrompt}: {"sentence","reading","meaning" in ${meaningLanguage()}}.`
+      ? `Return exactly 3 items in "examples" in ${targetPrompt}: {"sentence","reading","meaning" in ${meaningLanguage()}}.`
       : `"examples":[].`
   ].join(" ");
 }
@@ -1441,8 +1438,7 @@ async function runTranslationTask({ spinnerId, parts, systemInstruction, maxOutp
       systemInstruction,
       temperature: 0.1,
       maxOutputTokens,
-      requireTranslation: true,
-      requireThreeExamples: forceExamples || isShortWordOrPhrase(sourceSample)
+      requireTranslation: true
     });
     if (sourceSample) result._sourceSample = sourceSample;
     if (!forceExamples && !shouldShowExamplesForResult(result, sourceSample)) result.examples = [];
@@ -1474,7 +1470,7 @@ async function translateText(inputOverride = null) {
       try {
         const meta = await geminiRequest([{ text: input }], {
           systemInstruction: buildSameChineseMetaPrompt(input, langPrompt(targetLang())),
-          temperature: 0.1, maxOutputTokens: 750, requireTranslation: true, requireThreeExamples: shortWord
+          temperature: 0.1, maxOutputTokens: 750, requireTranslation: true
         });
         renderResult({
           ...localResult,
@@ -1683,6 +1679,7 @@ function setToolPanel(panelId) {
 
 $("drawToggle").addEventListener("click", () => setToolPanel(el.drawPanel.style.display === "flex" ? null : "draw"));
 $("imageToggle").addEventListener("click", () => setToolPanel(el.imagePanel.style.display === "flex" ? null : "image"));
+$("liveToggle").addEventListener("click", () => setToolPanel(el.livePanel.style.display === "flex" ? null : "live"));
 
 /* ============================ IMAGE & RESULT ACTIONS ============================ */
 $("chooseImageBtn").addEventListener("click", () => $("imageFile").click());
