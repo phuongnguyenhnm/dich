@@ -680,9 +680,9 @@ function createFlagElement(flagCode) {
 
 const CONFIG = {
   apiBase: "https://generativelanguage.googleapis.com/v1beta/models/",
-  requestTimeoutMs: 45000,
+  requestTimeoutMs: 40000,
   maxImageBytes: 12 * 1024 * 1024,
-  maxImageDimension: 1400,
+  maxImageDimension: 1280,
   maxAudioBytes: 18 * 1024 * 1024,
   defaultModel: "gemini-3.5-flash-lite",
   maxHistory: 5
@@ -699,23 +699,23 @@ const FALLBACK_MODELS = [
 const CHINESE_CODES = ["Chinese", "Traditional Chinese"];
 
 const LANGUAGES = [
-  { code: "auto", flag: null, label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "auto-detected language", speech: "vi-VN" },
-  { code: "Vietnamese", flag: "vn", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "Vietnamese", speech: "vi-VN" },
-  { code: "Chinese", flag: "cn", label: { vi: "Tiếng Trung Giản thể", en: "Simplified Chinese", zh: "简体中文" }, prompt: "Simplified Chinese", speech: "zh-CN" },
-  { code: "Traditional Chinese", flag: "tw", label: { vi: "Tiếng Trung Phồn thể", en: "Traditional Chinese", zh: "繁体中文" }, prompt: "Traditional Chinese", speech: "zh-TW" },
-  { code: "English", flag: "us", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prompt: "English", speech: "en-US" },
-  { code: "Japanese", flag: "jp", label: { vi: "Tiếng Nhật", en: "Japanese", zh: "日语" }, prompt: "Japanese", speech: "ja-JP" },
-  { code: "Korean", flag: "kr", label: { vi: "Tiếng Hàn", en: "Korean", zh: "韩语" }, prompt: "Korean", speech: "ko-KR" },
-  { code: "French", flag: "fr", label: { vi: "Tiếng Pháp", en: "French", zh: "法语" }, prompt: "French", speech: "fr-FR" },
-  { code: "German", flag: "de", label: { vi: "Tiếng Đức", en: "German", zh: "德语" }, prompt: "German", speech: "de-DE" },
-  { code: "Spanish", flag: "es", label: { vi: "Tiếng Tây Ban Nha", en: "Spanish", zh: "西班牙语" }, prompt: "Spanish", speech: "es-ES" },
-  { code: "Thai", flag: "th", label: { vi: "Tiếng Thái", en: "Thai", zh: "泰语" }, prompt: "Thai", speech: "th-TH" },
-  { code: "Russian", flag: "ru", label: { vi: "Tiếng Nga", en: "Russian", zh: "俄语" }, prompt: "Russian", speech: "ru-RU" },
-  { code: "Italian", flag: "it", label: { vi: "Tiếng Ý", en: "Italian", zh: "意大利语" }, prompt: "Italian", speech: "it-IT" },
-  { code: "Portuguese", flag: "pt", label: { vi: "Tiếng Bồ Đào Nha", en: "Portuguese", zh: "葡萄牙语" }, prompt: "Portuguese", speech: "pt-PT" },
-  { code: "Arabic", flag: "sa", label: { vi: "Tiếng Ả Rập", en: "Arabic", zh: "阿拉伯语" }, prompt: "Arabic", speech: "ar-SA" },
-  { code: "Indonesian", flag: "id", label: { vi: "Tiếng Indonesia", en: "Indonesian", zh: "印尼语" }, prompt: "Indonesian", speech: "id-ID" },
-  { code: "Hindi", flag: "in", label: { vi: "Tiếng Hindi", en: "Hindi", zh: "印地语" }, prompt: "Hindi", speech: "hi-IN" }
+  { code: "auto", flag: null, label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "auto", speech: "vi-VN" },
+  { code: "Vietnamese", flag: "vn", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "VI", speech: "vi-VN" },
+  { code: "Chinese", flag: "cn", label: { vi: "Tiếng Trung Giản thể", en: "Simplified Chinese", zh: "简体中文" }, prompt: "ZH-CN", speech: "zh-CN" },
+  { code: "Traditional Chinese", flag: "tw", label: { vi: "Tiếng Trung Phồn thể", en: "Traditional Chinese", zh: "繁体中文" }, prompt: "ZH-TW", speech: "zh-TW" },
+  { code: "English", flag: "us", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prompt: "EN", speech: "en-US" },
+  { code: "Japanese", flag: "jp", label: { vi: "Tiếng Nhật", en: "Japanese", zh: "日语" }, prompt: "JA", speech: "ja-JP" },
+  { code: "Korean", flag: "kr", label: { vi: "Tiếng Hàn", en: "Korean", zh: "韩语" }, prompt: "KO", speech: "ko-KR" },
+  { code: "French", flag: "fr", label: { vi: "Tiếng Pháp", en: "French", zh: "法语" }, prompt: "FR", speech: "fr-FR" },
+  { code: "German", flag: "de", label: { vi: "Tiếng Đức", en: "German", zh: "德语" }, prompt: "DE", speech: "de-DE" },
+  { code: "Spanish", flag: "es", label: { vi: "Tiếng Tây Ban Nha", en: "Spanish", zh: "西班牙语" }, prompt: "ES", speech: "es-ES" },
+  { code: "Thai", flag: "th", label: { vi: "Tiếng Thái", en: "Thai", zh: "泰语" }, prompt: "TH", speech: "th-TH" },
+  { code: "Russian", flag: "ru", label: { vi: "Tiếng Nga", en: "Russian", zh: "俄语" }, prompt: "RU", speech: "ru-RU" },
+  { code: "Italian", flag: "it", label: { vi: "Tiếng Ý", en: "Italian", zh: "意大利语" }, prompt: "IT", speech: "it-IT" },
+  { code: "Portuguese", flag: "pt", label: { vi: "Tiếng Bồ Đào Nha", en: "Portuguese", zh: "葡萄牙语" }, prompt: "PT", speech: "pt-PT" },
+  { code: "Arabic", flag: "sa", label: { vi: "Tiếng Ả Rập", en: "Arabic", zh: "阿拉伯语" }, prompt: "AR", speech: "ar-SA" },
+  { code: "Indonesian", flag: "id", label: { vi: "Tiếng Indonesia", en: "Indonesian", zh: "印尼语" }, prompt: "ID", speech: "id-ID" },
+  { code: "Hindi", flag: "in", label: { vi: "Tiếng Hindi", en: "Hindi", zh: "印地语" }, prompt: "HI", speech: "hi-IN" }
 ];
 
 const I18N = {
@@ -918,7 +918,7 @@ const sourceLang = () => state.sourceLang;
 const targetLang = () => state.targetLang;
 const langPrompt = value => getLangObj(value)?.prompt || value;
 const escapeText = value => String(value ?? "").replace(/\u0000/g, "");
-const meaningLanguage = () => state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese";
+const meaningLangCode = () => state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
 
 function renderLangButton(type) {
   const isSource = type === "source";
@@ -1168,6 +1168,7 @@ function ensureConfig() {
 }
 
 const stopStream = stream => stream?.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function persistModelSelection(newModel) {
   const clean = newModel.trim();
@@ -1236,35 +1237,10 @@ async function optimizeImage(file) {
   g.fillStyle = "#ffffff";
   g.fillRect(0, 0, c.width, c.height);
   g.drawImage(img, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", 0.85);
+  return c.toDataURL("image/jpeg", 0.8);
 }
 
-/* ============================ GEMINI API & TOKEN-OPTIMIZED PROMPTS ============================ */
-function buildResponseSchema() {
-  return {
-    type: "OBJECT",
-    properties: {
-      transcript: { type: "STRING" },
-      translation: { type: "STRING" },
-      pronunciation: { type: "STRING" },
-      pinyin: { type: "STRING" },
-      examples: {
-        type: "ARRAY",
-        items: {
-          type: "OBJECT",
-          properties: {
-            sentence: { type: "STRING" },
-            reading: { type: "STRING" },
-            meaning: { type: "STRING" }
-          },
-          required: ["sentence", "meaning"]
-        }
-      }
-    },
-    required: ["translation"]
-  };
-}
-
+/* ============================ GEMINI API & ULTRA-LEAN PROMPTS ============================ */
 function makeRetryError(message, retryable = true, status = 0) {
   const err = new Error(message);
   err.retryable = retryable;
@@ -1274,9 +1250,9 @@ function makeRetryError(message, retryable = true, status = 0) {
 
 async function rawGeminiRequest(modelName, parts, options) {
   const {
-    systemInstruction,
+    systemInstruction = "JSON only.",
     temperature = 0.1,
-    maxOutputTokens = 900,
+    maxOutputTokens = 420,
     timeoutMs = CONFIG.requestTimeoutMs
   } = options;
   const controller = new AbortController();
@@ -1289,13 +1265,12 @@ async function rawGeminiRequest(modelName, parts, options) {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": state.apiKey.trim() },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemInstruction || "Fast accurate translator. Return JSON." }] },
+        systemInstruction: { parts: [{ text: systemInstruction }] },
         contents: [{ role: "user", parts }],
         generationConfig: {
           temperature,
           maxOutputTokens,
-          responseMimeType: "application/json",
-          responseSchema: buildResponseSchema()
+          responseMimeType: "application/json"
         }
       }),
       signal: controller.signal
@@ -1333,12 +1308,33 @@ async function rawGeminiRequest(modelName, parts, options) {
   return text;
 }
 
+function normalizeModelPayload(rawObj) {
+  if (!rawObj || typeof rawObj !== "object") return {};
+  const rawEx = Array.isArray(rawObj.examples) ? rawObj.examples : (Array.isArray(rawObj.ex) ? rawObj.ex : []);
+  const examples = rawEx.slice(0, 3).map(item => {
+    if (typeof item === "string") return { sentence: item, reading: "", meaning: "" };
+    return {
+      sentence: String(item?.sentence ?? item?.s ?? "").trim(),
+      reading: String(item?.reading ?? item?.r ?? item?.pinyin ?? "").trim(),
+      meaning: String(item?.meaning ?? item?.m ?? "").trim()
+    };
+  }).filter(x => x.sentence || x.meaning);
+
+  return {
+    transcript: String(rawObj.transcript ?? rawObj.src ?? "").trim(),
+    translation: String(rawObj.translation ?? rawObj.tr ?? "").trim(),
+    pronunciation: String(rawObj.pronunciation ?? rawObj.pr ?? "").trim(),
+    pinyin: String(rawObj.pinyin ?? rawObj.py ?? "").trim(),
+    examples
+  };
+}
+
 function parseJsonResponse(text) {
   const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-  try { return JSON.parse(cleaned); } catch (_) {
+  try { return normalizeModelPayload(JSON.parse(cleaned)); } catch (_) {
     const i = cleaned.indexOf("{"), j = cleaned.lastIndexOf("}");
     if (i >= 0 && j > i) {
-      try { return JSON.parse(cleaned.slice(i, j + 1)); } catch (__) {}
+      try { return normalizeModelPayload(JSON.parse(cleaned.slice(i, j + 1))); } catch (__) {}
     }
     throw makeRetryError("Không phân tích được JSON từ Gemini.", true);
   }
@@ -1362,6 +1358,7 @@ async function geminiRequest(parts, options = {}) {
       const retry = err.retryable || [404, 429, 500, 502, 503, 504].includes(err.status);
       if (retry && i < models.length - 1) {
         el.status.textContent = t("tryingFallback");
+        await sleep(err.status === 429 ? 650 : 300);
         continue;
       }
       break;
@@ -1383,9 +1380,9 @@ async function geminiRequest(parts, options = {}) {
 
 function isShortWordOrPhrase(text) {
   const s = String(text || "").trim();
-  if (!s || s.length > 140 || /\n/.test(s)) return false;
-  if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) return Array.from(s).length <= 28;
-  return s.split(/\s+/).filter(Boolean).length <= 14;
+  if (!s || s.length > 90 || /\n/.test(s)) return false;
+  if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) return Array.from(s).length <= 16;
+  return s.split(/\s+/).filter(Boolean).length <= 7;
 }
 
 const shouldShowExamplesForResult = (result, inputText = "") =>
@@ -1404,32 +1401,23 @@ function normalizeExampleItem(ex) {
   };
 }
 
-function buildTranslationSystemPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false } = {}) {
+/* Shortest possible prompts with compact JSON keys: tr=translation, pr=pronunciation, py=pinyin, ex=3 examples */
+function buildLeanPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false, extraTag = "" } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
-  const needExamples = forceExamples || isShortWordOrPhrase(sampleText);
-  const mLang = meaningLanguage();
-
-  return [
-    `Translate ${from}->${to} (general & factory/technical). Keep numbers, codes, names, units, symbols, line breaks.`,
-    `Set "pronunciation" for ${to} (IPA/Pinyin/reading); also set "pinyin" for Chinese.`,
-    needExamples
-      ? `Return exactly 3 items in "examples" using the word/phrase in ${to} sentences: {"sentence","reading","meaning" in ${mLang}}.`
-      : `Long text: "examples":[].`
-  ].join(" ");
+  const needEx = forceExamples || isShortWordOrPhrase(sampleText);
+  const m = meaningLangCode();
+  const exRule = needEx ? `ex:3 short sentences in ${to}({"s","r","m" in ${m}})` : `ex:[]`;
+  return `${extraTag ? extraTag + ". " : ""}${from}->${to}. Keep numbers/codes/names/units. JSON:{"tr":"","pr":"reading","py":"pinyin if ZH",${exRule}}`;
 }
 
-function buildSameChineseMetaPrompt(input, targetPrompt) {
-  const needExamples = isShortWordOrPhrase(input);
-  return [
-    `Keep ${targetPrompt} text unchanged as "translation":${JSON.stringify(input)}. Add "pronunciation" & "pinyin".`,
-    needExamples
-      ? `Return exactly 3 items in "examples" in ${targetPrompt}: {"sentence","reading","meaning" in ${meaningLanguage()}}.`
-      : `"examples":[].`
-  ].join(" ");
+function buildSameChineseLeanPrompt(input, toCode) {
+  const needEx = isShortWordOrPhrase(input);
+  const exRule = needEx ? `ex:3 short sentences in ${toCode}({"s","r","m" in ${meaningLangCode()}})` : `ex:[]`;
+  return `Keep ${toCode} text as tr. JSON:{"tr":${JSON.stringify(input)},"pr":"","py":"pinyin",${exRule}}`;
 }
 
-async function runTranslationTask({ spinnerId, parts, systemInstruction, maxOutputTokens = 900, sourceSample = "", forceExamples = false }) {
+async function runTranslationTask({ spinnerId, parts, systemInstruction, maxOutputTokens = 420, sourceSample = "", forceExamples = false }) {
   if (state.isBusy) return showError(t("errBusy"));
   clearError();
   try {
@@ -1466,11 +1454,11 @@ async function translateText(inputOverride = null) {
     renderResult(localResult, true);
     showNotice(t("sameChineseNotice"));
 
-    if (state.apiKey.trim() && Array.from(input).length <= 140) {
+    if (state.apiKey.trim() && Array.from(input).length <= 90) {
       try {
         const meta = await geminiRequest([{ text: input }], {
-          systemInstruction: buildSameChineseMetaPrompt(input, langPrompt(targetLang())),
-          temperature: 0.1, maxOutputTokens: 750, requireTranslation: true
+          systemInstruction: buildSameChineseLeanPrompt(input, langPrompt(targetLang())),
+          temperature: 0.1, maxOutputTokens: 360, requireTranslation: true
         });
         renderResult({
           ...localResult,
@@ -1485,11 +1473,12 @@ async function translateText(inputOverride = null) {
     return;
   }
 
+  const shortWord = isShortWordOrPhrase(input);
   await runTranslationTask({
     spinnerId: "translateSpinner",
     parts: [{ text: input }],
-    systemInstruction: buildTranslationSystemPrompt({ sampleText: input }),
-    maxOutputTokens: 900,
+    systemInstruction: buildLeanPrompt({ sampleText: input }),
+    maxOutputTokens: shortWord ? 460 : 360,
     sourceSample: input,
     forceExamples: false
   });
@@ -1502,15 +1491,15 @@ async function backTranslateResult() {
   clearError();
 
   const srcCode = sourceLang(), tgtCode = targetLang();
-  const fallbackLang = state.uiLang === "zh" ? "Simplified Chinese" : state.uiLang === "en" ? "English" : "Vietnamese";
+  const fallbackLang = state.uiLang === "zh" ? "ZH-CN" : state.uiLang === "en" ? "EN" : "VI";
   const backTarget = srcCode === "auto" ? fallbackLang : langPrompt(srcCode);
   const backSource = langPrompt(tgtCode);
 
   try {
     setBusy(true, "backSpin");
     const res = await geminiRequest([{ text: translated }], {
-      systemInstruction: buildTranslationSystemPrompt({ fromOverride: backSource, toOverride: backTarget, sampleText: translated }),
-      temperature: 0.1, maxOutputTokens: 700, requireTranslation: true
+      systemInstruction: `${backSource}->${backTarget}. JSON:{"tr":""}`,
+      temperature: 0.1, maxOutputTokens: 320, requireTranslation: true
     });
     el.backTransLabel.textContent = `${t("backTransLabel")} (${srcCode === "auto" ? fallbackLang : backTarget})`;
     el.backTransText.textContent = res.translation || "";
@@ -1528,11 +1517,11 @@ async function translateImage() {
   await runTranslationTask({
     spinnerId: "imageSpinner",
     parts: [
-      { text: buildTranslationSystemPrompt({ sampleText: "word", forceExamples: true }) + " OCR image text first." },
+      { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "OCR" }) },
       { inlineData: { mimeType: "image/jpeg", data: state.imageData.split(",")[1] } }
     ],
-    systemInstruction: "OCR and translate fast. Return JSON.",
-    maxOutputTokens: 900,
+    systemInstruction: "JSON only.",
+    maxOutputTokens: 460,
     forceExamples: true
   });
 }
@@ -1542,11 +1531,11 @@ async function translateDrawing() {
   await runTranslationTask({
     spinnerId: "drawSpinner",
     parts: [
-      { text: buildTranslationSystemPrompt({ sampleText: "word", forceExamples: true }) + " Recognize handwriting first." },
+      { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "Handwriting" }) },
       { inlineData: { mimeType: "image/png", data: el.canvas.toDataURL("image/png").split(",")[1] } }
     ],
-    systemInstruction: "Recognize handwriting and translate fast. Return JSON.",
-    maxOutputTokens: 900,
+    systemInstruction: "JSON only.",
+    maxOutputTokens: 460,
     forceExamples: true
   });
 }
@@ -1815,7 +1804,7 @@ function addBubble(text, side, translation) {
 }
 
 const liveLanguages = side => {
-  const src = sourceLang() === "auto" ? "speaker's auto-detected language" : langPrompt(sourceLang());
+  const src = sourceLang() === "auto" ? "auto" : langPrompt(sourceLang());
   const tgt = langPrompt(targetLang());
   return side === "A" ? { from: src, to: tgt } : { from: tgt, to: src };
 };
@@ -1918,11 +1907,11 @@ async function processLiveAudio(blob, mime, side) {
 
     el.liveStatus.textContent = "Đang nhận dạng và dịch…";
     const b64 = await blobToBase64(blob);
-    const prompt = `Transcribe ${from} audio and translate naturally into ${to}. Keep numbers, names, and codes; use [unclear] if unclear. Return JSON.`;
+    const prompt = `Audio ${from}->${to}. JSON:{"src":"transcript","tr":"translation","py":"pinyin if ZH"}`;
 
     const result = await geminiRequest(
       [{ text: prompt }, { inlineData: { mimeType: safeMime, data: b64 } }],
-      { systemInstruction: "Fast speech transcription and translation. Return JSON.", temperature: 0.1, maxOutputTokens: 900, timeoutMs: 60000, requireTranslation: false }
+      { systemInstruction: "JSON only.", temperature: 0.1, maxOutputTokens: 360, timeoutMs: 50000, requireTranslation: false }
     );
     if (!result.transcript && !result.translation) throw new Error("Không nhận dạng được lời nói.");
 
