@@ -119,10 +119,19 @@ textarea::placeholder{color:#81929c}
 .btn:hover{border-color:#607988;background:var(--panel3)}
 .btn.primary{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700}
 .btn.ghost{background:transparent}
-.btn.active-tool{background:#583238;border-color:#d77e84;color:#ffc1c1}
-.btn.mic-chip{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700;padding:5px 10px}
-.btn.mic-chip.recording{background:#ff8c8c;color:#351010;animation:pulse 1.1s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 6px #ff8c8c00}}
+/* 2 trạng thái rõ rệt cho các nút chế độ / thao tác: mặc định (tắt) vs is-active (đang bật/đang chạy) */
+.btn.mode-toggle.is-active,
+.btn.mic-chip.is-active{
+  background:var(--accent);
+  border-color:var(--accent2);
+  color:#08243a;
+  font-weight:700;
+  box-shadow:0 0 0 2px #8ecbff33;
+}
+.btn.mic-chip.is-active{
+  animation:pulse 1.1s infinite;
+}
+@keyframes pulse{50%{box-shadow:0 0 0 6px #8ecbff00}}
 .small{font-size:11px;color:var(--muted)}
 .panel,.live{
   display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
@@ -293,23 +302,23 @@ a{color:var(--accent)}
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
           <span class="btn-label">Dán</span>
         </button>
-        <button class="btn" id="speakSourceBtn">
+        <button class="btn mode-toggle" id="speakSourceBtn" aria-pressed="false">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
           <span class="btn-label">Đọc</span>
         </button>
-        <button class="btn" id="drawToggle">
+        <button class="btn mode-toggle" id="drawToggle" aria-pressed="false">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
           <span class="btn-label">Viết tay</span>
         </button>
-        <button class="btn" id="imageToggle">
+        <button class="btn mode-toggle" id="imageToggle" aria-pressed="false">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
           <span class="btn-label">Ảnh</span>
         </button>
-        <button class="btn" id="liveToggle">
+        <button class="btn mode-toggle" id="liveToggle" aria-pressed="false">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0-3-3m3 3-3 3"/><path d="M16 17H4m0 0 3-3m-3 3 3 3"/></svg></span>
           <span class="btn-label">Hội thoại</span>
         </button>
-        <button class="btn mic-chip" id="micBtn" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">
+        <button class="btn mic-chip" id="micBtn" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói" aria-pressed="false">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></span>
           <span class="btn-label">Mic</span>
         </button>
@@ -875,6 +884,7 @@ const state = {
   startingSide: null,
   recognition: null,
   speechActive: false,
+  speakingSource: false,
   strokes: [],
   currentStroke: null,
   canvasDpr: 1,
@@ -900,7 +910,8 @@ const el = {
   sourceLangLabel: $("sourceLangLabel"), targetLangLabel: $("targetLangLabel"),
   langMenu: $("langMenu"), drawPanel: $("drawPanel"), imagePanel: $("imagePanel"),
   canvas: $("drawCanvas"), livePanel: $("livePanel"), liveFeed: $("liveFeed"),
-  liveStatus: $("liveStatus"), mic: $("micBtn")
+  liveStatus: $("liveStatus"), mic: $("micBtn"), speakSourceBtn: $("speakSourceBtn"),
+  drawToggle: $("drawToggle"), imageToggle: $("imageToggle"), liveToggle: $("liveToggle")
 };
 
 const setBtnLabel = (btnId, text) => {
@@ -919,6 +930,25 @@ const targetLang = () => state.targetLang;
 const langPrompt = value => getLangObj(value)?.prompt || value;
 const escapeText = value => String(value ?? "").replace(/\u0000/g, "");
 const meaningLangCode = () => state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
+
+function setToggleButtonState(btn, active) {
+  if (!btn) return;
+  btn.classList.toggle("is-active", Boolean(active));
+  btn.setAttribute("aria-pressed", active ? "true" : "false");
+}
+
+function syncToolStates() {
+  const isDrawOpen = el.drawPanel.style.display === "flex";
+  const isImageOpen = el.imagePanel.style.display === "flex";
+  const isLiveOpen = el.livePanel.style.display === "flex";
+  const isMicActive = Boolean(state.liveRecorder?.state === "recording" || state.liveStarting || state.speechActive);
+
+  setToggleButtonState(el.speakSourceBtn, state.speakingSource);
+  setToggleButtonState(el.drawToggle, isDrawOpen);
+  setToggleButtonState(el.imageToggle, isImageOpen);
+  setToggleButtonState(el.liveToggle, isLiveOpen);
+  setToggleButtonState(el.mic, isMicActive);
+}
 
 function renderLangButton(type) {
   const isSource = type === "source";
@@ -1033,6 +1063,7 @@ function applyUILanguage() {
   updateCount();
   updateLiveLabels();
   setStatus();
+  syncToolStates();
   if (state.lastResult) renderResult(state.lastResult, false);
   syncVisualViewport();
 }
@@ -1401,7 +1432,6 @@ function normalizeExampleItem(ex) {
   };
 }
 
-/* Shortest possible prompts with compact JSON keys: tr=translation, pr=pronunciation, py=pinyin, ex=3 examples */
 function buildLeanPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false, extraTag = "" } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
@@ -1660,10 +1690,10 @@ function setToolPanel(panelId) {
   setShow(el.drawPanel, isDraw);
   setShow(el.imagePanel, isImage);
   setShow(el.livePanel, isLive);
-  $("liveToggle").classList.toggle("active-tool", isLive);
   if (isDraw) requestAnimationFrame(resizeCanvas);
   if (isLive) updateLiveLabels();
   else if (state.liveRecorder || state.liveStarting) stopLiveRecording();
+  syncToolStates();
 }
 
 $("drawToggle").addEventListener("click", () => setToolPanel(el.drawPanel.style.display === "flex" ? null : "draw"));
@@ -1727,10 +1757,22 @@ $("copyBtn").addEventListener("click", async () => {
   }
 });
 
-function speak(text, lang) {
+function stopSpeaking() {
+  state.speakingSource = false;
+  if ("speechSynthesis" in window) {
+    try { speechSynthesis.cancel(); } catch (_) {}
+  }
+  syncToolStates();
+}
+
+function speak(text, lang, trackSource = false) {
   if (!("speechSynthesis" in window)) return showError("Trình duyệt không hỗ trợ đọc văn bản.");
   if (!text) return;
-  try { speechSynthesis.cancel(); } catch (_) {}
+  if (trackSource && state.speakingSource) {
+    stopSpeaking();
+    return;
+  }
+  stopSpeaking();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = getLangObj(lang)?.speech || "en-US";
   u.rate = CHINESE_CODES.includes(lang) ? 0.92 : 1;
@@ -1738,19 +1780,33 @@ function speak(text, lang) {
   const prefix = u.lang.toLowerCase().split("-")[0];
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
   if (voice) u.voice = voice;
-  u.onerror = () => {};
-  try { speechSynthesis.speak(u); } catch (_) {}
+
+  if (trackSource) {
+    state.speakingSource = true;
+    syncToolStates();
+  }
+  const finishSpeak = () => {
+    if (trackSource) {
+      state.speakingSource = false;
+      syncToolStates();
+    }
+  };
+  u.onend = finishSpeak;
+  u.onerror = finishSpeak;
+  try {
+    speechSynthesis.speak(u);
+  } catch (_) {
+    finishSpeak();
+  }
 }
-$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang()));
-$("speakSourceBtn").addEventListener("click", () => speak(el.source.value, sourceLang() === "auto" ? "Vietnamese" : sourceLang()));
+$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang(), false));
+el.speakSourceBtn.addEventListener("click", () => speak(el.source.value, sourceLang() === "auto" ? "Vietnamese" : sourceLang(), true));
 
 /* ============================ SPEECH & LIVE CONVERSATION ============================ */
-const syncMicVisual = () => el.mic.classList.toggle("recording", Boolean(state.liveRecorder?.state === "recording" || state.speechActive));
-
 function stopSpeechInput() {
   state.speechActive = false;
   if (state.recognition) { try { state.recognition.stop(); } catch (_) {} state.recognition = null; }
-  syncMicVisual();
+  syncToolStates();
 }
 
 function startSpeechInput() {
@@ -1759,6 +1815,7 @@ function startSpeechInput() {
   if (!SR) return showError("Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini.");
   if (state.speechActive && state.recognition) return stopSpeechInput();
 
+  stopSpeaking();
   const rec = new SR();
   state.recognition = rec;
   state.speechActive = true;
@@ -1779,9 +1836,14 @@ function startSpeechInput() {
     updateCount();
   };
   rec.onerror = e => { if (!["aborted", "no-speech"].includes(e.error)) showError("Lỗi nhận dạng giọng nói: " + e.error); };
-  rec.onend = () => { if (state.recognition === rec) state.recognition = null; state.speechActive = false; syncMicVisual(); };
-  try { rec.start(); syncMicVisual(); } catch (e) {
-    state.recognition = null; state.speechActive = false; syncMicVisual();
+  rec.onend = () => { if (state.recognition === rec) state.recognition = null; state.speechActive = false; syncToolStates(); };
+  try {
+    rec.start();
+    syncToolStates();
+  } catch (e) {
+    state.recognition = null;
+    state.speechActive = false;
+    syncToolStates();
     showError("Không thể bắt đầu nhận dạng: " + e.message);
   }
 }
@@ -1830,7 +1892,7 @@ async function stopLiveRecording() {
 function updateLiveButtons() {
   $("sideABtn").classList.toggle("active", state.liveSide === "A" || (state.liveStarting && state.startingSide === "A"));
   $("sideBBtn").classList.toggle("active", state.liveSide === "B" || (state.liveStarting && state.startingSide === "B"));
-  syncMicVisual();
+  syncToolStates();
 }
 
 async function beginLiveRecording(side) {
@@ -1841,6 +1903,7 @@ async function beginLiveRecording(side) {
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return showError(t("errNoMedia"));
   if (!state.apiKey.trim()) { openSettings(); return showError(t("errNeedKey")); }
 
+  stopSpeaking();
   state.liveStarting = true;
   state.startingSide = side;
   const token = ++state.liveStartToken;
@@ -1921,7 +1984,7 @@ async function processLiveAudio(blob, mime, side) {
     const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
     if (result.pinyin && CHINESE_CODES.includes(targetCode)) addBubble("Pinyin: " + result.pinyin, side, "");
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
-    if (translation) speak(translation, targetCode);
+    if (translation) speak(translation, targetCode, false);
   } catch (e) {
     showError(e.message || e);
     el.liveStatus.textContent = "Dịch thất bại. Bạn có thể ghi âm lại.";
@@ -2034,10 +2097,17 @@ $("swapBtn").addEventListener("click", () => {
 });
 
 $("translateBtn").addEventListener("click", () => translateText());
-el.source.addEventListener("input", updateCount);
+el.source.addEventListener("input", () => {
+  updateCount();
+  if (state.speakingSource) stopSpeaking();
+});
 el.source.addEventListener("focus", () => { closeLangMenu(); setTimeout(syncVisualViewport, 120); });
 el.source.addEventListener("blur", () => setTimeout(syncVisualViewport, 120));
-$("clearTextBtn").addEventListener("click", () => { el.source.value = ""; updateCount(); });
+$("clearTextBtn").addEventListener("click", () => {
+  stopSpeaking();
+  el.source.value = "";
+  updateCount();
+});
 
 $("pasteBtn").addEventListener("click", async () => {
   try {
@@ -2056,6 +2126,7 @@ window.addEventListener("resize", () => {
   if (el.drawPanel.style.display === "flex") resizeCanvas();
 });
 window.addEventListener("pagehide", () => {
+  stopSpeaking();
   stopSpeechInput();
   if (state.liveRecorder && state.liveRecorder.state !== "inactive") { try { state.liveRecorder.stop(); } catch (_) {} }
   stopStream(state.liveStream);
@@ -2068,6 +2139,7 @@ window.addEventListener("pagehide", () => {
 /* ============================ INIT ============================ */
 initPWAWithGeneratedIcon();
 applyUILanguage();
+syncToolStates();
 syncVisualViewport();
 if ("speechSynthesis" in window && speechSynthesis.getVoices) speechSynthesis.getVoices();
 if (window.ResizeObserver && el.canvas.parentElement) {
