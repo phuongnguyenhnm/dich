@@ -32,25 +32,16 @@ button{cursor:pointer;touch-action:manipulation}
 button:disabled{opacity:.45;cursor:not-allowed}
 svg.ico{display:block;flex-shrink:0;pointer-events:none}
 .btn-ico{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;pointer-events:none}
-.flag-img{
-  width:18px;height:13px;border-radius:2.5px;object-fit:cover;flex-shrink:0;
-  box-shadow:0 0 0 1px #ffffff24;display:block;pointer-events:none
-}
-.flag-spark{
-  width:18px;height:13px;display:inline-flex;align-items:center;justify-content:center;
-  color:var(--accent);font-size:12px;line-height:1;flex-shrink:0;pointer-events:none
-}
+.flag-img{width:18px;height:13px;border-radius:2.5px;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 1px #ffffff24;display:block;pointer-events:none}
+.flag-spark{width:18px;height:13px;display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-size:12px;line-height:1;flex-shrink:0;pointer-events:none}
 .app{
   width:min(100%,760px);height:100%;margin:0 auto;
   padding:max(8px,env(safe-area-inset-top)) 12px max(8px,env(safe-area-inset-bottom));
   display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:6px;min-width:0;
   overflow:hidden;overscroll-behavior:none
 }
-header{
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  min-height:40px;flex-shrink:0;z-index:2
-}
-.header-left{display:flex;align-items:center;gap:6px;flex-shrink:0}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;flex-shrink:0;z-index:2}
+.header-slot{position:relative;flex-shrink:0;width:38px;height:38px}
 .brand{text-align:center;min-width:0;flex:1}
 .brand strong{font-size:16.5px;letter-spacing:.2px;display:block;line-height:1.15;color:var(--text)}
 .iconbtn{
@@ -73,28 +64,21 @@ header{
   overflow-wrap:anywhere;white-space:pre-wrap;max-height:64px;overflow-y:auto;overflow-x:hidden;
   touch-action:pan-y;overscroll-behavior:contain
 }
-.notice{
-  display:none;padding:6px 10px;border:1px solid #3c657d;background:#152b38;
-  color:var(--accent2);border-radius:11px;font-size:11.5px;line-height:1.35;overflow-x:hidden
-}
+.notice{display:none;padding:6px 10px;border:1px solid #3c657d;background:#152b38;color:var(--accent2);border-radius:11px;font-size:11.5px;line-height:1.35;overflow-x:hidden}
 .card{
   background:linear-gradient(160deg,#1c272e,#172027);border:1px solid #ffffff14;
   border-radius:var(--radius);padding:9px 10px;box-shadow:0 8px 24px #0003;
   display:flex;flex-direction:column;gap:7px;min-height:0;min-width:0;overflow:visible;
   overscroll-behavior:none;position:relative
 }
-.langrow{
-  display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);
-  align-items:center;gap:6px;flex-shrink:0;position:relative;z-index:20
-}
+.langrow{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);align-items:center;gap:6px;flex-shrink:0;position:relative;z-index:20}
 .lang-picker{position:relative;min-width:0}
 .lang-btn{
   width:100%;min-width:0;border:1px solid var(--line);border-radius:11px;
   padding:7px 24px 7px 8px;background:var(--panel2);color:var(--text);font-size:12.5px;
   display:flex;align-items:center;gap:6px;text-align:left;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aabb5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 8px center;
-  overflow:hidden
+  background-repeat:no-repeat;background-position:right 8px center;overflow:hidden
 }
 .lang-btn:hover,.lang-btn[aria-expanded="true"]{border-color:var(--accent);background-color:var(--panel3)}
 .lang-btn-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
@@ -107,82 +91,71 @@ header{
 .lang-menu.open{display:block}
 .lang-option{
   width:100%;border:0;background:transparent;color:var(--text);border-radius:9px;
-  padding:8px 9px;font-size:12.5px;display:flex;align-items:center;gap:8px;
-  text-align:left;white-space:nowrap
+  padding:8px 9px;font-size:12.5px;display:flex;align-items:center;gap:8px;text-align:left;white-space:nowrap
 }
 .lang-option:hover{background:var(--panel3)}
 .lang-option.active{background:#1b384a;color:var(--accent2);font-weight:600}
 .lang-option-label{overflow:hidden;text-overflow:ellipsis;flex:1}
 .lang-check{color:var(--accent);font-size:12px;flex-shrink:0}
-.swap{
-  width:36px;height:36px;border:1px solid var(--line);border-radius:50%;
-  background:var(--panel3);color:var(--accent);display:grid;place-items:center;flex-shrink:0;padding:0
-}
+.swap{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--panel3);color:var(--accent);display:grid;place-items:center;flex-shrink:0;padding:0}
 .io-box{
   display:flex;flex-direction:column;gap:7px;border:1px solid var(--line);
   border-radius:14px;padding:8px 10px;background:#10171cb8;min-height:0;min-width:0;flex:1;
-  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
-  touch-action:pan-y;overscroll-behavior:contain
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain
 }
 textarea{
-  width:100%;min-height:60px;max-height:100px;resize:none;border:0;outline:0;
+  width:100%;min-height:56px;max-height:96px;resize:none;border:0;outline:0;
   background:transparent;color:var(--text);font-size:15.5px;line-height:1.4;padding:2px;flex-shrink:0;
   overflow-y:auto;overflow-x:hidden;touch-action:pan-y
 }
 textarea::placeholder{color:#81929c}
 .row{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;flex-shrink:0}
-.tools{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.tools{display:flex;gap:5px;align-items:center;flex-wrap:wrap;flex:1;min-width:0}
 .btn{
   border:1px solid var(--line);border-radius:99px;background:var(--panel2);
   color:var(--text);padding:5px 8.5px;font-size:11.5px;transition:all .15s;
   display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap
 }
+.btn.icon-only{
+  width:30px;height:30px;padding:0;border-radius:50%;
+}
 .btn:hover{border-color:#607988;background:var(--panel3)}
 .btn.primary{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700}
 .btn.ghost{background:transparent}
+.btn.mode-toggle.is-active,
+.btn.mic-chip.is-active{
+  background:var(--accent);
+  border-color:var(--accent2);
+  color:#08243a;
+  font-weight:700;
+  box-shadow:0 0 0 2px #8ecbff33;
+}
+.btn.mic-chip.is-active{
+  animation:pulse 1.1s infinite;
+}
+@keyframes pulse{50%{box-shadow:0 0 0 6px #8ecbff00}}
 .small{font-size:11px;color:var(--muted)}
-.panel{
+.panel,.live{
   display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
   border-radius:12px;background:#111a20;flex-shrink:0;overflow:hidden
 }
 .stage{height:112px;border:1px dashed #60717b;border-radius:10px;overflow:hidden;background:#ffffff;touch-action:none}
 canvas{display:block;width:100%;height:100%;touch-action:none}
-.preview{
-  display:none;align-items:center;justify-content:center;min-height:56px;max-height:110px;
-  overflow:hidden;border-radius:10px;background:#0d1419
-}
+.preview{display:none;align-items:center;justify-content:center;min-height:56px;max-height:110px;overflow:hidden;border-radius:10px;background:#0d1419}
 .preview img{display:block;max-width:100%;max-height:104px;object-fit:contain}
 .divider{height:1px;background:#ffffff14;margin:1px 0;flex-shrink:0}
-.result{
-  display:none;flex-direction:column;gap:6px;padding-top:2px;flex-shrink:0;overflow-x:hidden;min-width:0
-}
+.result{display:none;flex-direction:column;gap:6px;padding-top:2px;flex-shrink:0;overflow-x:hidden;min-width:0}
 .result-head{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
 .result-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--accent);font-weight:700}
 .result-text{font-size:15.5px;line-height:1.42;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
-.pronunciation{
-  color:var(--accent2);font-size:12.5px;line-height:1.38;
-  overflow-wrap:anywhere;word-break:break-word;display:none
-}
-
-/* Khung cách viết Hán tự kiểu mễ tự (1 ký tự) */
-.hanzi-stroke-box{
-  display:none;flex-direction:column;gap:6px;padding:8px 10px;
-  border:1px solid var(--line);border-radius:12px;background:#111a20
-}
-.hanzi-stroke-head{
-  display:flex;align-items:center;justify-content:space-between;gap:8px
-}
-.hanzi-stroke-title{
-  font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;
-  color:var(--accent2);font-weight:700
-}
+.pronunciation{color:var(--accent2);font-size:12.5px;line-height:1.38;overflow-wrap:anywhere;word-break:break-word;display:none}
+.hanzi-stroke-box{display:none;flex-direction:column;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#111a20}
+.hanzi-stroke-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hanzi-stroke-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--accent2);font-weight:700}
 .hanzi-stroke-meta{font-size:11px;color:var(--muted)}
 .hanzi-grid-wrap{
-  position:relative;width:184px;height:184px;margin:2px auto;
-  border-radius:16px;overflow:hidden;
-  background:#f4f5f6;border:1px solid #d5dbe0;
-  box-shadow:inset 0 0 0 1px #ffffff88,0 6px 18px #00000040;
-  cursor:pointer
+  position:relative;width:184px;height:184px;margin:2px auto;border-radius:16px;overflow:hidden;
+  background:#f4f5f6;border:1px solid #d5dbe0;box-shadow:inset 0 0 0 1px #ffffff88,0 6px 18px #00000040;cursor:pointer
 }
 .hanzi-grid-bg{
   position:absolute;inset:0;pointer-events:none;
@@ -190,72 +163,44 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     linear-gradient(to right,transparent calc(50% - .5px),#d4dae0 calc(50% - .5px),#d4dae0 calc(50% + .5px),transparent calc(50% + .5px)),
     linear-gradient(to bottom,transparent calc(50% - .5px),#d4dae0 calc(50% - .5px),#d4dae0 calc(50% + .5px),transparent calc(50% + .5px)),
     linear-gradient(45deg,transparent calc(50% - .75px),#dfe4e8 calc(50% - .75px),#dfe4e8 calc(50% + .75px),transparent calc(50% + .75px)),
-    linear-gradient(-45deg,transparent calc(50% - .75px),#dfe4e8 calc(50% - .75px),#dfe4e8 calc(50% + .75px),transparent calc(50% + .75px));
-  background-size:100% 100%,100% 100%,100% 100%,100% 100%
+    linear-gradient(-45deg,transparent calc(50% - .75px),#dfe4e8 calc(50% - .75px),#dfe4e8 calc(50% + .75px),transparent calc(50% + .75px))
 }
-.hanzi-writer-target{
-  position:relative;z-index:2;width:184px;height:184px
-}
+.hanzi-writer-target{position:relative;z-index:2;width:184px;height:184px}
 .hanzi-replay-btn{
-  position:absolute;right:8px;bottom:8px;z-index:4;
-  width:28px;height:28px;border-radius:50%;
-  border:1px solid #cfd6dc;background:#ffffffeb;color:#394752;
-  display:grid;place-items:center;padding:0;box-shadow:0 2px 6px #00000024
+  position:absolute;right:8px;bottom:8px;z-index:4;width:28px;height:28px;border-radius:50%;
+  border:1px solid #cfd6dc;background:#ffffffeb;color:#394752;display:grid;place-items:center;padding:0;box-shadow:0 2px 6px #00000024
 }
 .hanzi-replay-btn:hover{background:#ffffff;color:#111a20;border-color:#9fb0bd}
-.hanzi-stroke-status{
-  text-align:center;font-size:11px;color:var(--muted);min-height:15px
-}
-
-/* 3 ví dụ dùng từ trong câu */
-.examples-box{
-  display:none;flex-direction:column;gap:5px;padding:8px 9px;
-  border:1px solid #395566;border-radius:10px;background:#122029
-}
-.examples-title{
-  font-size:10px;text-transform:uppercase;letter-spacing:.75px;
-  color:var(--good);font-weight:700
-}
-.example-item{
-  padding:6px 8px;border-radius:8px;background:#192832;
-  font-size:12px;line-height:1.4;overflow-wrap:anywhere
-}
+.hanzi-stroke-status{text-align:center;font-size:11px;color:var(--muted);min-height:15px}
+.examples-box{display:none;flex-direction:column;gap:5px;padding:8px 9px;border:1px solid #395566;border-radius:10px;background:#122029}
+.examples-title{font-size:10px;text-transform:uppercase;letter-spacing:.75px;color:var(--good);font-weight:700}
+.example-item{padding:6px 8px;border-radius:8px;background:#192832;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
 .example-sentence{font-weight:600;color:var(--text)}
 .example-reading{font-size:11px;color:var(--accent2);margin-top:2px}
 .example-meaning{font-size:11.5px;color:#b8c7d0;margin-top:2px}
-
 .back-trans{
-  display:none;flex-direction:column;gap:3px;padding:7px 9px;
-  border:1px dashed #4b697c;background:#12222c;border-radius:9px;
-  font-size:12px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word
+  display:none;flex-direction:column;gap:3px;padding:7px 9px;border:1px dashed #4b697c;
+  background:#12222c;border-radius:9px;font-size:12px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word
 }
-.back-trans-label{
-  font-size:10px;text-transform:uppercase;letter-spacing:.7px;
-  color:var(--good);font-weight:700
-}
-.explain{
-  display:none;padding:7px 9px;border-left:3px solid var(--accent);
-  background:#142631;border-radius:8px;font-size:11.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere
-}
+.back-trans-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--good);font-weight:700}
+.explain{display:none;padding:7px 9px;border-left:3px solid var(--accent);background:#142631;border-radius:8px;font-size:11.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
 .extra{display:none;gap:5px;flex-direction:column}
 .extra-item{padding:7px 9px;background:var(--panel2);border-radius:9px;font-size:11.5px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
 .extra-item b{color:var(--accent2)}
 .history-bar{display:none;gap:5px;flex-wrap:wrap;padding-top:2px;flex-shrink:0}
 .chip{
-  border:1px solid var(--line);background:var(--panel2);color:var(--muted);
-  border-radius:99px;padding:3px 9px;font-size:10.5px;max-width:160px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:99px;
+  padding:3px 9px;font-size:10.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 .chip:hover{color:var(--text);border-color:var(--accent)}
 .spinner{
   display:none;width:13px;height:13px;border:2px solid #092b4544;
   border-top-color:#092b45;border-radius:50%;animation:spin .65s linear infinite
 }
-@keyframes spin{to{transform:rotate(360deg)}}
-.live{
-  display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
-  border-radius:13px;background:#111a20;flex-shrink:0;overflow:hidden
+.btn .spinner{
+  border-color:#edf3f644;border-top-color:var(--accent);
 }
+@keyframes spin{to{transform:rotate(360deg)}}
 .feed{
   display:flex;flex-direction:column;gap:6px;max-height:110px;min-height:56px;
   overflow-y:auto;overflow-x:hidden;padding:7px;background:#10171c;border:1px solid var(--line);
@@ -267,101 +212,60 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .bubble small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
 .turnrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .turn{
-  padding:7px 6px;border:1px solid var(--line);border-radius:10px;
-  background:var(--panel2);color:var(--text);font-size:11.5px;transition:all .15s;
-  display:inline-flex;align-items:center;justify-content:center;gap:5px
+  padding:7px 6px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);
+  color:var(--text);font-size:11.5px;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:5px
 }
 .turn.active{background:#48272c;border-color:#d77e84;color:#ffc1c1}
 .bottom{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
 .main-actions{display:grid;grid-template-columns:1fr;gap:8px}
-.main-actions button{padding:9px 10px;font-size:12.5px;width:100%}
-.dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;padding:1px 4px 0}
-.dockbtn{
-  display:flex;flex-direction:column;align-items:center;gap:2px;border:0;
-  background:transparent;color:var(--muted);font-size:10.5px;transition:color .15s;padding:0
-}
-.dockcircle{
-  width:40px;height:40px;border-radius:13px;background:var(--panel3);
-  display:grid;place-items:center;color:var(--accent);transition:all .15s
-}
-.dockbtn.active .dockcircle{background:#583238;color:#ffb8b8}
-.mic{
-  width:52px;height:52px;border:0;border-radius:16px;background:var(--accent);
-  color:#08243a;box-shadow:0 6px 18px #8ecbff22;
-  transition:all .15s;display:grid;place-items:center;padding:0;flex-shrink:0
-}
-.mic.recording{background:#ff8c8c;color:#351010;border-radius:50%;animation:pulse 1.1s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 9px #ff8c8c00}}
-.modal{
-  display:none;position:fixed;inset:0;z-index:50;background:#000b;
-  align-items:center;justify-content:center;padding:14px
-}
+.main-actions button{padding:9.5px 10px;font-size:13px;width:100%}
+.modal{display:none;position:fixed;inset:0;z-index:50;background:#000b;align-items:center;justify-content:center;padding:14px}
 .modalbox{
-  width:min(100%,480px);max-height:90dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);
+  width:min(100%,460px);max-height:90dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);
   border:1px solid var(--line);border-radius:18px;padding:16px;touch-action:pan-y;overscroll-behavior:contain
 }
 .modalbox h2{font-size:17px;margin:0 0 6px}
 .modalbox p{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 10px}
 .field{margin:10px 0}
 .field label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
-.field input,.field select{
-  width:100%;padding:10px 11px;border-radius:10px;background:#10171c;
-  border:1px solid var(--line);color:var(--text);outline:none
-}
+.field input,.field select{width:100%;padding:10px 11px;border-radius:10px;background:#10171c;border:1px solid var(--line);color:var(--text);outline:none}
 .field input:focus,.field select:focus{border-color:var(--accent)}
 .modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-.author-card{
-  display:flex;flex-direction:column;gap:10px;margin:10px 0 12px
+.author-box{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:10px;padding:14px 12px;margin:10px 0 12px;border:1px solid var(--line);border-radius:14px;background:#111a20
 }
-.author-row{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#111a20
+.author-name{font-size:16px;font-weight:700;color:var(--text)}
+.author-cta{font-size:12.5px;color:var(--accent2)}
+.social-icons{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:4px}
+.social-btn{
+  width:46px;height:46px;border-radius:14px;border:1px solid #47687d;background:#183242;
+  color:var(--text);display:grid;place-items:center;text-decoration:none;transition:all .15s
 }
-.author-info{display:flex;flex-direction:column;gap:2px;min-width:0}
-.author-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
-.author-value{font-size:13.5px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
-.contact-action{
-  width:38px;height:38px;border-radius:11px;border:1px solid #47687d;
-  background:#183242;color:var(--accent2);display:grid;place-items:center;
-  flex-shrink:0;text-decoration:none;transition:all .15s
-}
-.contact-action:hover{background:#21465c;border-color:var(--accent);color:#ffffff}
-.zalo-badge{
-  font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1
-}
+.social-btn:hover{transform:translateY(-1px);border-color:var(--accent);background:#21465c}
+.social-btn.fb{color:#79b8ff}
+.social-btn.zalo{color:#67d4ff;font-size:12px;font-weight:800;letter-spacing:.3px}
+.social-btn.phone{color:#8fe0b0}
 a{color:var(--accent)}
 </style>
 </head>
 <body>
 <main class="app" id="appRoot">
 <header>
-  <div class="header-left">
-    <button class="iconbtn" id="resetBtn" aria-label="Làm mới" title="Làm mới">
-      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
-        <path d="M3 3v5h5"/>
-      </svg>
+  <div class="header-slot">
+    <button class="iconbtn" id="settingsBtn" aria-label="Cài đặt" title="Cài đặt">
+      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
-    <button class="iconbtn" id="infoBtn" aria-label="Thông tin" title="Thông tin">
-      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 16v-4"/>
-        <path d="M12 8h.01"/>
-      </svg>
-    </button>
+    <i class="dot" id="keyDot" style="position:absolute;top:2px;right:2px;"></i>
   </div>
   <div class="brand">
     <strong>AI Translation</strong>
     <div><span class="status" id="statusPill">Đang tải...</span></div>
   </div>
-  <div style="position:relative;flex-shrink:0;width:38px;height:38px;">
-    <button class="iconbtn" id="settingsBtn" aria-label="Cài đặt" title="Cài đặt">
-      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
+  <div class="header-slot">
+    <button class="iconbtn" id="infoBtn" aria-label="Thông tin" title="Thông tin">
+      <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
     </button>
-    <i class="dot" id="keyDot" style="position:absolute; top:2px; right:2px;"></i>
   </div>
 </header>
 
@@ -379,10 +283,7 @@ a{color:var(--accent)}
       </button>
     </div>
     <button class="swap" id="swapBtn" title="Đổi ngôn ngữ" aria-label="Đổi ngôn ngữ">
-      <svg class="ico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 16V4m0 0L3 8m4-4 4 4"/>
-        <path d="M17 8v12m0 0 4-4m-4 4-4-4"/>
-      </svg>
+      <svg class="ico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
     </button>
     <div class="lang-picker" id="targetPicker">
       <button type="button" class="lang-btn" id="targetLangBtn" aria-label="Ngôn ngữ đích" aria-haspopup="listbox" aria-expanded="false">
@@ -398,31 +299,48 @@ a{color:var(--accent)}
 
     <div class="row">
       <div class="tools">
-        <button class="btn" id="clearTextBtn">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
-          <span class="btn-label">Xóa</span>
+        <button class="btn icon-only" id="clearTextBtn" aria-label="Xóa" title="Xóa">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
         </button>
-        <button class="btn" id="pasteBtn">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
-          <span class="btn-label">Dán</span>
+        <button class="btn icon-only" id="pasteBtn" aria-label="Dán" title="Dán">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
         </button>
-        <button class="btn" id="speakSourceBtn">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
-          <span class="btn-label">Đọc</span>
+        <button class="btn icon-only mode-toggle" id="speakSourceBtn" aria-label="Đọc" title="Đọc" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
         </button>
-        <button class="btn" id="drawToggle">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
-          <span class="btn-label">Viết tay</span>
+        <button class="btn icon-only mode-toggle" id="drawToggle" aria-label="Viết tay" title="Viết tay" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
         </button>
-        <button class="btn" id="imageToggle">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
-          <span class="btn-label">Ảnh</span>
+        <button class="btn icon-only mode-toggle" id="imageToggle" aria-label="Ảnh" title="Ảnh" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
+        </button>
+        <button class="btn icon-only mode-toggle" id="liveToggle" aria-label="Hội thoại" title="Hội thoại" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0-3-3m3 3-3 3"/><path d="M16 17H4m0 0 3-3m-3 3 3 3"/></svg></span>
+        </button>
+        <button class="btn icon-only mic-chip" id="micBtn" aria-label="Mic" title="Mic" aria-pressed="false">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></span>
         </button>
       </div>
       <span class="small" id="charCount">0 ký tự</span>
     </div>
 
-    <!-- Bảng vẽ -->
+    <section class="live" id="livePanel">
+      <div class="row">
+        <b id="liveTitle">Hội thoại trực tiếp</b>
+        <button class="btn" id="clearLiveBtn"><span class="btn-label">Xóa hội thoại</span></button>
+      </div>
+      <div class="small" id="liveDesc">Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.</div>
+      <div class="feed" id="liveFeed"><div class="small" id="liveEmptyText">Chưa có nội dung hội thoại.</div></div>
+      <div class="turnrow">
+        <button class="turn" id="sideABtn">Người A</button>
+        <button class="turn" id="sideBBtn">Người B</button>
+      </div>
+      <div class="row">
+        <span class="small" id="liveStatus">Đang chờ người nói.</span>
+        <button class="btn ghost" id="stopLiveBtn"><span class="btn-label">Dừng ghi âm</span></button>
+      </div>
+    </section>
+
     <div class="panel" id="drawPanel">
       <div class="stage"><canvas id="drawCanvas"></canvas></div>
       <div class="row">
@@ -442,7 +360,6 @@ a{color:var(--accent)}
       </div>
     </div>
 
-    <!-- Tải ảnh -->
     <div class="panel" id="imagePanel">
       <div class="preview" id="imagePreviewWrap"><img id="imagePreview" alt="Ảnh cần dịch"></div>
       <div class="row">
@@ -459,35 +376,26 @@ a{color:var(--accent)}
       <div class="small" id="imageHint">Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.</div>
     </div>
 
-    <!-- Kết quả nằm gọn trong cùng 1 ô -->
     <div class="result" id="resultSection" aria-live="polite">
       <div class="divider"></div>
       <div class="result-head">
         <span class="result-label" id="resultLabel">Bản dịch</span>
         <div class="tools">
-          <button class="btn" id="backTranslateBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></span>
-            <span class="btn-label">Dịch ngược</span>
+          <button class="btn icon-only" id="backTranslateBtn" aria-label="Dịch ngược" title="Dịch ngược">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></span>
             <i class="spinner" id="backSpin"></i>
           </button>
-          <button class="btn" id="useResultBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
-            <span class="btn-label">Đưa lên</span>
+          <button class="btn icon-only" id="copyBtn" aria-label="Sao chép" title="Sao chép">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
           </button>
-          <button class="btn" id="copyBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-            <span class="btn-label">Sao chép</span>
-          </button>
-          <button class="btn" id="speakBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
-            <span class="btn-label">Đọc</span>
+          <button class="btn icon-only" id="speakBtn" aria-label="Đọc" title="Đọc">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
           </button>
         </div>
       </div>
       <div class="result-text" id="resultText"></div>
       <div class="pronunciation" id="pronunciationText"></div>
 
-      <!-- Cách viết Hán tự (chỉ hiện khi bản dịch tiếng Trung có 1 ký tự) -->
       <div class="hanzi-stroke-box" id="hanziStrokeBox">
         <div class="hanzi-stroke-head">
           <span class="hanzi-stroke-title" id="hanziStrokeTitle">Cách viết Hán tự</span>
@@ -497,16 +405,12 @@ a{color:var(--accent)}
           <div class="hanzi-grid-bg"></div>
           <div class="hanzi-writer-target" id="hanziWriterTarget"></div>
           <button type="button" class="hanzi-replay-btn" id="hanziReplayBtn" aria-label="Viết lại" title="Viết lại">
-            <svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
-              <path d="M3 3v5h5"/>
-            </svg>
+            <svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
           </button>
         </div>
         <div class="hanzi-stroke-status" id="hanziStrokeStatus"></div>
       </div>
 
-      <!-- 3 ví dụ dùng từ trong câu (chỉ hiện khi kết quả là từ / cụm từ ngắn) -->
       <div class="examples-box" id="examplesBox">
         <span class="examples-title" id="examplesTitle">3 ví dụ dùng từ trong câu</span>
         <div id="examplesList" style="display:flex;flex-direction:column;gap:5px"></div>
@@ -522,24 +426,6 @@ a{color:var(--accent)}
 
     <div class="history-bar" id="historyBar"></div>
   </div>
-
-  <!-- Hội thoại trực tiếp -->
-  <section class="live" id="livePanel">
-    <div class="row">
-      <b id="liveTitle">Hội thoại trực tiếp</b>
-      <button class="btn" id="clearLiveBtn"><span class="btn-label">Xóa hội thoại</span></button>
-    </div>
-    <div class="small" id="liveDesc">Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.</div>
-    <div class="feed" id="liveFeed"><div class="small" id="liveEmptyText">Chưa có nội dung hội thoại.</div></div>
-    <div class="turnrow">
-      <button class="turn" id="sideABtn">Người A</button>
-      <button class="turn" id="sideBBtn">Người B</button>
-    </div>
-    <div class="row">
-      <span class="small" id="liveStatus">Đang chờ người nói.</span>
-      <button class="btn ghost" id="stopLiveBtn"><span class="btn-label">Dừng ghi âm</span></button>
-    </div>
-  </section>
 </section>
 
 <div class="bottom">
@@ -549,59 +435,23 @@ a{color:var(--accent)}
       <i class="spinner" id="translateSpinner"></i>
     </button>
   </div>
-  <div class="dock">
-    <button class="dockbtn" id="liveToggle">
-      <span class="dockcircle">
-        <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 7h12m0 0-3-3m3 3-3 3"/>
-          <path d="M16 17H4m0 0 3-3m-3 3 3 3"/>
-        </svg>
-      </span>
-      <span id="liveDockLabel">Hội thoại</span>
-    </button>
-    <button class="mic" id="micBtn" aria-label="Nhập bằng giọng nói">
-      <svg class="ico" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="2" width="6" height="11" rx="3"/>
-        <path d="M5 10a7 7 0 0 0 14 0"/>
-        <path d="M12 17v5m-3 0h6"/>
-      </svg>
-    </button>
-    <div aria-hidden="true"></div>
-  </div>
   <div class="small" id="disclaimerText" style="text-align:center">Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.</div>
 </div>
 </main>
 
-<!-- Thông tin tác giả -->
 <div class="modal" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
  <div class="modalbox">
   <h2 id="infoTitle">Thông tin tác giả</h2>
-  <p id="infoDesc">Thông tin liên hệ của tác giả ứng dụng AI Translation.</p>
-  <div class="author-card">
-    <div class="author-row">
-      <div class="author-info">
-        <span class="author-label" id="authorNameLabel">Tác giả</span>
-        <span class="author-value">Nguyễn Văn Phương</span>
-      </div>
-    </div>
-    <div class="author-row">
-      <div class="author-info">
-        <span class="author-label" id="authorPhoneLabel">Số điện thoại</span>
-        <span class="author-value">0845425888</span>
-      </div>
-      <a class="contact-action" href="tel:0845425888" id="callAuthorBtn" aria-label="Gọi điện 0845425888" title="Gọi điện 0845425888">
-        <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
+  <div class="author-box">
+    <div class="author-name">Nguyễn Văn Phương</div>
+    <div class="author-cta" id="authorCtaText">Mọi góp ý vui lòng liên hệ</div>
+    <div class="social-icons">
+      <a class="social-btn fb" href="https://facebook.com/nguyenphuonghnm" target="_blank" rel="noopener noreferrer" id="fbAuthorBtn" aria-label="Facebook" title="Facebook">
+        <svg class="ico" viewBox="0 0 24 24" width="21" height="21" fill="currentColor"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.5H7.7v3.2h2.7V22h3.1z"/></svg>
       </a>
-    </div>
-    <div class="author-row">
-      <div class="author-info">
-        <span class="author-label">Zalo</span>
-        <span class="author-value">0974569711</span>
-      </div>
-      <a class="contact-action" href="https://zalo.me/0974569711" target="_blank" rel="noopener noreferrer" id="zaloAuthorBtn" aria-label="Kết bạn Zalo 0974569711" title="Kết bạn Zalo 0974569711">
-        <span class="zalo-badge">Zalo</span>
+      <a class="social-btn zalo" href="https://zalo.me/0974569711" target="_blank" rel="noopener noreferrer" id="zaloAuthorBtn" aria-label="Zalo" title="Zalo"><span>Zalo</span></a>
+      <a class="social-btn phone" href="tel:0845425888" id="callAuthorBtn" aria-label="Gọi điện" title="Gọi điện">
+        <svg class="ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       </a>
     </div>
   </div>
@@ -611,7 +461,6 @@ a{color:var(--accent)}
  </div>
 </div>
 
-<!-- Cài đặt -->
 <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
  <div class="modalbox">
   <h2 id="settingsTitle">Cài đặt Gemini API</h2>
@@ -653,39 +502,26 @@ a{color:var(--accent)}
 <script>
 "use strict";
 
-/* ============================ CHỐNG KÉO LỆCH & TƯƠNG THÍCH BÀN PHÍM IOS PWA ============================ */
-function isEditableFocused() {
-  const active = document.activeElement;
-  return Boolean(active && (active.tagName === "TEXTAREA" || active.tagName === "INPUT" || active.isContentEditable));
-}
+/* ============================ VIEWPORT & IOS PWA ============================ */
+const isEditableFocused = () => {
+  const a = document.activeElement;
+  return Boolean(a && (a.tagName === "TEXTAREA" || a.tagName === "INPUT" || a.isContentEditable));
+};
 
 function lockViewportPosition() {
   if (isEditableFocused()) return;
   window.scrollTo(0, 0);
-  document.documentElement.scrollTop = 0;
-  document.documentElement.scrollLeft = 0;
-  document.body.scrollTop = 0;
-  document.body.scrollLeft = 0;
+  document.documentElement.scrollTop = document.documentElement.scrollLeft = 0;
+  document.body.scrollTop = document.body.scrollLeft = 0;
   const app = document.getElementById("appRoot");
-  if (app) {
-    app.scrollTop = 0;
-    app.scrollLeft = 0;
-  }
+  if (app) app.scrollTop = app.scrollLeft = 0;
 }
 
 function syncVisualViewport() {
   const vv = window.visualViewport;
-  if (!vv) {
-    lockViewportPosition();
-    return;
-  }
   const app = document.getElementById("appRoot");
-  if (app) {
-    app.style.height = `${Math.round(vv.height)}px`;
-  }
-  if (!isEditableFocused()) {
-    lockViewportPosition();
-  }
+  if (vv && app) app.style.height = `${Math.round(vv.height)}px`;
+  if (!isEditableFocused()) lockViewportPosition();
 }
 
 document.addEventListener("touchmove", e => {
@@ -693,48 +529,36 @@ document.addEventListener("touchmove", e => {
   if (!(target instanceof Element)) return;
   if (target.closest("#drawCanvas, #hanziGridWrap")) return;
   if (isEditableFocused() && target.closest("textarea, input")) return;
-  const scrollBox = target.closest(".io-box, .feed, .modalbox, #errorBox, #langMenu, textarea");
-  if (!scrollBox) {
-    e.preventDefault();
-    return;
-  }
-  const canScrollY = scrollBox.scrollHeight > scrollBox.clientHeight + 1;
-  const canScrollX = scrollBox.scrollWidth > scrollBox.clientWidth + 1;
-  if (!canScrollY && !canScrollX) {
+  const box = target.closest(".io-box, .feed, .modalbox, #errorBox, #langMenu, textarea");
+  if (!box || (box.scrollHeight <= box.clientHeight + 1 && box.scrollWidth <= box.clientWidth + 1)) {
     e.preventDefault();
   }
 }, { passive: false });
 
-document.addEventListener("scroll", () => {
-  if (!isEditableFocused()) lockViewportPosition();
-}, { passive: true });
-
+document.addEventListener("scroll", () => { if (!isEditableFocused()) lockViewportPosition(); }, { passive: true });
 if (window.visualViewport) {
   window.visualViewport.addEventListener("resize", syncVisualViewport, { passive: true });
   window.visualViewport.addEventListener("scroll", syncVisualViewport, { passive: true });
 }
 
-/* ============================ TẠO ICON BẰNG CODE & PWA ============================ */
+/* ============================ PWA ICON & MANIFEST ============================ */
 function buildAppIconDataUrl(size = 512) {
   const c = document.createElement("canvas");
-  c.width = size;
-  c.height = size;
+  c.width = c.height = size;
   const g = c.getContext("2d");
   if (!g) return "";
 
-  const pad = Math.round(size * 0.04);
-  const rad = Math.round(size * 0.22);
-
-  const bgGrad = g.createLinearGradient(0, 0, size, size);
-  bgGrad.addColorStop(0, "#0b2538");
-  bgGrad.addColorStop(0.55, "#114663");
-  bgGrad.addColorStop(1, "#187a8c");
+  const pad = Math.round(size * 0.04), rad = Math.round(size * 0.22);
+  const bg = g.createLinearGradient(0, 0, size, size);
+  bg.addColorStop(0, "#0b2538");
+  bg.addColorStop(0.55, "#114663");
+  bg.addColorStop(1, "#187a8c");
 
   g.save();
   g.beginPath();
   g.roundRect(pad, pad, size - pad * 2, size - pad * 2, rad);
   g.clip();
-  g.fillStyle = bgGrad;
+  g.fillStyle = bg;
   g.fillRect(0, 0, size, size);
 
   const glow = g.createRadialGradient(size * 0.78, size * 0.22, 10, size * 0.78, size * 0.22, size * 0.55);
@@ -749,20 +573,19 @@ function buildAppIconDataUrl(size = 512) {
   g.roundRect(pad + 6, pad + 6, size - (pad + 6) * 2, size - (pad + 6) * 2, Math.max(16, rad - 6));
   g.stroke();
 
-  const boxPad = Math.round(size * 0.16);
-  const boxRad = Math.round(size * 0.14);
+  const bPad = Math.round(size * 0.16), bRad = Math.round(size * 0.14);
   g.fillStyle = "rgba(10, 22, 32, 0.42)";
   g.beginPath();
-  g.roundRect(boxPad, boxPad, size - boxPad * 2, size - boxPad * 2, boxRad);
+  g.roundRect(bPad, bPad, size - bPad * 2, size - bPad * 2, bRad);
   g.fill();
   g.strokeStyle = "rgba(142, 203, 255, 0.35)";
   g.lineWidth = Math.max(2, Math.round(size * 0.007));
   g.stroke();
 
-  g.fillStyle = "#8ecbff";
-  g.font = `800 ${Math.round(size * 0.21)}px system-ui, -apple-system, sans-serif`;
   g.textAlign = "center";
   g.textBaseline = "middle";
+  g.fillStyle = "#8ecbff";
+  g.font = `800 ${Math.round(size * 0.21)}px system-ui, -apple-system, sans-serif`;
   g.fillText("A", size * 0.34, size * 0.38);
 
   g.fillStyle = "#e6f6ff";
@@ -771,28 +594,15 @@ function buildAppIconDataUrl(size = 512) {
 
   g.strokeStyle = "#8fe0b0";
   g.lineWidth = Math.max(5, Math.round(size * 0.018));
-  g.lineCap = "round";
-  g.lineJoin = "round";
-
+  g.lineCap = g.lineJoin = "round";
   g.beginPath();
-  g.moveTo(size * 0.50, size * 0.33);
-  g.lineTo(size * 0.68, size * 0.33);
-  g.lineTo(size * 0.62, size * 0.27);
-  g.moveTo(size * 0.68, size * 0.33);
-  g.lineTo(size * 0.62, size * 0.39);
+  g.moveTo(size * 0.50, size * 0.33); g.lineTo(size * 0.68, size * 0.33);
+  g.lineTo(size * 0.62, size * 0.27); g.moveTo(size * 0.68, size * 0.33); g.lineTo(size * 0.62, size * 0.39);
+  g.moveTo(size * 0.50, size * 0.67); g.lineTo(size * 0.32, size * 0.67);
+  g.lineTo(size * 0.38, size * 0.61); g.moveTo(size * 0.32, size * 0.67); g.lineTo(size * 0.38, size * 0.73);
   g.stroke();
 
-  g.beginPath();
-  g.moveTo(size * 0.50, size * 0.67);
-  g.lineTo(size * 0.32, size * 0.67);
-  g.lineTo(size * 0.38, size * 0.61);
-  g.moveTo(size * 0.32, size * 0.67);
-  g.lineTo(size * 0.38, size * 0.73);
-  g.stroke();
-
-  const sx = size * 0.77;
-  const sy = size * 0.22;
-  const sr = size * 0.045;
+  const sx = size * 0.77, sy = size * 0.22, sr = size * 0.045;
   g.fillStyle = "#c4e5ff";
   g.beginPath();
   g.moveTo(sx, sy - sr);
@@ -811,39 +621,25 @@ function initPWAWithGeneratedIcon() {
   const iconUrl = buildAppIconDataUrl(512);
   if (!iconUrl) return;
   const fav = document.getElementById("faviconLink");
-  const appleIcon = document.getElementById("appleTouchIconLink");
-  const manifestLink = document.getElementById("manifestLink");
+  const apple = document.getElementById("appleTouchIconLink");
+  const link = document.getElementById("manifestLink");
   if (fav) fav.href = iconUrl;
-  if (appleIcon) appleIcon.href = iconUrl;
-
-  if (manifestLink && window.Blob && window.URL?.createObjectURL) {
+  if (apple) apple.href = iconUrl;
+  if (link && window.Blob && window.URL?.createObjectURL) {
     try {
       if (manifestBlobUrl) URL.revokeObjectURL(manifestBlobUrl);
       const manifest = {
-        name: "AI Translation",
-        short_name: "AI Translation",
-        start_url: ".",
-        scope: ".",
-        display: "standalone",
-        background_color: "#101418",
-        theme_color: "#101418",
-        icons: [
-          {
-            src: iconUrl,
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any maskable"
-          }
-        ]
+        name: "AI Translation", short_name: "AI Translation", start_url: ".", scope: ".",
+        display: "standalone", background_color: "#101418", theme_color: "#101418",
+        icons: [{ src: iconUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }]
       };
-      const blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
-      manifestBlobUrl = URL.createObjectURL(blob);
-      manifestLink.href = manifestBlobUrl;
+      manifestBlobUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" }));
+      link.href = manifestBlobUrl;
     } catch (_) {}
   }
 }
 
-/* ============================ LÁ CỜ SVG ĐỂ HIỂN THỊ RÕ TRÊN CHROME MÁY TÍNH ============================ */
+/* ============================ FLAGS & CONFIG ============================ */
 const FLAG_SVGS = {
   vn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20"><rect width="30" height="20" fill="#da251d"/><polygon points="15,4 16.9,9.8 23,9.8 18.1,13.4 20,19.2 15,15.6 10,19.2 11.9,13.4 7,9.8 13.1,9.8" fill="#ffff00"/></svg>`,
   cn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20"><rect width="30" height="20" fill="#de2910"/><polygon points="6,4.2 7.5,8.8 12.3,8.8 8.4,11.6 9.9,16.2 6,13.4 2.1,16.2 3.6,11.6 -0.3,8.8 4.5,8.8" fill="#ffde00"/><polygon points="13.5,2.5 14,4 15.5,4 14.3,4.9 14.7,6.4 13.5,5.5 12.3,6.4 12.7,4.9 11.5,4 13,4" fill="#ffde00"/><polygon points="16,5 16.4,6.4 17.8,6.4 16.7,7.2 17.1,8.6 16,7.8 14.9,8.6 15.3,7.2 14.2,6.4 15.6,6.4" fill="#ffde00"/><polygon points="16,9.5 16.4,10.9 17.8,10.9 16.7,11.7 17.1,13.1 16,12.3 14.9,13.1 15.3,11.7 14.2,10.9 15.6,10.9" fill="#ffde00"/><polygon points="13.5,12 14,13.5 15.5,13.5 14.3,14.4 14.7,15.9 13.5,15 12.3,15.9 12.7,14.4 11.5,13.5 13,13.5" fill="#ffde00"/></svg>`,
@@ -864,14 +660,6 @@ const FLAG_SVGS = {
 };
 
 const flagUrlCache = {};
-function getFlagDataUrl(flagCode) {
-  if (!flagCode || !FLAG_SVGS[flagCode]) return "";
-  if (!flagUrlCache[flagCode]) {
-    flagUrlCache[flagCode] = "data:image/svg+xml;utf8," + encodeURIComponent(FLAG_SVGS[flagCode]);
-  }
-  return flagUrlCache[flagCode];
-}
-
 function createFlagElement(flagCode) {
   if (!flagCode || !FLAG_SVGS[flagCode]) {
     const spark = document.createElement("span");
@@ -879,23 +667,27 @@ function createFlagElement(flagCode) {
     spark.textContent = "✦";
     return spark;
   }
+  if (!flagUrlCache[flagCode]) {
+    flagUrlCache[flagCode] = "data:image/svg+xml;utf8," + encodeURIComponent(FLAG_SVGS[flagCode]);
+  }
   const img = document.createElement("img");
   img.className = "flag-img";
-  img.src = getFlagDataUrl(flagCode);
+  img.src = flagUrlCache[flagCode];
   img.alt = "";
   img.loading = "eager";
   return img;
 }
 
-/* ============================ CẤU HÌNH ============================ */
 const CONFIG = {
   apiBase: "https://generativelanguage.googleapis.com/v1beta/models/",
-  requestTimeoutMs: 45000,
+  requestTimeoutMs: 40000,
   maxImageBytes: 12 * 1024 * 1024,
-  maxImageDimension: 1400,
+  maxImageDimension: 1280,
   maxAudioBytes: 18 * 1024 * 1024,
   defaultModel: "gemini-3.5-flash-lite",
-  maxHistory: 5
+  maxHistory: 5,
+  maxCacheEntries: 80,
+  modelCooldownMs: 25000
 };
 
 const FALLBACK_MODELS = [
@@ -909,104 +701,60 @@ const FALLBACK_MODELS = [
 const CHINESE_CODES = ["Chinese", "Traditional Chinese"];
 
 const LANGUAGES = [
-  { code: "auto", flag: null, label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "ngôn ngữ tự động nhận diện", speech: "vi-VN" },
-  { code: "Vietnamese", flag: "vn", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
-  { code: "Chinese", flag: "cn", label: { vi: "Tiếng Trung Giản thể", en: "Simplified Chinese", zh: "简体中文" }, prompt: "tiếng Trung Giản thể", speech: "zh-CN" },
-  { code: "Traditional Chinese", flag: "tw", label: { vi: "Tiếng Trung Phồn thể", en: "Traditional Chinese", zh: "繁体中文" }, prompt: "tiếng Trung Phồn thể", speech: "zh-TW" },
-  { code: "English", flag: "us", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prompt: "tiếng Anh", speech: "en-US" },
-  { code: "Japanese", flag: "jp", label: { vi: "Tiếng Nhật", en: "Japanese", zh: "日语" }, prompt: "tiếng Nhật", speech: "ja-JP" },
-  { code: "Korean", flag: "kr", label: { vi: "Tiếng Hàn", en: "Korean", zh: "韩语" }, prompt: "tiếng Hàn", speech: "ko-KR" },
-  { code: "French", flag: "fr", label: { vi: "Tiếng Pháp", en: "French", zh: "法语" }, prompt: "tiếng Pháp", speech: "fr-FR" },
-  { code: "German", flag: "de", label: { vi: "Tiếng Đức", en: "German", zh: "德语" }, prompt: "tiếng Đức", speech: "de-DE" },
-  { code: "Spanish", flag: "es", label: { vi: "Tiếng Tây Ban Nha", en: "Spanish", zh: "西班牙语" }, prompt: "tiếng Tây Ban Nha", speech: "es-ES" },
-  { code: "Thai", flag: "th", label: { vi: "Tiếng Thái", en: "Thai", zh: "泰语" }, prompt: "tiếng Thái", speech: "th-TH" },
-  { code: "Russian", flag: "ru", label: { vi: "Tiếng Nga", en: "Russian", zh: "俄语" }, prompt: "tiếng Nga", speech: "ru-RU" },
-  { code: "Italian", flag: "it", label: { vi: "Tiếng Ý", en: "Italian", zh: "意大利语" }, prompt: "tiếng Ý", speech: "it-IT" },
-  { code: "Portuguese", flag: "pt", label: { vi: "Tiếng Bồ Đào Nha", en: "Portuguese", zh: "葡萄牙语" }, prompt: "tiếng Bồ Đào Nha", speech: "pt-PT" },
-  { code: "Arabic", flag: "sa", label: { vi: "Tiếng Ả Rập", en: "Arabic", zh: "阿拉伯语" }, prompt: "tiếng Ả Rập", speech: "ar-SA" },
-  { code: "Indonesian", flag: "id", label: { vi: "Tiếng Indonesia", en: "Indonesian", zh: "印尼语" }, prompt: "tiếng Indonesia", speech: "id-ID" },
-  { code: "Hindi", flag: "in", label: { vi: "Tiếng Hindi", en: "Hindi", zh: "印地语" }, prompt: "tiếng Hindi", speech: "hi-IN" }
+  { code: "auto", flag: null, label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "auto", speech: "vi-VN" },
+  { code: "Vietnamese", flag: "vn", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "VI", speech: "vi-VN" },
+  { code: "Chinese", flag: "cn", label: { vi: "Tiếng Trung Giản thể", en: "Simplified Chinese", zh: "简体中文" }, prompt: "ZH-CN", speech: "zh-CN" },
+  { code: "Traditional Chinese", flag: "tw", label: { vi: "Tiếng Trung Phồn thể", en: "Traditional Chinese", zh: "繁体中文" }, prompt: "ZH-TW", speech: "zh-TW" },
+  { code: "English", flag: "us", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prompt: "EN", speech: "en-US" },
+  { code: "Japanese", flag: "jp", label: { vi: "Tiếng Nhật", en: "Japanese", zh: "日语" }, prompt: "JA", speech: "ja-JP" },
+  { code: "Korean", flag: "kr", label: { vi: "Tiếng Hàn", en: "Korean", zh: "韩语" }, prompt: "KO", speech: "ko-KR" },
+  { code: "French", flag: "fr", label: { vi: "Tiếng Pháp", en: "French", zh: "法语" }, prompt: "FR", speech: "fr-FR" },
+  { code: "German", flag: "de", label: { vi: "Tiếng Đức", en: "German", zh: "德语" }, prompt: "DE", speech: "de-DE" },
+  { code: "Spanish", flag: "es", label: { vi: "Tiếng Tây Ban Nha", en: "Spanish", zh: "西班牙语" }, prompt: "ES", speech: "es-ES" },
+  { code: "Thai", flag: "th", label: { vi: "Tiếng Thái", en: "Thai", zh: "泰语" }, prompt: "TH", speech: "th-TH" },
+  { code: "Russian", flag: "ru", label: { vi: "Tiếng Nga", en: "Russian", zh: "俄语" }, prompt: "RU", speech: "ru-RU" },
+  { code: "Italian", flag: "it", label: { vi: "Tiếng Ý", en: "Italian", zh: "意大利语" }, prompt: "IT", speech: "it-IT" },
+  { code: "Portuguese", flag: "pt", label: { vi: "Tiếng Bồ Đào Nha", en: "Portuguese", zh: "葡萄牙语" }, prompt: "PT", speech: "pt-PT" },
+  { code: "Arabic", flag: "sa", label: { vi: "Tiếng Ả Rập", en: "Arabic", zh: "阿拉伯语" }, prompt: "AR", speech: "ar-SA" },
+  { code: "Indonesian", flag: "id", label: { vi: "Tiếng Indonesia", en: "Indonesian", zh: "印尼语" }, prompt: "ID", speech: "id-ID" },
+  { code: "Hindi", flag: "in", label: { vi: "Tiếng Hindi", en: "Hindi", zh: "印地语" }, prompt: "HI", speech: "hi-IN" }
 ];
 
 const I18N = {
   vi: {
-    pageTitle: "AI Translation",
-    ready: "Sẵn sàng",
-    noKey: "Chưa có API Key",
-    tryingFallback: "Đang thử model dự phòng...",
-    switchedModel: m => `Đã tự động đổi sang model ${m}.`,
+    pageTitle: "AI Translation", ready: "Sẵn sàng", noKey: "Chưa có API Key",
+    tryingFallback: "Đang thử lại / đổi model...", switchedModel: m => `Đã tự động đổi sang model ${m}.`,
     sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ, không tốn token dịch.",
-    placeholder: "Nhập nội dung cần dịch...",
-    clear: "Xóa",
-    paste: "Dán",
-    draw: "Viết tay",
-    image: "Ảnh",
-    charCount: n => `${n.toLocaleString("vi-VN")} ký tự`,
-    undo: "Hoàn tác",
-    clearDraw: "Xóa nét",
-    thin: "Mảnh",
-    medium: "Vừa",
-    thick: "Đậm",
-    translateDraw: "Dịch chữ viết",
-    chooseImage: "Chọn ảnh",
-    removeImage: "Bỏ ảnh",
-    translateImage: "Dịch nội dung ảnh",
-    imageHint: "Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.",
-    resultLabel: "Bản dịch",
-    pronunciationPrefix: reading => `Cách đọc: ${reading}`,
-    backTranslate: "Dịch ngược",
-    backTransLabel: "Kiểm tra dịch ngược",
-    hanziTitle: "Cách viết Hán tự",
-    hanziLoading: "Đang tải nét viết...",
-    hanziStrokeStep: (cur, total) => `Nét ${cur} / ${total}`,
-    hanziDone: total => `Hoàn tất ${total} nét • Chạm để xem lại`,
-    hanziUnavailable: "Không có dữ liệu nét viết cho ký tự này.",
-    hanziReplay: "Viết lại",
-    examplesTitle: "3 ví dụ dùng từ trong câu",
-    useResult: "Đưa lên",
-    copy: "Sao chép",
-    copied: "Đã sao chép ✓",
-    speak: "Đọc",
-    liveTitle: "Hội thoại trực tiếp",
-    clearLive: "Xóa hội thoại",
+    placeholder: "Nhập nội dung cần dịch...", clear: "Xóa", paste: "Dán", draw: "Viết tay",
+    image: "Ảnh", liveBtn: "Hội thoại", micChip: "Mic", charCount: n => `${n.toLocaleString("vi-VN")} ký tự`,
+    undo: "Hoàn tác", clearDraw: "Xóa nét", thin: "Mảnh", medium: "Vừa", thick: "Đậm",
+    translateDraw: "Dịch chữ viết", chooseImage: "Chọn ảnh", removeImage: "Bỏ ảnh", translateImage: "Dịch nội dung ảnh",
+    imageHint: "Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.", resultLabel: "Bản dịch",
+    pronunciationPrefix: r => `Cách đọc: ${r}`, backTranslate: "Dịch ngược", backTransLabel: "Kiểm tra dịch ngược",
+    hanziTitle: "Cách viết Hán tự", hanziLoading: "Đang tải nét viết...",
+    hanziStrokeStep: (c, n) => `Nét ${c} / ${n}`, hanziDone: n => `Hoàn tất ${n} nét • Chạm để xem lại`,
+    hanziUnavailable: "Không có dữ liệu nét viết cho ký tự này.", hanziReplay: "Viết lại",
+    examplesTitle: "3 ví dụ dùng từ trong câu", copy: "Sao chép", copied: "Đã sao chép ✓",
+    speak: "Đọc", liveTitle: "Hội thoại trực tiếp", clearLive: "Xóa hội thoại",
     liveDesc: "Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.",
-    liveEmpty: "Chưa có nội dung hội thoại.",
-    personA: "Người A",
-    personB: "Người B",
-    autoLabel: "Tự động",
-    liveWaiting: "Đang chờ người nói.",
-    stopLive: "Dừng ghi âm",
-    translateBtn: "Dịch văn bản",
-    liveDock: "Hội thoại",
+    liveEmpty: "Chưa có nội dung hội thoại.", personA: "Người A", personB: "Người B", autoLabel: "Tự động",
+    liveWaiting: "Đang chờ người nói.", stopLive: "Dừng ghi âm", translateBtn: "Dịch văn bản",
     disclaimer: "Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.",
-    infoTitle: "Thông tin tác giả",
-    infoDesc: "Thông tin liên hệ của tác giả ứng dụng AI Translation.",
-    authorNameLabel: "Tác giả",
-    authorPhoneLabel: "Số điện thoại",
-    callAuthorTitle: "Gọi điện 0845425888",
-    zaloAuthorTitle: "Kết bạn Zalo 0974569711",
+    infoTitle: "Thông tin tác giả", authorCtaText: "Mọi góp ý vui lòng liên hệ",
+    fbTitle: "Facebook", zaloTitle: "Zalo", callTitle: "Gọi điện",
     settingsTitle: "Cài đặt Gemini API",
     settingsDesc: 'API Key được lưu trong trình duyệt của bạn (<code>localStorage</code>) và gửi trực tiếp tới Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Lấy API Key tại đây</a>.',
-    uiLangLabel: "Ngôn ngữ giao diện",
-    apiKeyLabel: "API Key",
-    modelLabel: "Gemini Model",
-    customModelOption: "Tùy chỉnh tên model...",
-    customModelLabel: "Tên model tùy chỉnh",
-    close: "Đóng",
-    save: "Lưu cài đặt",
-    resetLabel: "Làm mới",
-    infoLabel: "Thông tin",
-    settingsLabel: "Cài đặt",
-    swapLabel: "Đổi ngôn ngữ",
-    micLabel: "Nhập bằng giọng nói",
+    uiLangLabel: "Ngôn ngữ giao diện", apiKeyLabel: "API Key", modelLabel: "Gemini Model",
+    customModelOption: "Tùy chỉnh tên model...", customModelLabel: "Tên model tùy chỉnh",
+    close: "Đóng", save: "Lưu cài đặt", infoLabel: "Thông tin",
+    settingsLabel: "Cài đặt", swapLabel: "Đổi ngôn ngữ", micLabel: "Nhập bằng giọng nói",
     errUnknown: "Đã xảy ra lỗi không xác định.",
     errNeedKey: "Bạn cần nhập Gemini API Key trong phần Cài đặt trước khi sử dụng.",
     errBadModel: "Tên model không hợp lệ. Ví dụ: gemini-3.5-flash-lite",
     errEmptyText: "Vui lòng nhập nội dung cần dịch.",
     errNoResultToBack: "Chưa có bản dịch để kiểm tra dịch ngược.",
     errTooLong: "Nội dung quá dài (tối đa 20.000 ký tự mỗi lượt).",
-    errNoImage: "Bạn chưa chọn ảnh.",
-    errNoDraw: "Hãy viết chữ lên bảng trước.",
+    errNoImage: "Bạn chưa chọn ảnh.", errNoDraw: "Hãy viết chữ lên bảng trước.",
     errSameLang: "Ngôn ngữ nguồn và đích đang giống nhau.",
     errSwapAuto: "Không thể đổi chiều khi nguồn đang ở chế độ tự động. Hãy chọn ngôn ngữ cụ thể.",
     errBusy: "Đang xử lý yêu cầu trước đó. Vui lòng chờ hoàn tất.",
@@ -1014,83 +762,39 @@ const I18N = {
     errNoMedia: "Trình duyệt không hỗ trợ ghi âm. Hãy dùng trình duyệt hiện đại và cấp quyền micro."
   },
   en: {
-    pageTitle: "AI Translation",
-    ready: "Ready",
-    noKey: "No API Key",
-    tryingFallback: "Trying fallback model...",
-    switchedModel: m => `Switched to working model ${m}.`,
+    pageTitle: "AI Translation", ready: "Ready", noKey: "No API Key",
+    tryingFallback: "Retrying / switching model...", switchedModel: m => `Switched to working model ${m}.`,
     sameChineseNotice: "Source and target are both Chinese: kept as-is without translation tokens.",
-    placeholder: "Enter text to translate...",
-    clear: "Clear",
-    paste: "Paste",
-    draw: "Draw",
-    image: "Image",
-    charCount: n => `${n.toLocaleString("en-US")} chars`,
-    undo: "Undo",
-    clearDraw: "Clear ink",
-    thin: "Thin",
-    medium: "Medium",
-    thick: "Thick",
-    translateDraw: "Translate handwriting",
-    chooseImage: "Choose image",
-    removeImage: "Remove image",
-    translateImage: "Translate image",
-    imageHint: "Supports PNG, JPG, WebP, GIF. Up to 12 MB.",
-    resultLabel: "Translation",
-    pronunciationPrefix: reading => `Reading: ${reading}`,
-    backTranslate: "Back-translate",
-    backTransLabel: "Back-translation check",
-    hanziTitle: "Stroke order",
-    hanziLoading: "Loading strokes...",
-    hanziStrokeStep: (cur, total) => `Stroke ${cur} / ${total}`,
-    hanziDone: total => `${total} strokes • Tap to replay`,
-    hanziUnavailable: "Stroke data unavailable for this character.",
-    hanziReplay: "Replay",
-    examplesTitle: "3 usage examples in sentences",
-    useResult: "To input",
-    copy: "Copy",
-    copied: "Copied ✓",
-    speak: "Speak",
-    liveTitle: "Live Conversation",
-    clearLive: "Clear chat",
+    placeholder: "Enter text to translate...", clear: "Clear", paste: "Paste", draw: "Draw",
+    image: "Image", liveBtn: "Live", micChip: "Mic", charCount: n => `${n.toLocaleString("en-US")} chars`,
+    undo: "Undo", clearDraw: "Clear ink", thin: "Thin", medium: "Medium", thick: "Thick",
+    translateDraw: "Translate handwriting", chooseImage: "Choose image", removeImage: "Remove image", translateImage: "Translate image",
+    imageHint: "Supports PNG, JPG, WebP, GIF. Up to 12 MB.", resultLabel: "Translation",
+    pronunciationPrefix: r => `Reading: ${r}`, backTranslate: "Back-translate", backTransLabel: "Back-translation check",
+    hanziTitle: "Stroke order", hanziLoading: "Loading strokes...",
+    hanziStrokeStep: (c, n) => `Stroke ${c} / ${n}`, hanziDone: n => `${n} strokes • Tap to replay`,
+    hanziUnavailable: "Stroke data unavailable for this character.", hanziReplay: "Replay",
+    examplesTitle: "3 usage examples in sentences", copy: "Copy", copied: "Copied ✓",
+    speak: "Speak", liveTitle: "Live Conversation", clearLive: "Clear chat",
     liveDesc: "Pick a speaker. The app records, transcribes, and translates into the other language. Tap again to stop.",
-    liveEmpty: "No conversation yet.",
-    personA: "Person A",
-    personB: "Person B",
-    autoLabel: "Auto",
-    liveWaiting: "Waiting for speaker.",
-    stopLive: "Stop recording",
-    translateBtn: "Translate text",
-    liveDock: "Live",
+    liveEmpty: "No conversation yet.", personA: "Person A", personB: "Person B", autoLabel: "Auto",
+    liveWaiting: "Waiting for speaker.", stopLive: "Stop recording", translateBtn: "Translate text",
     disclaimer: "AI translations may need verification in specialized or technical contexts.",
-    infoTitle: "Author Information",
-    infoDesc: "Contact information for the author of AI Translation.",
-    authorNameLabel: "Author",
-    authorPhoneLabel: "Phone number",
-    callAuthorTitle: "Call 0845425888",
-    zaloAuthorTitle: "Add Zalo 0974569711",
+    infoTitle: "Author Information", authorCtaText: "For any feedback, please contact",
+    fbTitle: "Facebook", zaloTitle: "Zalo", callTitle: "Call",
     settingsTitle: "Gemini API Settings",
     settingsDesc: 'Your API Key is stored locally in your browser (<code>localStorage</code>) and sent directly to Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Get an API Key here</a>.',
-    uiLangLabel: "Interface Language",
-    apiKeyLabel: "API Key",
-    modelLabel: "Gemini Model",
-    customModelOption: "Custom model name...",
-    customModelLabel: "Custom model name",
-    close: "Close",
-    save: "Save settings",
-    resetLabel: "Reset",
-    infoLabel: "Info",
-    settingsLabel: "Settings",
-    swapLabel: "Swap languages",
-    micLabel: "Voice input",
+    uiLangLabel: "Interface Language", apiKeyLabel: "API Key", modelLabel: "Gemini Model",
+    customModelOption: "Custom model name...", customModelLabel: "Custom model name",
+    close: "Close", save: "Save settings", infoLabel: "Info",
+    settingsLabel: "Settings", swapLabel: "Swap languages", micLabel: "Voice input",
     errUnknown: "An unknown error occurred.",
     errNeedKey: "Please enter your Gemini API Key in Settings before using.",
     errBadModel: "Invalid model name. Example: gemini-3.5-flash-lite",
     errEmptyText: "Please enter text to translate.",
     errNoResultToBack: "No translation available to back-translate.",
     errTooLong: "Text is too long (max 20,000 characters per request).",
-    errNoImage: "Please choose an image first.",
-    errNoDraw: "Please write on the canvas first.",
+    errNoImage: "Please choose an image first.", errNoDraw: "Please write on the canvas first.",
     errSameLang: "Source and target languages are the same.",
     errSwapAuto: "Cannot swap when source is set to Auto Detect. Select a specific language.",
     errBusy: "A previous request is still processing. Please wait.",
@@ -1098,83 +802,39 @@ const I18N = {
     errNoMedia: "Your browser does not support audio recording. Use a modern browser and grant mic access."
   },
   zh: {
-    pageTitle: "AI Translation",
-    ready: "就绪",
-    noKey: "未设置 API Key",
-    tryingFallback: "正在尝试备用模型...",
-    switchedModel: m => `已自动切换至可用模型 ${m}。`,
+    pageTitle: "AI Translation", ready: "就绪", noKey: "未设置 API Key",
+    tryingFallback: "正在重试 / 切换模型...", switchedModel: m => `已自动切换至可用模型 ${m}。`,
     sameChineseNotice: "源语言和目标语言同为中文：直接保留原文，不消耗翻译 Token。",
-    placeholder: "输入要翻译的内容...",
-    clear: "清空",
-    paste: "粘贴",
-    draw: "手写",
-    image: "图片",
-    charCount: n => `${n.toLocaleString("zh-CN")} 字`,
-    undo: "撤销",
-    clearDraw: "清除笔迹",
-    thin: "细",
-    medium: "中",
-    thick: "粗",
-    translateDraw: "翻译手写",
-    chooseImage: "选择图片",
-    removeImage: "移除图片",
-    translateImage: "翻译图片内容",
-    imageHint: "支持 PNG、JPG、WebP、GIF，最大 12 MB。",
-    resultLabel: "译文",
-    pronunciationPrefix: reading => `读音：${reading}`,
-    backTranslate: "回译校验",
-    backTransLabel: "回译核对",
-    hanziTitle: "汉字笔画顺序",
-    hanziLoading: "正在加载笔画...",
-    hanziStrokeStep: (cur, total) => `第 ${cur} / ${total} 画`,
-    hanziDone: total => `共 ${total} 画 • 点击重播`,
-    hanziUnavailable: "暂无该字的笔画数据。",
-    hanziReplay: "重播",
-    examplesTitle: "3 个句中用法示例",
-    useResult: "上屏",
-    copy: "复制",
-    copied: "已复制 ✓",
-    speak: "朗读",
-    liveTitle: "实时对话翻译",
-    clearLive: "清空对话",
+    placeholder: "输入要翻译的内容...", clear: "清空", paste: "粘贴", draw: "手写",
+    image: "图片", liveBtn: "对话", micChip: "麦克风", charCount: n => `${n.toLocaleString("zh-CN")} 字`,
+    undo: "撤销", clearDraw: "清除笔迹", thin: "细", medium: "中", thick: "粗",
+    translateDraw: "翻译手写", chooseImage: "选择图片", removeImage: "移除图片", translateImage: "翻译图片内容",
+    imageHint: "支持 PNG、JPG、WebP、GIF，最大 12 MB。", resultLabel: "译文",
+    pronunciationPrefix: r => `读音：${r}`, backTranslate: "回译校验", backTransLabel: "回译核对",
+    hanziTitle: "汉字笔画顺序", hanziLoading: "正在加载笔画...",
+    hanziStrokeStep: (c, n) => `第 ${c} / ${n} 画`, hanziDone: n => `共 ${n} 画 • 点击重播`,
+    hanziUnavailable: "暂无该字的笔画数据。", hanziReplay: "重播",
+    examplesTitle: "3 个句中用法示例", copy: "复制", copied: "已复制 ✓",
+    speak: "朗读", liveTitle: "实时对话翻译", clearLive: "清空对话",
     liveDesc: "选择说话方进行录音、识别并翻译为对方语言；再次点击正在录音的按钮即可停止。",
-    liveEmpty: "暂无对话内容。",
-    personA: "说话方 A",
-    personB: "说话方 B",
-    autoLabel: "自动",
-    liveWaiting: "等待说话。",
-    stopLive: "停止录音",
-    translateBtn: "翻译文本",
-    liveDock: "对话",
+    liveEmpty: "暂无对话内容。", personA: "说话方 A", personB: "说话方 B", autoLabel: "自动",
+    liveWaiting: "等待说话。", stopLive: "停止录音", translateBtn: "翻译文本",
     disclaimer: "AI 译文在专业或技术场景下建议人工复核。",
-    infoTitle: "作者信息",
-    infoDesc: "AI Translation 作者联系方式。",
-    authorNameLabel: "作者",
-    authorPhoneLabel: "电话号码",
-    callAuthorTitle: "拨打电话 0845425888",
-    zaloAuthorTitle: "添加 Zalo 0974569711",
+    infoTitle: "作者信息", authorCtaText: "如有任何建议请联系",
+    fbTitle: "Facebook", zaloTitle: "Zalo", callTitle: "拨打电话",
     settingsTitle: "Gemini API 设置",
     settingsDesc: 'API Key 保存在浏览器本地（<code>localStorage</code>）并直接发送至 Google。<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">点击此处获取 API Key</a>。',
-    uiLangLabel: "界面语言",
-    apiKeyLabel: "API Key",
-    modelLabel: "Gemini 模型",
-    customModelOption: "自定义模型名称...",
-    customModelLabel: "自定义模型名称",
-    close: "关闭",
-    save: "保存设置",
-    resetLabel: "重置",
-    infoLabel: "信息",
-    settingsLabel: "设置",
-    swapLabel: "切换语言",
-    micLabel: "语音输入",
+    uiLangLabel: "界面语言", apiKeyLabel: "API Key", modelLabel: "Gemini 模型",
+    customModelOption: "自定义模型名称...", customModelLabel: "自定义模型名称",
+    close: "关闭", save: "保存设置", infoLabel: "信息",
+    settingsLabel: "设置", swapLabel: "切换语言", micLabel: "语音输入",
     errUnknown: "发生未知错误。",
     errNeedKey: "请先在设置中输入 Gemini API Key。",
     errBadModel: "模型名称无效，例如：gemini-3.5-flash-lite",
     errEmptyText: "请输入要翻译的内容。",
     errNoResultToBack: "暂无译文可供回译校验。",
     errTooLong: "内容过长（每次最多 20,000 字）。",
-    errNoImage: "请先选择图片。",
-    errNoDraw: "请先在手写板上书写。",
+    errNoImage: "请先选择图片。", errNoDraw: "请先在手写板上书写。",
     errSameLang: "源语言和目标语言相同。",
     errSwapAuto: "源语言为“自动检测”时无法互换，请选择具体语言。",
     errBusy: "上一个请求仍在处理中，请稍候。",
@@ -1184,11 +844,22 @@ const I18N = {
 };
 
 const $ = id => document.getElementById(id);
+const elTag = (tag, className, text) => {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+};
+const setShow = (node, visible, display = "flex") => {
+  if (node) node.style.display = visible ? display : "none";
+};
 
 const state = {
   uiLang: localStorage.getItem("smart_translate_ui_lang_v1") || "vi",
   apiKey: localStorage.getItem("smart_translate_key_v5") || "",
   model: localStorage.getItem("smart_translate_model_v5") || CONFIG.defaultModel,
+  modelCooldownUntil: {},
+  cache: new Map(),
   sourceLang: "auto",
   targetLang: "Chinese",
   openPickerType: null,
@@ -1208,6 +879,7 @@ const state = {
   startingSide: null,
   recognition: null,
   speechActive: false,
+  speakingSource: false,
   strokes: [],
   currentStroke: null,
   canvasDpr: 1,
@@ -1217,78 +889,69 @@ const state = {
 };
 
 const el = {
-  notice: $("noticeBox"),
-  error: $("errorBox"),
-  status: $("statusPill"),
-  keyDot: $("keyDot"),
-  ioBox: $("ioBox"),
-  source: $("sourceText"),
-  resultSection: $("resultSection"),
-  resultText: $("resultText"),
-  pronunciation: $("pronunciationText"),
-  hanziStrokeBox: $("hanziStrokeBox"),
-  hanziStrokeTitle: $("hanziStrokeTitle"),
-  hanziStrokeMeta: $("hanziStrokeMeta"),
-  hanziGridWrap: $("hanziGridWrap"),
-  hanziWriterTarget: $("hanziWriterTarget"),
-  hanziReplayBtn: $("hanziReplayBtn"),
-  hanziStrokeStatus: $("hanziStrokeStatus"),
-  examplesBox: $("examplesBox"),
-  examplesTitle: $("examplesTitle"),
-  examplesList: $("examplesList"),
-  backTransBox: $("backTransBox"),
-  backTransLabel: $("backTransLabel"),
-  backTransText: $("backTransText"),
-  explanation: $("explanation"),
-  alternatives: $("alternatives"),
-  historyBar: $("historyBar"),
-  translate: $("translateBtn"),
-  translateSpin: $("translateSpinner"),
-  backSpin: $("backSpin"),
-  sourceLangBtn: $("sourceLangBtn"),
-  targetLangBtn: $("targetLangBtn"),
-  sourceLangFlag: $("sourceLangFlag"),
-  targetLangFlag: $("targetLangFlag"),
-  sourceLangLabel: $("sourceLangLabel"),
-  targetLangLabel: $("targetLangLabel"),
-  langMenu: $("langMenu"),
-  drawPanel: $("drawPanel"),
-  imagePanel: $("imagePanel"),
-  canvas: $("drawCanvas"),
-  livePanel: $("livePanel"),
-  liveFeed: $("liveFeed"),
-  liveStatus: $("liveStatus"),
-  mic: $("micBtn")
+  notice: $("noticeBox"), error: $("errorBox"), status: $("statusPill"), keyDot: $("keyDot"),
+  ioBox: $("ioBox"), source: $("sourceText"), resultSection: $("resultSection"),
+  resultText: $("resultText"), pronunciation: $("pronunciationText"),
+  hanziStrokeBox: $("hanziStrokeBox"), hanziStrokeTitle: $("hanziStrokeTitle"),
+  hanziStrokeMeta: $("hanziStrokeMeta"), hanziGridWrap: $("hanziGridWrap"),
+  hanziWriterTarget: $("hanziWriterTarget"), hanziReplayBtn: $("hanziReplayBtn"),
+  hanziStrokeStatus: $("hanziStrokeStatus"), examplesBox: $("examplesBox"),
+  examplesTitle: $("examplesTitle"), examplesList: $("examplesList"),
+  backTransBox: $("backTransBox"), backTransLabel: $("backTransLabel"), backTransText: $("backTransText"),
+  explanation: $("explanation"), alternatives: $("alternatives"), historyBar: $("historyBar"),
+  translate: $("translateBtn"), translateSpin: $("translateSpinner"), backSpin: $("backSpin"),
+  sourceLangBtn: $("sourceLangBtn"), targetLangBtn: $("targetLangBtn"),
+  sourceLangFlag: $("sourceLangFlag"), targetLangFlag: $("targetLangFlag"),
+  sourceLangLabel: $("sourceLangLabel"), targetLangLabel: $("targetLangLabel"),
+  langMenu: $("langMenu"), drawPanel: $("drawPanel"), imagePanel: $("imagePanel"),
+  canvas: $("drawCanvas"), livePanel: $("livePanel"), liveFeed: $("liveFeed"),
+  liveStatus: $("liveStatus"), mic: $("micBtn"), speakSourceBtn: $("speakSourceBtn"),
+  drawToggle: $("drawToggle"), imageToggle: $("imageToggle"), liveToggle: $("liveToggle"),
+  copyBtn: $("copyBtn"), backTranslateBtn: $("backTranslateBtn"), speakBtn: $("speakBtn"),
+  clearTextBtn: $("clearTextBtn"), pasteBtn: $("pasteBtn")
 };
 
-function setBtnLabel(btnId, text) {
-  const btn = $(btnId);
-  const label = btn?.querySelector(".btn-label");
-  if (label) label.textContent = text;
-}
-
-function t(key, ...args) {
+const setBtnLabel = (btnId, text) => {
+  const lbl = $(btnId)?.querySelector(".btn-label");
+  if (lbl) lbl.textContent = text;
+};
+const t = (key, ...args) => {
   const pack = I18N[state.uiLang] || I18N.vi;
   const val = pack[key] ?? I18N.vi[key] ?? key;
   return typeof val === "function" ? val(...args) : val;
+};
+const getLangObj = code => LANGUAGES.find(item => item.code === code) || null;
+const isSameChinesePair = () => CHINESE_CODES.includes(state.sourceLang) && state.sourceLang === state.targetLang;
+const sourceLang = () => state.sourceLang;
+const targetLang = () => state.targetLang;
+const langPrompt = value => getLangObj(value)?.prompt || value;
+const escapeText = value => String(value ?? "").replace(/\u0000/g, "");
+const meaningLangCode = () => state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
+
+function setToggleButtonState(btn, active) {
+  if (!btn) return;
+  btn.classList.toggle("is-active", Boolean(active));
+  btn.setAttribute("aria-pressed", active ? "true" : "false");
 }
 
-function getLangObj(code) {
-  return LANGUAGES.find(item => item.code === code) || null;
-}
+function syncToolStates() {
+  const isDrawOpen = el.drawPanel.style.display === "flex";
+  const isImageOpen = el.imagePanel.style.display === "flex";
+  const isLiveOpen = el.livePanel.style.display === "flex";
+  const isMicActive = Boolean(state.liveRecorder?.state === "recording" || state.liveStarting || state.speechActive);
 
-function isSameChinesePair() {
-  return CHINESE_CODES.includes(state.sourceLang) && state.sourceLang === state.targetLang;
+  setToggleButtonState(el.speakSourceBtn, state.speakingSource);
+  setToggleButtonState(el.drawToggle, isDrawOpen);
+  setToggleButtonState(el.imageToggle, isImageOpen);
+  setToggleButtonState(el.liveToggle, isLiveOpen);
+  setToggleButtonState(el.mic, isMicActive);
 }
 
 function renderLangButton(type) {
   const isSource = type === "source";
-  const code = isSource ? state.sourceLang : state.targetLang;
-  const item = getLangObj(code) || LANGUAGES[1];
-  const flagSlot = isSource ? el.sourceLangFlag : el.targetLangFlag;
-  const labelSlot = isSource ? el.sourceLangLabel : el.targetLangLabel;
-  flagSlot.replaceChildren(createFlagElement(item.flag));
-  labelSlot.textContent = item.label[state.uiLang] || item.label.vi;
+  const item = getLangObj(isSource ? state.sourceLang : state.targetLang) || LANGUAGES[1];
+  (isSource ? el.sourceLangFlag : el.targetLangFlag).replaceChildren(createFlagElement(item.flag));
+  (isSource ? el.sourceLangLabel : el.targetLangLabel).textContent = item.label[state.uiLang] || item.label.vi;
 }
 
 function closeLangMenu() {
@@ -1300,15 +963,10 @@ function closeLangMenu() {
 
 function positionLangMenu(btn) {
   const rect = btn.getBoundingClientRect();
-  const menuWidth = Math.max(rect.width, 210);
-  let left = rect.left;
-  if (left + menuWidth > window.innerWidth - 10) {
-    left = Math.max(10, window.innerWidth - menuWidth - 10);
-  }
+  const w = Math.max(rect.width, 210);
+  const left = Math.min(Math.max(10, rect.left), Math.max(10, window.innerWidth - w - 10));
   const top = Math.min(window.innerHeight - 160, rect.bottom + 5);
-  el.langMenu.style.width = `${Math.round(menuWidth)}px`;
-  el.langMenu.style.left = `${Math.round(left)}px`;
-  el.langMenu.style.top = `${Math.round(top)}px`;
+  Object.assign(el.langMenu.style, { width: `${Math.round(w)}px`, left: `${Math.round(left)}px`, top: `${Math.round(top)}px` });
 }
 
 function openLangMenu(type) {
@@ -1319,28 +977,16 @@ function openLangMenu(type) {
   state.openPickerType = type;
   const isSource = type === "source";
   const currentCode = isSource ? state.sourceLang : state.targetLang;
-  const list = isSource ? LANGUAGES : LANGUAGES.filter(item => item.code !== "auto");
+  const list = isSource ? LANGUAGES : LANGUAGES.filter(i => i.code !== "auto");
 
-  el.langMenu.replaceChildren();
-  list.forEach(item => {
-    const optBtn = document.createElement("button");
+  el.langMenu.replaceChildren(...list.map(item => {
+    const active = item.code === currentCode;
+    const optBtn = elTag("button", "lang-option" + (active ? " active" : ""));
     optBtn.type = "button";
-    optBtn.className = "lang-option" + (item.code === currentCode ? " active" : "");
     optBtn.setAttribute("role", "option");
-    optBtn.setAttribute("aria-selected", item.code === currentCode ? "true" : "false");
-
-    const labelSpan = document.createElement("span");
-    labelSpan.className = "lang-option-label";
-    labelSpan.textContent = item.label[state.uiLang] || item.label.vi;
-
-    optBtn.append(createFlagElement(item.flag), labelSpan);
-    if (item.code === currentCode) {
-      const check = document.createElement("span");
-      check.className = "lang-check";
-      check.textContent = "✓";
-      optBtn.append(check);
-    }
-
+    optBtn.setAttribute("aria-selected", active ? "true" : "false");
+    optBtn.append(createFlagElement(item.flag), elTag("span", "lang-option-label", item.label[state.uiLang] || item.label.vi));
+    if (active) optBtn.append(elTag("span", "lang-check", "✓"));
     optBtn.addEventListener("click", e => {
       e.stopPropagation();
       if (isSource) state.sourceLang = item.code;
@@ -1350,11 +996,10 @@ function openLangMenu(type) {
       closeLangMenu();
       handleLangSelectionChanged();
     });
-    el.langMenu.append(optBtn);
-  });
+    return optBtn;
+  }));
 
-  const anchorBtn = isSource ? el.sourceLangBtn : el.targetLangBtn;
-  positionLangMenu(anchorBtn);
+  positionLangMenu(isSource ? el.sourceLangBtn : el.targetLangBtn);
   el.langMenu.classList.add("open");
   el.sourceLangBtn.setAttribute("aria-expanded", isSource ? "true" : "false");
   el.targetLangBtn.setAttribute("aria-expanded", !isSource ? "true" : "false");
@@ -1364,47 +1009,46 @@ function applyUILanguage() {
   document.documentElement.lang = state.uiLang;
   document.title = t("pageTitle");
   el.source.placeholder = t("placeholder");
-  setBtnLabel("clearTextBtn", t("clear"));
-  setBtnLabel("pasteBtn", t("paste"));
-  setBtnLabel("speakSourceBtn", t("speak"));
-  setBtnLabel("drawToggle", t("draw"));
-  setBtnLabel("imageToggle", t("image"));
-  setBtnLabel("undoDraw", t("undo"));
-  setBtnLabel("clearDraw", t("clearDraw"));
+
+  const labels = {
+    undoDraw: "undo", clearDraw: "clearDraw", translateDrawBtn: "translateDraw",
+    chooseImageBtn: "chooseImage", removeImageBtn: "removeImage", translateImageBtn: "translateImage",
+    clearLiveBtn: "clearLive", stopLiveBtn: "stopLive", translateBtn: "translateBtn",
+    closeInfoBtn: "close", cancelSettings: "close", saveSettings: "save"
+  };
+  Object.entries(labels).forEach(([id, key]) => setBtnLabel(id, t(key)));
+
+  el.clearTextBtn.title = el.clearTextBtn.ariaLabel = t("clear");
+  el.pasteBtn.title = el.pasteBtn.ariaLabel = t("paste");
+  el.speakSourceBtn.title = el.speakSourceBtn.ariaLabel = t("speak");
+  el.drawToggle.title = el.drawToggle.ariaLabel = t("draw");
+  el.imageToggle.title = el.imageToggle.ariaLabel = t("image");
+  el.liveToggle.title = el.liveToggle.ariaLabel = t("liveBtn");
+  el.mic.title = el.mic.ariaLabel = t("micChip");
+  el.copyBtn.title = el.copyBtn.ariaLabel = t("copy");
+  el.backTranslateBtn.title = el.backTranslateBtn.ariaLabel = t("backTranslate");
+  el.speakBtn.title = el.speakBtn.ariaLabel = t("speak");
+
   $("brushThinOpt").textContent = t("thin");
   $("brushMedOpt").textContent = t("medium");
   $("brushThickOpt").textContent = t("thick");
-  setBtnLabel("translateDrawBtn", t("translateDraw"));
-  setBtnLabel("chooseImageBtn", t("chooseImage"));
-  setBtnLabel("removeImageBtn", t("removeImage"));
-  setBtnLabel("translateImageBtn", t("translateImage"));
   $("imageHint").textContent = t("imageHint");
   $("resultLabel").textContent = t("resultLabel");
-  setBtnLabel("backTranslateBtn", t("backTranslate"));
   el.hanziStrokeTitle.textContent = t("hanziTitle");
   el.hanziReplayBtn.title = el.hanziReplayBtn.ariaLabel = t("hanziReplay");
   el.examplesTitle.textContent = t("examplesTitle");
   el.backTransLabel.textContent = t("backTransLabel");
-  setBtnLabel("useResultBtn", t("useResult"));
-  setBtnLabel("copyBtn", t("copy"));
-  setBtnLabel("speakBtn", t("speak"));
   $("liveTitle").textContent = t("liveTitle");
-  setBtnLabel("clearLiveBtn", t("clearLive"));
   $("liveDesc").textContent = t("liveDesc");
   const emptyFeed = el.liveFeed.querySelector("#liveEmptyText");
   if (emptyFeed) emptyFeed.textContent = t("liveEmpty");
-  setBtnLabel("stopLiveBtn", t("stopLive"));
-  setBtnLabel("translateBtn", t("translateBtn"));
-  $("liveDockLabel").textContent = t("liveDock");
   $("disclaimerText").textContent = t("disclaimer");
 
   $("infoTitle").textContent = t("infoTitle");
-  $("infoDesc").textContent = t("infoDesc");
-  $("authorNameLabel").textContent = t("authorNameLabel");
-  $("authorPhoneLabel").textContent = t("authorPhoneLabel");
-  $("callAuthorBtn").title = $("callAuthorBtn").ariaLabel = t("callAuthorTitle");
-  $("zaloAuthorBtn").title = $("zaloAuthorBtn").ariaLabel = t("zaloAuthorTitle");
-  setBtnLabel("closeInfoBtn", t("close"));
+  $("authorCtaText").textContent = t("authorCtaText");
+  $("fbAuthorBtn").title = $("fbAuthorBtn").ariaLabel = t("fbTitle");
+  $("zaloAuthorBtn").title = $("zaloAuthorBtn").ariaLabel = t("zaloTitle");
+  $("callAuthorBtn").title = $("callAuthorBtn").ariaLabel = t("callTitle");
 
   $("settingsTitle").textContent = t("settingsTitle");
   $("settingsDesc").innerHTML = t("settingsDesc");
@@ -1413,34 +1057,26 @@ function applyUILanguage() {
   $("modelLabel").textContent = t("modelLabel");
   $("customModelOption").textContent = t("customModelOption");
   $("customModelLabel").textContent = t("customModelLabel");
-  setBtnLabel("cancelSettings", t("close"));
-  setBtnLabel("saveSettings", t("save"));
 
-  $("resetBtn").title = $("resetBtn").ariaLabel = t("resetLabel");
   $("infoBtn").title = $("infoBtn").ariaLabel = t("infoLabel");
   $("settingsBtn").title = $("settingsBtn").ariaLabel = t("settingsLabel");
   $("swapBtn").title = $("swapBtn").ariaLabel = t("swapLabel");
-  el.mic.title = el.mic.ariaLabel = t("micLabel");
 
   renderLangButton("source");
   renderLangButton("target");
   updateCount();
   updateLiveLabels();
   setStatus();
-  if (state.lastResult) {
-    renderResult(state.lastResult, false);
-  }
+  syncToolStates();
+  if (state.lastResult) renderResult(state.lastResult, false);
   syncVisualViewport();
 }
 
-/* ============================ CÁCH VIẾT HÁN TỰ (1 KÝ TỰ) ============================ */
+/* ============================ HANZI STROKE ORDER (1 CHAR) ============================ */
 function extractSingleChineseChar(text) {
-  const cleaned = String(text || "")
-    .replace(/[\s\p{P}\p{S}]/gu, "");
-  const chars = Array.from(cleaned);
+  const chars = Array.from(String(text || "").replace(/[\s\p{P}\p{S}]/gu, ""));
   if (chars.length !== 1) return "";
-  const ch = chars[0];
-  return /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/.test(ch) ? ch : "";
+  return /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/.test(chars[0]) ? chars[0] : "";
 }
 
 function clearHanziStrokeBox() {
@@ -1450,7 +1086,7 @@ function clearHanziStrokeBox() {
   el.hanziWriterTarget.replaceChildren();
   el.hanziStrokeMeta.textContent = "";
   el.hanziStrokeStatus.textContent = "";
-  el.hanziStrokeBox.style.display = "none";
+  setShow(el.hanziStrokeBox, false);
 }
 
 function playHanziStrokeAnimation() {
@@ -1460,114 +1096,79 @@ function playHanziStrokeAnimation() {
   try {
     state.hanziWriter.animateCharacter({
       onComplete: () => {
-        if (state.hanziTotalStrokes > 0) {
-          el.hanziStrokeStatus.textContent = t("hanziDone", state.hanziTotalStrokes);
-        }
+        if (state.hanziTotalStrokes > 0) el.hanziStrokeStatus.textContent = t("hanziDone", state.hanziTotalStrokes);
       }
     });
   } catch (_) {}
 }
 
 function refreshHanziStrokeBox(translationText) {
-  const isChineseTarget = CHINESE_CODES.includes(targetLang());
-  const singleChar = isChineseTarget ? extractSingleChineseChar(translationText) : "";
-
-  if (!singleChar) {
-    clearHanziStrokeBox();
-    return;
-  }
-
-  if (typeof window.HanziWriter !== "function") {
-    state.currentHanziChar = singleChar;
-    el.hanziWriterTarget.replaceChildren();
-    el.hanziStrokeMeta.textContent = singleChar;
-    el.hanziStrokeStatus.textContent = t("hanziUnavailable");
-    el.hanziStrokeBox.style.display = "flex";
-    return;
-  }
+  const singleChar = CHINESE_CODES.includes(targetLang()) ? extractSingleChineseChar(translationText) : "";
+  if (!singleChar) return clearHanziStrokeBox();
 
   state.currentHanziChar = singleChar;
   state.hanziWriter = null;
   state.hanziTotalStrokes = 0;
   el.hanziWriterTarget.replaceChildren();
   el.hanziStrokeMeta.textContent = singleChar;
-  el.hanziStrokeStatus.textContent = t("hanziLoading");
-  el.hanziStrokeBox.style.display = "flex";
+  setShow(el.hanziStrokeBox, true);
 
+  if (typeof window.HanziWriter !== "function") {
+    el.hanziStrokeStatus.textContent = t("hanziUnavailable");
+    return;
+  }
+
+  el.hanziStrokeStatus.textContent = t("hanziLoading");
   try {
-    const writer = window.HanziWriter.create(el.hanziWriterTarget, singleChar, {
-      width: 184,
-      height: 184,
-      padding: 16,
-      showOutline: true,
-      showCharacter: false,
-      strokeColor: "#1f3c68",
-      highlightColor: "#c82828",
-      outlineColor: "#cfd6dc",
-      radicalColor: "#c82828",
-      strokeAnimationSpeed: 1,
-      delayBetweenStrokes: 260,
+    state.hanziWriter = window.HanziWriter.create(el.hanziWriterTarget, singleChar, {
+      width: 184, height: 184, padding: 16, showOutline: true, showCharacter: false,
+      strokeColor: "#1f3c68", highlightColor: "#c82828", outlineColor: "#cfd6dc", radicalColor: "#c82828",
+      strokeAnimationSpeed: 1, delayBetweenStrokes: 260,
       charDataLoader: (char, onComplete) => {
-        const encoded = encodeURIComponent(char);
-        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encoded}.json`)
-          .then(res => {
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            return res.json();
-          })
+        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encodeURIComponent(char)}.json`)
+          .then(res => { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
           .then(data => {
             if (state.currentHanziChar !== singleChar) return;
-            const strokeCount = Array.isArray(data?.strokes) ? data.strokes.length : 0;
-            state.hanziTotalStrokes = strokeCount;
-            el.hanziStrokeMeta.textContent = strokeCount ? `${singleChar} • ${strokeCount} nét` : singleChar;
+            const n = Array.isArray(data?.strokes) ? data.strokes.length : 0;
+            state.hanziTotalStrokes = n;
+            el.hanziStrokeMeta.textContent = n ? `${singleChar} • ${n} nét` : singleChar;
             onComplete(data);
-            setTimeout(() => {
-              if (state.currentHanziChar === singleChar) playHanziStrokeAnimation();
-            }, 80);
+            setTimeout(() => { if (state.currentHanziChar === singleChar) playHanziStrokeAnimation(); }, 80);
           })
-          .catch(() => {
-            if (state.currentHanziChar !== singleChar) return;
-            el.hanziStrokeStatus.textContent = t("hanziUnavailable");
-          });
+          .catch(() => { if (state.currentHanziChar === singleChar) el.hanziStrokeStatus.textContent = t("hanziUnavailable"); });
       }
     });
-    state.hanziWriter = writer;
   } catch (_) {
     el.hanziStrokeStatus.textContent = t("hanziUnavailable");
   }
 }
 
-el.hanziReplayBtn.addEventListener("click", e => {
-  e.stopPropagation();
-  playHanziStrokeAnimation();
-});
+el.hanziReplayBtn.addEventListener("click", e => { e.stopPropagation(); playHanziStrokeAnimation(); });
+el.hanziGridWrap.addEventListener("click", playHanziStrokeAnimation);
 
-el.hanziGridWrap.addEventListener("click", () => {
-  playHanziStrokeAnimation();
-});
-
-/* ============================ TIỆN ÍCH UI ============================ */
+/* ============================ UI HELPERS & CACHE ============================ */
 function showNotice(message) {
   if (state.noticeTimer) clearTimeout(state.noticeTimer);
   el.notice.textContent = String(message || "");
-  el.notice.style.display = message ? "block" : "none";
+  setShow(el.notice, Boolean(message), "block");
   if (message) {
     state.noticeTimer = setTimeout(() => {
-      el.notice.style.display = "none";
+      setShow(el.notice, false, "block");
       el.notice.textContent = "";
     }, 4500);
   }
 }
 function showError(message) {
   el.error.textContent = String(message || t("errUnknown"));
-  el.error.style.display = "block";
+  setShow(el.error, true, "block");
 }
 function clearError() {
   el.error.textContent = "";
-  el.error.style.display = "none";
+  setShow(el.error, false, "block");
 }
 function clearBackTranslation() {
   el.backTransText.textContent = "";
-  el.backTransBox.style.display = "none";
+  setShow(el.backTransBox, false);
 }
 function setStatus() {
   const ready = Boolean(state.apiKey.trim());
@@ -1581,76 +1182,75 @@ function setBusy(busy, spinnerId) {
     if ($(id)) $(id).disabled = busy;
   });
 }
-function openInfoModal() {
-  closeLangMenu();
-  $("infoModal").style.display = "flex";
-}
-function closeInfoModal() {
-  $("infoModal").style.display = "none";
-  syncVisualViewport();
-}
+function openInfoModal() { closeLangMenu(); setShow($("infoModal"), true); }
+function closeInfoModal() { setShow($("infoModal"), false); syncVisualViewport(); }
 function openSettings() {
   closeLangMenu();
   $("uiLangSelect").value = state.uiLang;
   $("apiKey").value = state.apiKey;
   const isKnown = Array.from($("modelName").options).some(o => o.value === state.model && o.value !== "custom");
-  if (isKnown) {
-    $("modelName").value = state.model;
-    $("customModelField").style.display = "none";
-  } else {
-    $("modelName").value = "custom";
-    $("customModelInput").value = state.model;
-    $("customModelField").style.display = "block";
-  }
-  $("settingsModal").style.display = "flex";
+  $("modelName").value = isKnown ? state.model : "custom";
+  setShow($("customModelField"), !isKnown, "block");
+  if (!isKnown) $("customModelInput").value = state.model;
+  setShow($("settingsModal"), true);
 }
-function closeSettings() {
-  $("settingsModal").style.display = "none";
-  syncVisualViewport();
-}
-function updateCount() {
-  $("charCount").textContent = t("charCount", el.source.value.length);
-}
-function escapeText(value) {
-  return String(value ?? "").replace(/\u0000/g, "");
-}
-function sourceLang() {
-  return state.sourceLang;
-}
-function targetLang() {
-  return state.targetLang;
-}
-function langPrompt(value) {
-  const found = getLangObj(value);
-  return found ? found.prompt : value;
-}
+function closeSettings() { setShow($("settingsModal"), false); syncVisualViewport(); }
+function updateCount() { $("charCount").textContent = t("charCount", el.source.value.length); }
 
 function ensureConfig() {
-  if (!state.apiKey.trim()) {
-    openSettings();
-    throw new Error(t("errNeedKey"));
-  }
-  if (!/^[a-zA-Z0-9._-]{2,100}$/.test(state.model.trim())) {
-    throw new Error(t("errBadModel"));
+  if (!state.apiKey.trim()) { openSettings(); throw new Error(t("errNeedKey")); }
+  if (!/^[a-zA-Z0-9._-]{2,100}$/.test(state.model.trim())) throw new Error(t("errBadModel"));
+}
+
+const stopStream = stream => stream?.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const backoffDelay = attempt => Math.round(600 * Math.pow(1.85, attempt) + Math.random() * 220);
+
+function readCached(key) {
+  if (state.cache.has(key)) return state.cache.get(key);
+  try {
+    const raw = sessionStorage.getItem("st_c_" + key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    state.cache.set(key, parsed);
+    return parsed;
+  } catch (_) {
+    return null;
   }
 }
 
-function stopStream(stream) {
-  if (stream) stream.getTracks().forEach(track => { try { track.stop(); } catch (_) {} });
+function writeCached(key, val) {
+  if (!key || !val) return;
+  if (state.cache.size >= CONFIG.maxCacheEntries) {
+    const oldest = state.cache.keys().next().value;
+    if (oldest) state.cache.delete(oldest);
+  }
+  state.cache.set(key, val);
+  try { sessionStorage.setItem("st_c_" + key, JSON.stringify(val)); } catch (_) {}
+}
+
+function markModelCoolingDown(modelName) {
+  state.modelCooldownUntil[modelName] = Date.now() + CONFIG.modelCooldownMs;
+}
+
+function orderModelsForRequest() {
+  const preferred = state.model.trim();
+  const all = [preferred, ...FALLBACK_MODELS.filter(m => m !== preferred)];
+  const now = Date.now();
+  const ready = all.filter(m => (state.modelCooldownUntil[m] || 0) <= now);
+  const cooling = all.filter(m => (state.modelCooldownUntil[m] || 0) > now);
+  return [...ready, ...cooling];
 }
 
 function persistModelSelection(newModel) {
   const clean = newModel.trim();
   if (!clean) return;
+  delete state.modelCooldownUntil[clean];
   const prev = state.model.trim();
   state.model = clean;
-  try {
-    localStorage.setItem("smart_translate_model_v5", clean);
-  } catch (_) {}
+  try { localStorage.setItem("smart_translate_model_v5", clean); } catch (_) {}
   setStatus();
-  if (prev !== clean) {
-    showNotice(t("switchedModel", clean));
-  }
+  if (prev !== clean) showNotice(t("switchedModel", clean));
 }
 
 function pushHistory(result) {
@@ -1661,37 +1261,31 @@ function pushHistory(result) {
     pinyin: result.pinyin || "",
     examples: Array.isArray(result.examples) ? result.examples.slice(0, 3) : [],
     explanation: result.explanation || "",
-    alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : []
+    alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : [],
+    _sourceSample: result._sourceSample || ""
   };
   state.history = [entry, ...state.history.filter(h => h.translation !== entry.translation)].slice(0, CONFIG.maxHistory);
   renderHistory();
 }
 
 function renderHistory() {
-  el.historyBar.replaceChildren();
-  if (!state.history.length) {
-    el.historyBar.style.display = "none";
-    return;
-  }
-  state.history.forEach(item => {
-    const btn = document.createElement("button");
+  el.historyBar.replaceChildren(...state.history.map(item => {
+    const btn = elTag("button", "chip", item.translation);
     btn.type = "button";
-    btn.className = "chip";
-    btn.textContent = item.translation;
     btn.title = item.translation;
     btn.addEventListener("click", () => renderResult(item, false));
-    el.historyBar.append(btn);
-  });
-  el.historyBar.style.display = "flex";
+    return btn;
+  }));
+  setShow(el.historyBar, state.history.length > 0);
 }
 
-/* ============================ XỬ LÝ ẢNH ============================ */
+/* ============================ IMAGE OPTIMIZATION ============================ */
 function fileToDataUrl(file) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Không thể đọc tệp ảnh."));
-    reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("Dữ liệu ảnh không hợp lệ."));
-    reader.readAsDataURL(file);
+    const r = new FileReader();
+    r.onerror = () => reject(new Error("Không thể đọc tệp ảnh."));
+    r.onload = () => typeof r.result === "string" ? resolve(r.result) : reject(new Error("Dữ liệu ảnh không hợp lệ."));
+    r.readAsDataURL(file);
   });
 }
 function loadImage(src) {
@@ -1705,370 +1299,341 @@ function loadImage(src) {
 async function optimizeImage(file) {
   if (!file || !file.type.startsWith("image/")) throw new Error("Vui lòng chọn một tệp hình ảnh.");
   if (file.size > CONFIG.maxImageBytes) throw new Error("Ảnh vượt quá 12 MB. Hãy chọn ảnh nhỏ hơn.");
-  const original = await fileToDataUrl(file);
-  const img = await loadImage(original);
+  const img = await loadImage(await fileToDataUrl(file));
   const maxDim = Math.max(img.naturalWidth || 1, img.naturalHeight || 1);
   const scale = Math.min(1, CONFIG.maxImageDimension / maxDim);
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.round((img.naturalWidth || 1) * scale));
-  canvas.height = Math.max(1, Math.round((img.naturalHeight || 1) * scale));
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Trình duyệt không hỗ trợ xử lý ảnh.");
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", 0.85);
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round((img.naturalWidth || 1) * scale));
+  c.height = Math.max(1, Math.round((img.naturalHeight || 1) * scale));
+  const g = c.getContext("2d");
+  if (!g) throw new Error("Trình duyệt không hỗ trợ xử lý ảnh.");
+  g.fillStyle = "#ffffff";
+  g.fillRect(0, 0, c.width, c.height);
+  g.drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.8);
 }
 
-/* ============================ GEMINI API (TỰ ĐỘNG ĐỔI MODEL OK) ============================ */
+/* ============================ GEMINI API & SMART ROUTING ============================ */
+function makeRetryError(message, retryable = true, status = 0) {
+  const err = new Error(message);
+  err.retryable = retryable;
+  if (status) err.status = status;
+  return err;
+}
+
 async function rawGeminiRequest(modelName, parts, options) {
-  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1200, timeoutMs = CONFIG.requestTimeoutMs } = options;
+  const {
+    systemInstruction = "",
+    temperature = 0.1,
+    maxOutputTokens = 360,
+    timeoutMs = CONFIG.requestTimeoutMs,
+    expectJson = true
+  } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
-  const url = CONFIG.apiBase + encodeURIComponent(modelName.trim()) + ":generateContent";
+  const url = `${CONFIG.apiBase}${encodeURIComponent(modelName.trim())}:generateContent`;
 
-  const body = {
-    systemInstruction: { parts: [{ text: systemInstruction || "Fast accurate translator. Return valid JSON." }] },
+  const payload = {
     contents: [{ role: "user", parts }],
-    generationConfig: {
-      temperature,
-      maxOutputTokens,
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: "object",
-        properties: {
-          transcript: { type: "string" },
-          translation: { type: "string" },
-          pronunciation: { type: "string" },
-          pinyin: { type: "string" },
-          examples: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                sentence: { type: "string" },
-                reading: { type: "string" },
-                meaning: { type: "string" }
-              },
-              required: ["sentence", "meaning"]
-            }
-          },
-          explanation: { type: "string" },
-          alternatives: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                text: { type: "string" },
-                note: { type: "string" }
-              }
-            }
-          }
-        },
-        required: ["translation"]
-      }
-    }
+    generationConfig: { temperature, maxOutputTokens }
   };
+  if (systemInstruction) payload.systemInstruction = { parts: [{ text: systemInstruction }] };
+  if (expectJson) payload.generationConfig.responseMimeType = "application/json";
 
   let response;
   try {
     response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": state.apiKey.trim()
-      },
-      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json", "x-goog-api-key": state.apiKey.trim() },
+      body: JSON.stringify(payload),
       signal: controller.signal
     });
   } catch (error) {
     clearTimeout(timer);
-    if (error.name === "AbortError") {
-      const err = new Error("Yêu cầu quá thời gian chờ.");
-      err.retryable = true;
-      throw err;
-    }
+    if (error.name === "AbortError") throw makeRetryError("Yêu cầu quá thời gian chờ.", true);
     if (!navigator.onLine) throw new Error("Thiết bị đang ngoại tuyến.");
-    const err = new Error("Lỗi kết nối mạng: " + (error.message || "network"));
-    err.retryable = true;
-    throw err;
+    throw makeRetryError("Lỗi kết nối mạng: " + (error.message || "network"), true);
   }
 
-  let raw;
-  try {
-    raw = await response.text();
-  } catch (_) {
+  let raw = "";
+  try { raw = await response.text(); } catch (_) {
     clearTimeout(timer);
-    const err = new Error("Không đọc được phản hồi từ Gemini.");
-    err.retryable = true;
-    throw err;
+    throw makeRetryError("Không đọc được phản hồi từ Gemini.", true);
   }
   clearTimeout(timer);
 
-  let data;
-  try {
-    data = raw ? JSON.parse(raw) : {};
-  } catch (_) {
-    const err = new Error(`Dữ liệu phản hồi không hợp lệ (HTTP ${response.status}).`);
-    err.status = response.status;
-    err.retryable = response.status >= 500;
-    throw err;
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (_) {
+    throw makeRetryError(`Dữ liệu phản hồi không hợp lệ (HTTP ${response.status}).`, response.status >= 500, response.status);
   }
 
   if (!response.ok) {
     const msg = data?.error?.message || `HTTP ${response.status}`;
-    const err = new Error(msg);
-    err.status = response.status;
-    err.retryable = response.status === 404 || response.status === 429 || response.status >= 500;
-    throw err;
+    throw makeRetryError(msg, [404, 429].includes(response.status) || response.status >= 500, response.status);
   }
-
-  if (data.promptFeedback?.blockReason) {
-    throw new Error("Yêu cầu bị chặn: " + data.promptFeedback.blockReason);
-  }
+  if (data.promptFeedback?.blockReason) throw new Error("Yêu cầu bị chặn: " + data.promptFeedback.blockReason);
   const candidate = data.candidates?.[0];
-  if (!candidate) {
-    const err = new Error("Gemini không trả về kết quả.");
-    err.retryable = true;
-    throw err;
-  }
-  if (candidate.finishReason === "SAFETY") {
-    throw new Error("Nội dung bị bộ lọc an toàn chặn.");
-  }
+  if (!candidate) throw makeRetryError("Gemini không trả về kết quả.", true);
+  if (candidate.finishReason === "SAFETY") throw new Error("Nội dung bị bộ lọc an toàn chặn.");
 
   const text = (candidate.content?.parts || []).map(p => p.text || "").join("").trim();
-  if (!text) {
-    const err = new Error("Gemini trả về nội dung trống.");
-    err.retryable = true;
-    throw err;
-  }
+  if (!text) throw makeRetryError("Gemini trả về nội dung trống.", true);
   return text;
+}
+
+function normalizeModelPayload(rawObj) {
+  if (!rawObj || typeof rawObj !== "object") return {};
+  const rawEx = Array.isArray(rawObj.examples) ? rawObj.examples : (Array.isArray(rawObj.ex) ? rawObj.ex : []);
+  const examples = rawEx.slice(0, 3).map(item => {
+    if (typeof item === "string") return { sentence: item, reading: "", meaning: "" };
+    return {
+      sentence: String(item?.sentence ?? item?.s ?? "").trim(),
+      reading: String(item?.reading ?? item?.r ?? item?.pinyin ?? "").trim(),
+      meaning: String(item?.meaning ?? item?.m ?? "").trim()
+    };
+  }).filter(x => x.sentence || x.meaning);
+
+  return {
+    transcript: String(rawObj.transcript ?? rawObj.src ?? "").trim(),
+    translation: String(rawObj.translation ?? rawObj.tr ?? "").trim(),
+    pronunciation: String(rawObj.pronunciation ?? rawObj.pr ?? "").trim(),
+    pinyin: String(rawObj.pinyin ?? rawObj.py ?? "").trim(),
+    examples
+  };
+}
+
+function parseModelOutput(text, expectJson) {
+  if (!expectJson) return { translation: text.trim() };
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try { return normalizeModelPayload(JSON.parse(cleaned)); } catch (_) {
+    const i = cleaned.indexOf("{"), j = cleaned.lastIndexOf("}");
+    if (i >= 0 && j > i) {
+      try { return normalizeModelPayload(JSON.parse(cleaned.slice(i, j + 1))); } catch (__) {}
+    }
+    throw makeRetryError("Không phân tích được JSON từ Gemini.", true);
+  }
 }
 
 async function geminiRequest(parts, options = {}) {
   ensureConfig();
-
-  const modelsToTry = [state.model.trim()];
-  FALLBACK_MODELS.forEach(m => {
-    if (!modelsToTry.includes(m)) modelsToTry.push(m);
-  });
-
+  const expectJson = options.expectJson !== false;
+  const models = orderModelsForRequest();
   let lastError = null;
-  for (let i = 0; i < modelsToTry.length; i++) {
-    const currentModel = modelsToTry[i];
-    try {
-      const rawText = await rawGeminiRequest(currentModel, parts, options);
-      const parsed = parseJsonResponse(rawText);
-      if (options.requireTranslation !== false && !parsed.translation) {
-        const err = new Error("Không có trường bản dịch hợp lệ.");
-        err.retryable = true;
-        throw err;
+  let lastModel = models[0] || state.model.trim();
+
+  for (let i = 0; i < models.length; i++) {
+    const m = models[i];
+    lastModel = m;
+    const sameModelRetries = i === 0 ? 1 : 0;
+
+    for (let attempt = 0; attempt <= sameModelRetries; attempt++) {
+      try {
+        const rawOut = await rawGeminiRequest(m, parts, { ...options, expectJson });
+        const parsed = parseModelOutput(rawOut, expectJson);
+        if (options.requireTranslation !== false && !parsed.translation) {
+          throw makeRetryError("Không có trường bản dịch hợp lệ.", true);
+        }
+        persistModelSelection(m);
+        return parsed;
+      } catch (err) {
+        lastError = err;
+        const retry = err.retryable || [404, 429, 500, 502, 503, 504].includes(err.status);
+        if ([429, 500, 502, 503, 504].includes(err.status)) markModelCoolingDown(m);
+
+        if (retry && attempt < sameModelRetries) {
+          el.status.textContent = t("tryingFallback");
+          await sleep(backoffDelay(attempt));
+          continue;
+        }
+        if (retry && i < models.length - 1) {
+          el.status.textContent = t("tryingFallback");
+          await sleep(backoffDelay(attempt + 1));
+        }
+        break;
       }
-      persistModelSelection(currentModel);
-      return parsed;
-    } catch (err) {
-      lastError = err;
-      const canTryNext = (
-        err.retryable ||
-        err.status === 503 ||
-        err.status === 404 ||
-        err.status === 429 ||
-        err.status === 500 ||
-        err.status === 502 ||
-        err.status === 504
-      );
-      if (canTryNext && i < modelsToTry.length - 1) {
-        el.status.textContent = t("tryingFallback");
-        continue;
-      }
-      break;
     }
   }
 
   setStatus();
   if (!lastError) throw new Error(t("errUnknown"));
+  const statusTag = lastError.status ? ` (${lastError.status})` : "";
+  const detail = lastError.message ? `: ${lastError.message}` : "";
   if (lastError.status === 503) {
-    throw new Error("Hệ thống Gemini đang quá tải (503). Vui lòng thử lại sau vài giây.");
+    throw new Error(`Hệ thống Gemini đang quá tải${statusTag} trên ${lastModel}${detail}`);
   }
-  if (lastError.status === 400) throw new Error("Yêu cầu không hợp lệ: " + lastError.message);
-  if (lastError.status === 401 || lastError.status === 403) {
-    throw new Error("API Key không hợp lệ hoặc chưa được cấp quyền: " + lastError.message);
+  if (lastError.status === 429) {
+    throw new Error(`Vượt giới hạn tốc độ / quota${statusTag} trên ${lastModel}${detail}`);
   }
-  if (lastError.status === 404) throw new Error("Model không tồn tại hoặc không khả dụng: " + lastError.message);
-  if (lastError.status === 429) throw new Error("Đã vượt giới hạn tốc độ hoặc quota.");
-  throw new Error("Lỗi Gemini API: " + lastError.message);
-}
-
-function parseJsonResponse(text) {
-  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-  try {
-    return JSON.parse(cleaned);
-  } catch (_) {
-    const first = cleaned.indexOf("{");
-    const last = cleaned.lastIndexOf("}");
-    if (first >= 0 && last > first) {
-      try {
-        return JSON.parse(cleaned.slice(first, last + 1));
-      } catch (__) {}
-    }
-    const err = new Error("Không phân tích được JSON từ Gemini.");
-    err.retryable = true;
-    throw err;
-  }
+  throw new Error(`Lỗi Gemini API${statusTag} [${lastModel}]${detail}`);
 }
 
 function isShortWordOrPhrase(text) {
   const s = String(text || "").trim();
-  if (!s || s.length > 60 || /\n/.test(s)) return false;
-  const words = s.split(/\s+/).filter(Boolean);
-  if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) {
-    return Array.from(s).length <= 12;
+  if (!s || s.length > 90 || /\n/.test(s)) return false;
+  if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) return Array.from(s).length <= 16;
+  return s.split(/\s+/).filter(Boolean).length <= 7;
+}
+
+const shouldShowExamplesForResult = (result, inputText = "") =>
+  isShortWordOrPhrase(result?.translation || "") || isShortWordOrPhrase(inputText || "");
+
+function normalizeExampleItem(ex) {
+  if (!ex) return null;
+  if (typeof ex === "string") {
+    const parts = ex.split(" - ").map(s => s.trim()).filter(Boolean);
+    return { sentence: parts[0] || ex.trim(), reading: "", meaning: parts.slice(1).join(" - ") };
   }
-  return words.length <= 5;
+  return {
+    sentence: String(ex.sentence || ex.text || ex.example || "").trim(),
+    reading: String(ex.reading || ex.pinyin || ex.pronunciation || "").trim(),
+    meaning: String(ex.meaning || ex.translation || ex.gloss || "").trim()
+  };
 }
 
-function shouldShowExamplesForResult(result, inputText = "") {
-  return isShortWordOrPhrase(result?.translation || "") || isShortWordOrPhrase(inputText || "");
-}
-
-function translationPrompt({ extraContext = "", fromOverride = "", toOverride = "", sampleText = "" } = {}) {
+function buildLeanPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false, extraTag = "" } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
-  const shortWord = isShortWordOrPhrase(sampleText);
-  const meaningLang = state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
-  const isZhTarget = CHINESE_CODES.includes(targetLang()) && !toOverride;
-  return `Dịch ${from} -> ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
-- Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng, bố cục.
-- Trung Giản thể/Phồn thể: tự nhiên, ưu tiên thuật ngữ nhà máy; giao tiếp lịch sự, tự nhiên.
-- "pronunciation": cách đọc/IPA/Pinyin chuẩn ngắn gọn ở ${to}${isZhTarget ? '; điền cả "pinyin".' : '.'}
-${shortWord
-  ? `- Đầu vào là từ/cụm từ ngắn: điền tối đa 3 phần tử "examples" (câu dùng từ/cụm đó ở ${to}: "sentence", "reading", "meaning" bằng ${meaningLang}); nếu rõ nghĩa/dài có thể để [].`
-  : `- Văn bản dài: đặt "examples": [].`}
-- "explanation", "alternatives": ngắn gọn hoặc rỗng.
-${extraContext ? extraContext + "
-" : ""}Trả JSON đúng schema.`;
+  const needEx = forceExamples || isShortWordOrPhrase(sampleText);
+  const m = meaningLangCode();
+  const exRule = needEx ? `ex:3 short sentences in ${to}({"s","r","m" in ${m}})` : `ex:[]`;
+  return `${extraTag ? extraTag + ". " : ""}${from}->${to}. Keep numbers/codes/names/units. JSON:{"tr":"","pr":"reading","py":"pinyin if ZH",${exRule}}`;
+}
+
+function buildSameChineseLeanPrompt(input, toCode) {
+  const needEx = isShortWordOrPhrase(input);
+  const exRule = needEx ? `ex:3 short sentences in ${toCode}({"s","r","m" in ${meaningLangCode()}})` : `ex:[]`;
+  return `Keep ${toCode} text as tr. JSON:{"tr":${JSON.stringify(input)},"pr":"","py":"pinyin",${exRule}}`;
+}
+
+async function runTranslationTask({
+  spinnerId, parts, systemInstruction = "", maxOutputTokens = 420,
+  sourceSample = "", forceExamples = false, expectJson = true, cacheKey = ""
+}) {
+  if (state.isBusy) return showError(t("errBusy"));
+  clearError();
+
+  if (cacheKey) {
+    const hit = readCached(cacheKey);
+    if (hit) {
+      renderResult({ ...hit, _sourceSample: sourceSample || hit._sourceSample || "" }, true);
+      return;
+    }
+  }
+
+  try {
+    setBusy(true, spinnerId);
+    const result = await geminiRequest(parts, {
+      systemInstruction,
+      temperature: 0.1,
+      maxOutputTokens,
+      requireTranslation: true,
+      expectJson
+    });
+    if (sourceSample) result._sourceSample = sourceSample;
+    if (!forceExamples && !shouldShowExamplesForResult(result, sourceSample)) result.examples = [];
+    if (cacheKey) writeCached(cacheKey, result);
+    renderResult(result, true);
+  } catch (e) {
+    showError(e.message || e);
+  } finally {
+    setBusy(false, spinnerId);
+  }
 }
 
 async function translateText(inputOverride = null) {
-  if (state.isBusy) {
-    showError(t("errBusy"));
-    return;
-  }
+  if (state.isBusy) return showError(t("errBusy"));
   clearError();
   const input = escapeText(inputOverride ?? el.source.value).trim();
-  if (!input) {
-    showError(t("errEmptyText"));
-    return;
-  }
-  if (input.length > 20000) {
-    showError(t("errTooLong"));
-    return;
-  }
+  if (!input) return showError(t("errEmptyText"));
+  if (input.length > 20000) return showError(t("errTooLong"));
   if (sourceLang() !== "auto" && sourceLang() === targetLang() && !CHINESE_CODES.includes(sourceLang())) {
-    showError(t("errSameLang"));
-    return;
+    return showError(t("errSameLang"));
   }
 
-  /* Riêng chữ Trung cùng ngôn ngữ nguồn & đích: giữ nguyên không dịch để đỡ tốn token AI */
   if (isSameChinesePair()) {
     const shortWord = isShortWordOrPhrase(input);
-    const localResult = {
-      translation: input,
-      pronunciation: "",
-      pinyin: "",
-      examples: [],
-      explanation: "",
-      alternatives: [],
-      _sourceSample: input
-    };
+    const localResult = { translation: input, pronunciation: "", pinyin: "", examples: [], explanation: "", alternatives: [], _sourceSample: input };
     renderResult(localResult, true);
     showNotice(t("sameChineseNotice"));
 
-    if (state.apiKey.trim() && shortWord) {
+    if (state.apiKey.trim() && Array.from(input).length <= 90) {
+      const ck = `zh_same|${targetLang()}|${meaningLangCode()}|${input}`;
+      const cached = readCached(ck);
+      if (cached) {
+        renderResult({ ...localResult, ...cached, translation: input, _sourceSample: input }, false);
+        return;
+      }
       try {
-        const meaningLang = state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
-        const meta = await geminiRequest(
-          [{ text: input }],
-          {
-            systemInstruction: `Không dịch sang ngôn ngữ khác. Đặt "translation" = "${input}". Điền "pinyin" & "pronunciation" ngắn gọn và tối đa 3 "examples" (sentence, reading, meaning bằng ${meaningLang}). Trả JSON đúng schema.`,
-            temperature: 0.1,
-            maxOutputTokens: 700,
-            requireTranslation: true
-          }
-        );
-        renderResult({
-          ...localResult,
-          translation: input,
+        const meta = await geminiRequest([{ text: input }], {
+          systemInstruction: buildSameChineseLeanPrompt(input, langPrompt(targetLang())),
+          temperature: 0.1, maxOutputTokens: 360, requireTranslation: true, expectJson: true
+        });
+        const merged = {
           pronunciation: meta.pronunciation || meta.pinyin || "",
           pinyin: meta.pinyin || meta.pronunciation || "",
-          examples: Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : [],
-          _sourceSample: input
-        }, false);
+          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : []
+        };
+        writeCached(ck, merged);
+        renderResult({ ...localResult, ...merged, translation: input, _sourceSample: input }, false);
       } catch (_) {}
     }
     return;
   }
 
-  try {
-    setBusy(true, "translateSpinner");
-    const result = await geminiRequest(
-      [{ text: input }],
-      {
-        systemInstruction: translationPrompt({ sampleText: input }),
-        temperature: 0.1,
-        maxOutputTokens: isShortWordOrPhrase(input) ? 1200 : 850,
-        requireTranslation: true
-      }
-    );
-    result._sourceSample = input;
-    if (!shouldShowExamplesForResult(result, input)) {
-      result.examples = [];
-    }
-    renderResult(result, true);
-  } catch (e) {
-    showError(e.message || e);
-  } finally {
-    setBusy(false, "translateSpinner");
+  const shortWord = isShortWordOrPhrase(input);
+  const cacheKey = `tx|${sourceLang()}|${targetLang()}|${meaningLangCode()}|${input}`;
+
+  if (shortWord) {
+    await runTranslationTask({
+      spinnerId: "translateSpinner",
+      parts: [{ text: input }],
+      systemInstruction: buildLeanPrompt({ sampleText: input }),
+      maxOutputTokens: 440,
+      sourceSample: input,
+      forceExamples: false,
+      expectJson: true,
+      cacheKey
+    });
+  } else {
+    await runTranslationTask({
+      spinnerId: "translateSpinner",
+      parts: [{ text: `Translate ${langPrompt(sourceLang())} to ${langPrompt(targetLang())}. Output translation only.\n${input}` }],
+      systemInstruction: "",
+      maxOutputTokens: 900,
+      sourceSample: input,
+      forceExamples: false,
+      expectJson: false,
+      cacheKey
+    });
   }
 }
 
 async function backTranslateResult() {
-  if (state.isBusy) {
-    showError(t("errBusy"));
-    return;
-  }
+  if (state.isBusy) return showError(t("errBusy"));
   const translated = escapeText(state.lastResult?.translation || el.resultText.textContent || "").trim();
-  if (!translated) {
-    showError(t("errNoResultToBack"));
-    return;
-  }
+  if (!translated) return showError(t("errNoResultToBack"));
   clearError();
 
-  const srcCode = sourceLang();
-  const tgtCode = targetLang();
-  const fallbackBackLang = state.uiLang === "zh" ? "tiếng Trung Giản thể" : state.uiLang === "en" ? "tiếng Anh" : "tiếng Việt";
-  const backTargetPrompt = srcCode === "auto" ? fallbackBackLang : langPrompt(srcCode);
-  const backSourcePrompt = langPrompt(tgtCode);
+  const srcCode = sourceLang(), tgtCode = targetLang();
+  const fallbackLang = state.uiLang === "zh" ? "ZH-CN" : state.uiLang === "en" ? "EN" : "VI";
+  const backTarget = srcCode === "auto" ? fallbackLang : langPrompt(srcCode);
+  const backSource = langPrompt(tgtCode);
+  const cacheKey = `bt|${backSource}|${backTarget}|${translated}`;
 
   try {
     setBusy(true, "backSpin");
-    const res = await geminiRequest(
-      [{ text: translated }],
-      {
-        systemInstruction: translationPrompt({
-          fromOverride: backSourcePrompt,
-          toOverride: backTargetPrompt,
-          sampleText: translated,
-          extraContext: "Dịch ngược chính xác sát nghĩa gốc để kiểm tra chéo bản dịch, giữ nguyên số, mã thiết bị và tên riêng."
-        }),
-        temperature: 0.1,
-        maxOutputTokens: 700,
-        requireTranslation: true
-      }
-    );
-    el.backTransLabel.textContent = `${t("backTransLabel")} (${srcCode === "auto" ? fallbackBackLang : backTargetPrompt})`;
-    el.backTransText.textContent = res.translation || "";
-    el.backTransBox.style.display = "flex";
+    let outText = readCached(cacheKey)?.translation;
+    if (!outText) {
+      const res = await geminiRequest(
+        [{ text: `Translate ${backSource} to ${backTarget}. Output translation only.\n${translated}` }],
+        { systemInstruction: "", temperature: 0.1, maxOutputTokens: 320, requireTranslation: true, expectJson: false }
+      );
+      outText = res.translation || "";
+      if (outText) writeCached(cacheKey, { translation: outText });
+    }
+    el.backTransLabel.textContent = `${t("backTransLabel")} (${srcCode === "auto" ? fallbackLang : backTarget})`;
+    el.backTransText.textContent = outText;
+    setShow(el.backTransBox, true);
     el.ioBox.scrollTop = el.ioBox.scrollHeight;
   } catch (e) {
     showError(e.message || e);
@@ -2078,109 +1643,50 @@ async function backTranslateResult() {
 }
 
 async function translateImage() {
-  if (state.isBusy) {
-    showError(t("errBusy"));
-    return;
-  }
-  clearError();
-  if (!state.imageData) {
-    showError(t("errNoImage"));
-    return;
-  }
-  try {
-    setBusy(true, "imageSpinner");
-    const base64Data = state.imageData.split(",")[1];
-    const prompt = translationPrompt({
-      sampleText: "word",
-      extraContext: "OCR toàn bộ chữ trong ảnh rồi dịch. Nếu chữ trong ảnh là từ/cụm từ ngắn thì điền đủ 3 ví dụ dùng từ trong câu; nếu là đoạn/văn bản dài thì đặt examples là []."
-    });
-    const result = await geminiRequest(
-      [
-        { text: prompt },
-        { inlineData: { mimeType: "image/jpeg", data: base64Data } }
-      ],
-      { systemInstruction: "OCR & dịch nhanh chính xác, giữ nguyên mã/số. Trả JSON.", temperature: 0.1, maxOutputTokens: 1400, requireTranslation: true }
-    );
-    if (!shouldShowExamplesForResult(result, "")) {
-      result.examples = [];
-    }
-    renderResult(result, true);
-  } catch (e) {
-    showError(e.message || e);
-  } finally {
-    setBusy(false, "imageSpinner");
-  }
+  if (!state.imageData) return showError(t("errNoImage"));
+  await runTranslationTask({
+    spinnerId: "imageSpinner",
+    parts: [
+      { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "OCR" }) },
+      { inlineData: { mimeType: "image/jpeg", data: state.imageData.split(",")[1] } }
+    ],
+    systemInstruction: "",
+    maxOutputTokens: 460,
+    forceExamples: true,
+    expectJson: true
+  });
 }
 
 async function translateDrawing() {
-  if (state.isBusy) {
-    showError(t("errBusy"));
-    return;
-  }
-  if (!state.strokes.length) {
-    showError(t("errNoDraw"));
-    return;
-  }
-  try {
-    setBusy(true, "drawSpinner");
-    clearError();
-    const base64Data = el.canvas.toDataURL("image/png").split(",")[1];
-    const prompt = translationPrompt({
-      sampleText: "word",
-      extraContext: "Nhận dạng chữ viết tay rồi dịch. Nếu nét vẽ là từ/cụm từ ngắn thì điền đủ 3 ví dụ dùng từ trong câu; nếu dài thì đặt examples là []."
-    });
-    const result = await geminiRequest(
-      [
-        { text: prompt },
-        { inlineData: { mimeType: "image/png", data: base64Data } }
-      ],
-      { systemInstruction: "Nhận dạng chữ viết tay & dịch nhanh. Trả JSON.", temperature: 0.1, maxOutputTokens: 1200, requireTranslation: true }
-    );
-    if (!shouldShowExamplesForResult(result, "")) {
-      result.examples = [];
-    }
-    renderResult(result, true);
-  } catch (e) {
-    showError(e.message || e);
-  } finally {
-    setBusy(false, "drawSpinner");
-  }
+  if (!state.strokes.length) return showError(t("errNoDraw"));
+  await runTranslationTask({
+    spinnerId: "drawSpinner",
+    parts: [
+      { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "Handwriting" }) },
+      { inlineData: { mimeType: "image/png", data: el.canvas.toDataURL("image/png").split(",")[1] } }
+    ],
+    systemInstruction: "",
+    maxOutputTokens: 460,
+    forceExamples: true,
+    expectJson: true
+  });
 }
 
+/* ============================ RESULT RENDERING ============================ */
 function renderExamples(result) {
   el.examplesList.replaceChildren();
   const showEx = shouldShowExamplesForResult(result, result?._sourceSample || "");
-  const list = showEx && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [];
-  if (!list.length) {
-    el.examplesBox.style.display = "none";
-    return;
-  }
-  list.forEach((ex, idx) => {
-    if (!ex || (!ex.sentence && !ex.meaning)) return;
-    const card = document.createElement("div");
-    card.className = "example-item";
+  const list = (showEx && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [])
+    .map(normalizeExampleItem).filter(ex => ex && (ex.sentence || ex.meaning));
 
-    if (ex.sentence) {
-      const sent = document.createElement("div");
-      sent.className = "example-sentence";
-      sent.textContent = `${idx + 1}. ${ex.sentence}`;
-      card.append(sent);
-    }
-    if (ex.reading) {
-      const read = document.createElement("div");
-      read.className = "example-reading";
-      read.textContent = ex.reading;
-      card.append(read);
-    }
-    if (ex.meaning) {
-      const mean = document.createElement("div");
-      mean.className = "example-meaning";
-      mean.textContent = ex.meaning;
-      card.append(mean);
-    }
+  list.forEach((ex, idx) => {
+    const card = elTag("div", "example-item");
+    if (ex.sentence) card.append(elTag("div", "example-sentence", `${idx + 1}. ${ex.sentence}`));
+    if (ex.reading) card.append(elTag("div", "example-reading", ex.reading));
+    if (ex.meaning) card.append(elTag("div", "example-meaning", ex.meaning));
     el.examplesList.append(card);
   });
-  el.examplesBox.style.display = el.examplesList.children.length ? "flex" : "none";
+  setShow(el.examplesBox, el.examplesList.children.length > 0);
 }
 
 function renderResult(result, saveToHistory = false) {
@@ -2189,80 +1695,60 @@ function renderResult(result, saveToHistory = false) {
   el.resultText.textContent = result.translation || "";
 
   const reading = (result.pronunciation || result.pinyin || "").trim();
-  if (reading) {
-    el.pronunciation.textContent = t("pronunciationPrefix", reading);
-    el.pronunciation.style.display = "block";
-  } else {
-    el.pronunciation.textContent = "";
-    el.pronunciation.style.display = "none";
-  }
+  el.pronunciation.textContent = reading ? t("pronunciationPrefix", reading) : "";
+  setShow(el.pronunciation, Boolean(reading), "block");
 
   refreshHanziStrokeBox(result.translation || "");
   renderExamples(result);
 
   el.explanation.textContent = result.explanation || "";
-  el.explanation.style.display = result.explanation ? "block" : "none";
+  setShow(el.explanation, Boolean(result.explanation), "block");
 
-  el.alternatives.replaceChildren();
-  const alternatives = Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : [];
-  alternatives.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "extra-item";
-    const b = document.createElement("b");
-    b.textContent = item.text || "";
-    const note = document.createElement("div");
-    note.textContent = item.note || "";
-    div.append(b, note);
-    el.alternatives.append(div);
-  });
-  el.alternatives.style.display = alternatives.length ? "flex" : "none";
+  const alts = Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : [];
+  el.alternatives.replaceChildren(...alts.map(item => {
+    const div = elTag("div", "extra-item");
+    div.append(elTag("b", "", item.text || ""), elTag("div", "", item.note || ""));
+    return div;
+  }));
+  setShow(el.alternatives, alts.length > 0);
 
   if (saveToHistory) pushHistory(result);
-
-  el.resultSection.style.display = "flex";
+  setShow(el.resultSection, true);
   el.ioBox.scrollTop = el.ioBox.scrollHeight;
   syncVisualViewport();
 }
 
-/* ============================ CANVAS VẼ TAY ============================ */
+/* ============================ HANDWRITING CANVAS ============================ */
 const ctx = el.canvas.getContext("2d");
-function canvasPoint(event) {
-  const rect = el.canvas.getBoundingClientRect();
-  return {
-    x: ((event.clientX - rect.left) / (rect.width || 1)) * state.canvasWidth,
-    y: ((event.clientY - rect.top) / (rect.height || 1)) * state.canvasHeight
-  };
-}
+const canvasPoint = event => {
+  const r = el.canvas.getBoundingClientRect();
+  return { x: ((event.clientX - r.left) / (r.width || 1)) * state.canvasWidth, y: ((event.clientY - r.top) / (r.height || 1)) * state.canvasHeight };
+};
+
 function resizeCanvas() {
-  const rect = el.canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return;
-  const oldW = state.canvasWidth;
-  const oldH = state.canvasHeight;
+  const r = el.canvas.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  const oldW = state.canvasWidth, oldH = state.canvasHeight;
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
-  const newW = Math.round(rect.width * ratio);
-  const newH = Math.round(rect.height * ratio);
+  const newW = Math.round(r.width * ratio), newH = Math.round(r.height * ratio);
   if (el.canvas.width === newW && el.canvas.height === newH) return;
 
-  el.canvas.width = newW;
-  el.canvas.height = newH;
-  state.canvasWidth = newW;
-  state.canvasHeight = newH;
+  el.canvas.width = state.canvasWidth = newW;
+  el.canvas.height = state.canvasHeight = newH;
   state.canvasDpr = ratio;
-
   if (oldW && oldH) {
-    const sx = newW / oldW;
-    const sy = newH / oldH;
-    state.strokes.forEach(stroke => stroke.points.forEach(p => { p.x *= sx; p.y *= sy; }));
+    const sx = newW / oldW, sy = newH / oldH;
+    state.strokes.forEach(s => s.points.forEach(p => { p.x *= sx; p.y *= sy; }));
   }
   redrawCanvas();
 }
+
 function redrawCanvas() {
   if (!ctx) return;
   ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
+  ctx.lineCap = ctx.lineJoin = "round";
   ctx.strokeStyle = "#101820";
 
   state.strokes.forEach(stroke => {
@@ -2275,6 +1761,7 @@ function redrawCanvas() {
     ctx.stroke();
   });
 }
+
 el.canvas.addEventListener("pointerdown", e => {
   if (el.drawPanel.style.display === "none") return;
   e.preventDefault();
@@ -2290,32 +1777,32 @@ el.canvas.addEventListener("pointermove", e => {
   state.strokes.pop();
 });
 function finishStroke() {
-  if (state.currentStroke) {
-    state.strokes.push(state.currentStroke);
-    state.currentStroke = null;
-    redrawCanvas();
-  }
+  if (!state.currentStroke) return;
+  state.strokes.push(state.currentStroke);
+  state.currentStroke = null;
+  redrawCanvas();
 }
 el.canvas.addEventListener("pointerup", finishStroke);
 el.canvas.addEventListener("pointercancel", finishStroke);
-
 $("undoDraw").addEventListener("click", () => { state.strokes.pop(); redrawCanvas(); });
 $("clearDraw").addEventListener("click", () => { state.strokes = []; state.currentStroke = null; redrawCanvas(); });
-$("drawToggle").addEventListener("click", () => {
-  const show = el.drawPanel.style.display !== "flex";
-  el.drawPanel.style.display = show ? "flex" : "none";
-  if (show) {
-    el.imagePanel.style.display = "none";
-    requestAnimationFrame(resizeCanvas);
-  }
-});
 
-/* ============================ ẢNH (TẢI LÊN) ============================ */
-$("imageToggle").addEventListener("click", () => {
-  const show = el.imagePanel.style.display !== "flex";
-  el.imagePanel.style.display = show ? "flex" : "none";
-  if (show) el.drawPanel.style.display = "none";
-});
+function setToolPanel(panelId) {
+  const isDraw = panelId === "draw", isImage = panelId === "image", isLive = panelId === "live";
+  setShow(el.drawPanel, isDraw);
+  setShow(el.imagePanel, isImage);
+  setShow(el.livePanel, isLive);
+  if (isDraw) requestAnimationFrame(resizeCanvas);
+  if (isLive) updateLiveLabels();
+  else if (state.liveRecorder || state.liveStarting) stopLiveRecording();
+  syncToolStates();
+}
+
+$("drawToggle").addEventListener("click", () => setToolPanel(el.drawPanel.style.display === "flex" ? null : "draw"));
+$("imageToggle").addEventListener("click", () => setToolPanel(el.imagePanel.style.display === "flex" ? null : "image"));
+$("liveToggle").addEventListener("click", () => setToolPanel(el.livePanel.style.display === "flex" ? null : "live"));
+
+/* ============================ IMAGE & RESULT ACTIONS ============================ */
 $("chooseImageBtn").addEventListener("click", () => $("imageFile").click());
 $("imageFile").addEventListener("change", async e => {
   const file = e.target.files?.[0];
@@ -2325,7 +1812,7 @@ $("imageFile").addEventListener("change", async e => {
     const optimized = await optimizeImage(file);
     state.imageData = optimized;
     $("imagePreview").src = optimized;
-    $("imagePreviewWrap").style.display = "flex";
+    setShow($("imagePreviewWrap"), true);
   } catch (err) {
     showError(err.message || err);
   } finally {
@@ -2335,253 +1822,192 @@ $("imageFile").addEventListener("change", async e => {
 $("removeImageBtn").addEventListener("click", () => {
   state.imageData = null;
   $("imagePreview").removeAttribute("src");
-  $("imagePreviewWrap").style.display = "none";
+  setShow($("imagePreviewWrap"), false);
 });
 $("translateImageBtn").addEventListener("click", translateImage);
 $("translateDrawBtn").addEventListener("click", translateDrawing);
-
-/* ============================ DỊCH NGƯỢC / ĐƯA LÊN / CLIPBOARD / TTS ============================ */
 $("backTranslateBtn").addEventListener("click", backTranslateResult);
-
-$("useResultBtn").addEventListener("click", () => {
-  const text = state.lastResult?.translation;
-  if (!text) return;
-  el.source.value = text;
-  updateCount();
-  el.ioBox.scrollTop = 0;
-  el.source.focus();
-  syncVisualViewport();
-});
 
 $("copyBtn").addEventListener("click", async () => {
   const text = state.lastResult?.translation;
   if (!text) return;
   try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-    } else {
-      const ta = document.createElement("textarea");
-      ta.value = text;
+    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+    else {
+      const ta = elTag("textarea", "", text);
       ta.setAttribute("readonly", "");
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
+      Object.assign(ta.style, { position: "fixed", opacity: "0" });
       document.body.append(ta);
       ta.select();
-      const ok = document.execCommand("copy");
+      if (!document.execCommand("copy")) throw new Error("Trình duyệt không cho phép sao chép.");
       ta.remove();
-      if (!ok) throw new Error("Trình duyệt không cho phép sao chép.");
     }
-    setBtnLabel("copyBtn", t("copied"));
-    setTimeout(() => { setBtnLabel("copyBtn", t("copy")); }, 1500);
+    el.copyBtn.classList.add("is-active");
+    setTimeout(() => el.copyBtn.classList.remove("is-active"), 1200);
   } catch (e) {
     showError("Không thể sao chép: " + e.message);
   }
 });
 
-function speak(text, lang) {
-  if (!("speechSynthesis" in window)) {
-    showError("Trình duyệt không hỗ trợ đọc văn bản.");
+function stopSpeaking() {
+  state.speakingSource = false;
+  if ("speechSynthesis" in window) {
+    try { speechSynthesis.cancel(); } catch (_) {}
+  }
+  syncToolStates();
+}
+
+function speak(text, lang, trackSource = false) {
+  if (!("speechSynthesis" in window)) return showError("Trình duyệt không hỗ trợ đọc văn bản.");
+  if (!text) return;
+  if (trackSource && state.speakingSource) {
+    stopSpeaking();
     return;
   }
-  if (!text) return;
-  try { speechSynthesis.cancel(); } catch (_) {}
-  const langInfo = getLangObj(lang);
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = langInfo?.speech || "en-US";
-  utterance.rate = CHINESE_CODES.includes(lang) ? 0.92 : 1;
+  stopSpeaking();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = getLangObj(lang)?.speech || "en-US";
+  u.rate = CHINESE_CODES.includes(lang) ? 0.92 : 1;
   const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
-  const prefix = utterance.lang.toLowerCase().split("-")[0];
+  const prefix = u.lang.toLowerCase().split("-")[0];
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
-  if (voice) utterance.voice = voice;
-  utterance.onerror = () => {};
-  try { speechSynthesis.speak(utterance); } catch (_) {}
-}
-$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang()));
-$("speakSourceBtn").addEventListener("click", () => {
-  const src = sourceLang();
-  speak(el.source.value, src === "auto" ? "Vietnamese" : src);
-});
+  if (voice) u.voice = voice;
 
-/* ============================ GIỌNG NÓI & HỘI THOẠI ============================ */
-function syncMicVisual() {
-  const liveActive = Boolean(state.liveRecorder && state.liveRecorder.state === "recording");
-  el.mic.classList.toggle("recording", liveActive || state.speechActive);
+  if (trackSource) {
+    state.speakingSource = true;
+    syncToolStates();
+  }
+  const finishSpeak = () => {
+    if (trackSource) {
+      state.speakingSource = false;
+      syncToolStates();
+    }
+  };
+  u.onend = finishSpeak;
+  u.onerror = finishSpeak;
+  try {
+    speechSynthesis.speak(u);
+  } catch (_) {
+    finishSpeak();
+  }
 }
+$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang(), false));
+el.speakSourceBtn.addEventListener("click", () => speak(el.source.value, sourceLang() === "auto" ? "Vietnamese" : sourceLang(), true));
 
+/* ============================ SPEECH & LIVE CONVERSATION ============================ */
 function stopSpeechInput() {
   state.speechActive = false;
-  if (state.recognition) {
-    try { state.recognition.stop(); } catch (_) {}
-    state.recognition = null;
-  }
-  syncMicVisual();
+  if (state.recognition) { try { state.recognition.stop(); } catch (_) {} state.recognition = null; }
+  syncToolStates();
 }
 
 function startSpeechInput() {
-  if (state.liveRecorder || state.liveStarting) {
-    stopLiveRecording();
-    return;
-  }
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    showError("Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini.");
-    return;
-  }
-  if (state.speechActive && state.recognition) {
-    stopSpeechInput();
-    return;
-  }
+  if (state.liveRecorder || state.liveStarting) return stopLiveRecording();
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return showError("Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini.");
+  if (state.speechActive && state.recognition) return stopSpeechInput();
 
-  const recognition = new SpeechRecognition();
-  state.recognition = recognition;
+  stopSpeaking();
+  const rec = new SR();
+  state.recognition = rec;
   state.speechActive = true;
-  const langInfo = getLangObj(sourceLang());
-  recognition.lang = (langInfo && langInfo.code !== "auto")
-    ? langInfo.speech
-    : (state.uiLang === "zh" ? "zh-CN" : state.uiLang === "en" ? "en-US" : "vi-VN");
-  recognition.interimResults = true;
-  recognition.continuous = false;
+  const info = getLangObj(sourceLang());
+  rec.lang = (info && info.code !== "auto") ? info.speech : (state.uiLang === "zh" ? "zh-CN" : state.uiLang === "en" ? "en-US" : "vi-VN");
+  rec.interimResults = true;
+  rec.continuous = false;
 
   let finalText = el.source.value ? el.source.value.trim() + " " : "";
-  recognition.onresult = e => {
+  rec.onresult = e => {
     let interim = "";
     for (let i = e.resultIndex; i < e.results.length; i++) {
-      const value = e.results[i][0].transcript;
-      if (e.results[i].isFinal) finalText += value + " ";
-      else interim += value;
+      const val = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += val + " ";
+      else interim += val;
     }
     el.source.value = (finalText + interim).trim();
     updateCount();
   };
-  recognition.onerror = e => {
-    if (e.error !== "aborted" && e.error !== "no-speech") {
-      showError("Lỗi nhận dạng giọng nói: " + e.error);
-    }
-  };
-  recognition.onend = () => {
-    if (state.recognition === recognition) state.recognition = null;
-    state.speechActive = false;
-    syncMicVisual();
-  };
+  rec.onerror = e => { if (!["aborted", "no-speech"].includes(e.error)) showError("Lỗi nhận dạng giọng nói: " + e.error); };
+  rec.onend = () => { if (state.recognition === rec) state.recognition = null; state.speechActive = false; syncToolStates(); };
   try {
-    recognition.start();
-    syncMicVisual();
+    rec.start();
+    syncToolStates();
   } catch (e) {
     state.recognition = null;
     state.speechActive = false;
-    syncMicVisual();
+    syncToolStates();
     showError("Không thể bắt đầu nhận dạng: " + e.message);
   }
 }
 el.mic.addEventListener("click", startSpeechInput);
 
 function updateLiveLabels() {
-  const srcObj = getLangObj(sourceLang());
-  const tgtObj = getLangObj(targetLang());
-  const srcName = sourceLang() === "auto" ? t("autoLabel") : (srcObj?.label[state.uiLang] || sourceLang());
-  const tgtName = tgtObj?.label[state.uiLang] || targetLang();
+  const srcName = sourceLang() === "auto" ? t("autoLabel") : (getLangObj(sourceLang())?.label[state.uiLang] || sourceLang());
+  const tgtName = getLangObj(targetLang())?.label[state.uiLang] || targetLang();
   $("sideABtn").textContent = `${t("personA")} (${srcName})`;
   $("sideBBtn").textContent = `${t("personB")} (${tgtName})`;
 }
 
 function addBubble(text, side, translation) {
-  const empty = el.liveFeed.querySelector("#liveEmptyText");
-  if (empty) empty.remove();
-  const bubble = document.createElement("div");
-  bubble.className = "bubble " + (side === "A" ? "left" : "right");
-  const main = document.createElement("div");
-  main.textContent = text;
-  bubble.append(main);
-  if (translation) {
-    const sub = document.createElement("small");
-    sub.textContent = "→ " + translation;
-    bubble.append(sub);
-  }
-  el.liveFeed.append(bubble);
+  el.liveFeed.querySelector("#liveEmptyText")?.remove();
+  const b = elTag("div", "bubble " + (side === "A" ? "left" : "right"));
+  b.append(elTag("div", "", text));
+  if (translation) b.append(elTag("small", "", "→ " + translation));
+  el.liveFeed.append(b);
   el.liveFeed.scrollTop = el.liveFeed.scrollHeight;
 }
 
-function liveLanguages(side) {
-  const src = sourceLang() === "auto" ? "ngôn ngữ tự động nhận diện của người nói" : langPrompt(sourceLang());
+const liveLanguages = side => {
+  const src = sourceLang() === "auto" ? "auto" : langPrompt(sourceLang());
   const tgt = langPrompt(targetLang());
   return side === "A" ? { from: src, to: tgt } : { from: tgt, to: src };
-}
+};
 
-function supportedRecorderMime() {
-  if (!window.MediaRecorder) return "";
-  const candidates = [
-    "audio/webm;codecs=opus",
-    "audio/webm",
-    "audio/mp4",
-    "audio/aac",
-    "audio/ogg;codecs=opus"
-  ];
-  return candidates.find(type => MediaRecorder.isTypeSupported?.(type)) || "";
+const supportedRecorderMime = () => !window.MediaRecorder ? "" :
+  ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac", "audio/ogg;codecs=opus"].find(m => MediaRecorder.isTypeSupported?.(m)) || "";
+
+function clearLiveState() {
+  stopStream(state.liveStream);
+  state.liveStream = state.liveRecorder = state.liveSide = state.startingSide = null;
+  state.liveStarting = false;
+  updateLiveButtons();
 }
 
 async function stopLiveRecording() {
   state.liveStartToken++;
   state.liveStarting = false;
-  const recorder = state.liveRecorder;
-  if (recorder && recorder.state !== "inactive") {
-    try { recorder.stop(); } catch (_) {}
-  } else {
-    stopStream(state.liveStream);
-    state.liveStream = null;
-    state.liveRecorder = null;
-    state.liveSide = null;
-    state.startingSide = null;
-    updateLiveButtons();
-  }
+  if (state.liveRecorder && state.liveRecorder.state !== "inactive") {
+    try { state.liveRecorder.stop(); } catch (_) {}
+  } else clearLiveState();
 }
 
 function updateLiveButtons() {
   $("sideABtn").classList.toggle("active", state.liveSide === "A" || (state.liveStarting && state.startingSide === "A"));
   $("sideBBtn").classList.toggle("active", state.liveSide === "B" || (state.liveStarting && state.startingSide === "B"));
-  syncMicVisual();
+  syncToolStates();
 }
 
 async function beginLiveRecording(side) {
-  if (state.isBusy) {
-    showError(t("errBusy"));
-    return;
-  }
+  if (state.isBusy) return showError(t("errBusy"));
   if (state.speechActive) stopSpeechInput();
   if (state.liveStarting) return;
-  if (state.liveRecorder) {
-    if (state.liveSide === side) {
-      await stopLiveRecording();
-      return;
-    }
-    showError(t("errSwitchSpeaker"));
-    return;
-  }
-  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-    showError(t("errNoMedia"));
-    return;
-  }
-  if (!state.apiKey.trim()) {
-    openSettings();
-    showError(t("errNeedKey"));
-    return;
-  }
+  if (state.liveRecorder) return state.liveSide === side ? stopLiveRecording() : showError(t("errSwitchSpeaker"));
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return showError(t("errNoMedia"));
+  if (!state.apiKey.trim()) { openSettings(); return showError(t("errNeedKey")); }
 
+  stopSpeaking();
   state.liveStarting = true;
   state.startingSide = side;
-  const startToken = ++state.liveStartToken;
+  const token = ++state.liveStartToken;
   updateLiveButtons();
   el.liveStatus.textContent = "Đang xin quyền microphone…";
   clearError();
 
   let stream;
   try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-    });
-    if (!state.liveStarting || startToken !== state.liveStartToken) {
-      stopStream(stream);
-      return;
-    }
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+    if (!state.liveStarting || token !== state.liveStartToken) return stopStream(stream);
+
     const mime = supportedRecorderMime();
     const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
     state.liveStream = stream;
@@ -2590,33 +2016,16 @@ async function beginLiveRecording(side) {
     state.liveStarting = false;
     state.liveChunks = [];
 
-    recorder.ondataavailable = e => {
-      if (e.data && e.data.size > 0) state.liveChunks.push(e.data);
-    };
-    recorder.onerror = e => {
-      showError("Lỗi ghi âm: " + (e.error?.message || "không xác định"));
-    };
+    recorder.ondataavailable = e => { if (e.data && e.data.size > 0) state.liveChunks.push(e.data); };
+    recorder.onerror = e => showError("Lỗi ghi âm: " + (e.error?.message || "không xác định"));
     recorder.onstop = async () => {
       const chunks = state.liveChunks.slice();
       state.liveChunks = [];
       const actualMime = recorder.mimeType || chunks[0]?.type || "";
-      stopStream(state.liveStream);
-      state.liveStream = null;
-      state.liveRecorder = null;
-      state.liveSide = null;
-      state.startingSide = null;
-      state.liveStarting = false;
-      updateLiveButtons();
-
-      if (!chunks.length) {
-        el.liveStatus.textContent = "Không thu được âm thanh.";
-        return;
-      }
+      clearLiveState();
+      if (!chunks.length) { el.liveStatus.textContent = "Không thu được âm thanh."; return; }
       const blob = new Blob(chunks, { type: actualMime || "audio/mp4" });
-      if (blob.size > CONFIG.maxAudioBytes) {
-        showError("Đoạn ghi âm quá lớn. Hãy nói ngắn hơn.");
-        return;
-      }
+      if (blob.size > CONFIG.maxAudioBytes) return showError("Đoạn ghi âm quá lớn. Hãy nói ngắn hơn.");
       await processLiveAudio(blob, actualMime || blob.type, side);
     };
     recorder.start(250);
@@ -2624,12 +2033,7 @@ async function beginLiveRecording(side) {
     updateLiveButtons();
   } catch (e) {
     stopStream(stream);
-    state.liveStarting = false;
-    state.liveRecorder = null;
-    state.liveStream = null;
-    state.liveSide = null;
-    state.startingSide = null;
-    updateLiveButtons();
+    clearLiveState();
     showError("Không thể truy cập microphone: " + (e.message || e));
     el.liveStatus.textContent = "Không bật được microphone.";
   }
@@ -2637,67 +2041,42 @@ async function beginLiveRecording(side) {
 
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Không thể đọc dữ liệu ghi âm."));
-    reader.onload = () => {
-      const result = String(reader.result || "");
-      const index = result.indexOf(",");
-      if (index < 0) reject(new Error("Dữ liệu âm thanh không hợp lệ."));
-      else resolve(result.slice(index + 1));
+    const r = new FileReader();
+    r.onerror = () => reject(new Error("Không thể đọc dữ liệu ghi âm."));
+    r.onload = () => {
+      const s = String(r.result || ""), idx = s.indexOf(",");
+      idx < 0 ? reject(new Error("Dữ liệu âm thanh không hợp lệ.")) : resolve(s.slice(idx + 1));
     };
-    reader.readAsDataURL(blob);
+    r.readAsDataURL(blob);
   });
 }
 
 async function processLiveAudio(blob, mime, side) {
-  if (state.isBusy) {
-    showError(t("errBusy"));
-    return;
-  }
+  if (state.isBusy) return showError(t("errBusy"));
   state.isBusy = true;
   try {
     const { from, to } = liveLanguages(side);
     const safeMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
-    const supported = [
-      "audio/webm", "audio/mp4", "audio/m4a", "audio/ogg",
-      "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"
-    ].includes(safeMime);
-
-    if (!supported) {
-      throw new Error("Định dạng âm thanh " + (safeMime || "không rõ") + " chưa được hỗ trợ.");
-    }
+    const supported = ["audio/webm", "audio/mp4", "audio/m4a", "audio/ogg", "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"];
+    if (!supported.includes(safeMime)) throw new Error("Định dạng âm thanh " + (safeMime || "không rõ") + " chưa được hỗ trợ.");
 
     el.liveStatus.textContent = "Đang nhận dạng và dịch…";
     const b64 = await blobToBase64(blob);
-    const prompt = `Nghe audio (${from}), phiên âm chính xác rồi dịch tự nhiên sang ${to}. Giữ nguyên số, tên riêng, mã thiết bị. Nếu không rõ ghi [không nghe rõ]. Trả JSON đúng schema.`;
+    const prompt = `Transcribe ${from} and translate to ${to}. JSON:{"src":"","tr":"","py":"pinyin if ZH"}`;
 
     const result = await geminiRequest(
-      [
-        { text: prompt },
-        { inlineData: { mimeType: safeMime, data: b64 } }
-      ],
-      {
-        systemInstruction: "Phiên âm và dịch hội thoại nhanh chính xác. Trả về JSON.",
-        temperature: 0.1,
-        maxOutputTokens: 1200,
-        timeoutMs: 60000,
-        requireTranslation: false
-      }
+      [{ text: prompt }, { inlineData: { mimeType: safeMime, data: b64 } }],
+      { systemInstruction: "", temperature: 0.1, maxOutputTokens: 360, timeoutMs: 50000, requireTranslation: false, expectJson: true }
     );
-
-    if (!result.transcript && !result.translation) {
-      throw new Error("Không nhận dạng được lời nói.");
-    }
+    if (!result.transcript && !result.translation) throw new Error("Không nhận dạng được lời nói.");
 
     const transcript = result.transcript || "(...)";
     const translation = result.translation || "";
     addBubble(transcript, side, translation);
     const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
-    if (result.pinyin && CHINESE_CODES.includes(targetCode)) {
-      addBubble("Pinyin: " + result.pinyin, side, "");
-    }
+    if (result.pinyin && CHINESE_CODES.includes(targetCode)) addBubble("Pinyin: " + result.pinyin, side, "");
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
-    if (translation) speak(translation, targetCode);
+    if (translation) speak(translation, targetCode, false);
   } catch (e) {
     showError(e.message || e);
     el.liveStatus.textContent = "Dịch thất bại. Bạn có thể ghi âm lại.";
@@ -2710,62 +2089,35 @@ $("sideABtn").addEventListener("click", () => beginLiveRecording("A"));
 $("sideBBtn").addEventListener("click", () => beginLiveRecording("B"));
 $("stopLiveBtn").addEventListener("click", stopLiveRecording);
 
-$("liveToggle").addEventListener("click", () => {
-  closeLangMenu();
-  const show = el.livePanel.style.display !== "flex";
-  el.livePanel.style.display = show ? "flex" : "none";
-  $("liveToggle").classList.toggle("active", show);
-  if (show) {
-    el.drawPanel.style.display = "none";
-    el.imagePanel.style.display = "none";
-    updateLiveLabels();
-  } else if (state.liveRecorder || state.liveStarting) {
-    stopLiveRecording();
-  }
-});
+function resetLiveFeed() {
+  const empty = elTag("div", "small", t("liveEmpty"));
+  empty.id = "liveEmptyText";
+  el.liveFeed.replaceChildren(empty);
+  el.liveStatus.textContent = t("liveWaiting");
+}
 
 $("clearLiveBtn").addEventListener("click", () => {
   if (state.liveRecorder || state.liveStarting) stopLiveRecording();
-  el.liveFeed.replaceChildren();
-  const empty = document.createElement("div");
-  empty.className = "small";
-  empty.id = "liveEmptyText";
-  empty.textContent = t("liveEmpty");
-  el.liveFeed.append(empty);
-  el.liveStatus.textContent = t("liveWaiting");
+  resetLiveFeed();
 });
 
-/* ============================ THÔNG TIN / CÀI ĐẶT / ĐỔI NGÔN NGỮ / RESET ============================ */
+/* ============================ MODALS, LANGUAGE & SWAP ============================ */
 $("infoBtn").addEventListener("click", openInfoModal);
 $("closeInfoBtn").addEventListener("click", closeInfoModal);
-$("infoModal").addEventListener("click", e => {
-  if (e.target === $("infoModal")) closeInfoModal();
-});
+$("infoModal").addEventListener("click", e => { if (e.target === $("infoModal")) closeInfoModal(); });
 
 $("settingsBtn").addEventListener("click", openSettings);
 $("cancelSettings").addEventListener("click", closeSettings);
-
-$("modelName").addEventListener("change", e => {
-  $("customModelField").style.display = e.target.value === "custom" ? "block" : "none";
-});
+$("modelName").addEventListener("change", e => setShow($("customModelField"), e.target.value === "custom", "block"));
 
 $("saveSettings").addEventListener("click", () => {
-  const nextUiLang = $("uiLangSelect").value;
+  const nextUi = $("uiLangSelect").value;
   const key = $("apiKey").value.trim();
-  let model = $("modelName").value;
-  if (model === "custom") {
-    model = $("customModelInput").value.trim() || CONFIG.defaultModel;
-  }
-  if (!key) {
-    showError(t("errNeedKey"));
-    return;
-  }
-  if (!/^[a-zA-Z0-9._-]{2,100}$/.test(model)) {
-    showError(t("errBadModel"));
-    return;
-  }
+  const model = $("modelName").value === "custom" ? ($("customModelInput").value.trim() || CONFIG.defaultModel) : $("modelName").value;
+  if (!key) return showError(t("errNeedKey"));
+  if (!/^[a-zA-Z0-9._-]{2,100}$/.test(model)) return showError(t("errBadModel"));
 
-  state.uiLang = I18N[nextUiLang] ? nextUiLang : "vi";
+  state.uiLang = I18N[nextUi] ? nextUi : "vi";
   state.apiKey = key;
   state.model = model;
   try {
@@ -2773,24 +2125,17 @@ $("saveSettings").addEventListener("click", () => {
     localStorage.setItem("smart_translate_key_v5", key);
     localStorage.setItem("smart_translate_model_v5", model);
   } catch (e) {
-    showError("Không thể lưu cài đặt trên trình duyệt: " + e.message);
-    return;
+    return showError("Không thể lưu cài đặt trên trình duyệt: " + e.message);
   }
   applyUILanguage();
   closeSettings();
   clearError();
 });
-
-$("settingsModal").addEventListener("click", e => {
-  if (e.target === $("settingsModal")) closeSettings();
-});
+$("settingsModal").addEventListener("click", e => { if (e.target === $("settingsModal")) closeSettings(); });
 
 function handleLangSelectionChanged() {
-  if (sourceLang() !== "auto" && sourceLang() === targetLang() && !CHINESE_CODES.includes(sourceLang())) {
-    showError(t("errSameLang"));
-  } else {
-    clearError();
-  }
+  if (sourceLang() !== "auto" && sourceLang() === targetLang() && !CHINESE_CODES.includes(sourceLang())) showError(t("errSameLang"));
+  else clearError();
   clearBackTranslation();
 
   if (isSameChinesePair() && el.source.value.trim()) {
@@ -2800,9 +2145,7 @@ function handleLangSelectionChanged() {
       pronunciation: state.lastResult?.pronunciation || state.lastResult?.pinyin || "",
       pinyin: state.lastResult?.pinyin || "",
       examples: isShortWordOrPhrase(sameText) && Array.isArray(state.lastResult?.examples) ? state.lastResult.examples.slice(0, 3) : [],
-      explanation: "",
-      alternatives: [],
-      _sourceSample: sameText
+      explanation: "", alternatives: [], _sourceSample: sameText
     }, false);
     showNotice(t("sameChineseNotice"));
   } else if (state.lastResult?.translation) {
@@ -2810,21 +2153,14 @@ function handleLangSelectionChanged() {
     renderExamples(state.lastResult);
   } else {
     clearHanziStrokeBox();
-    el.examplesBox.style.display = "none";
+    setShow(el.examplesBox, false);
   }
   updateLiveLabels();
   syncVisualViewport();
 }
 
-el.sourceLangBtn.addEventListener("click", e => {
-  e.stopPropagation();
-  openLangMenu("source");
-});
-el.targetLangBtn.addEventListener("click", e => {
-  e.stopPropagation();
-  openLangMenu("target");
-});
-
+el.sourceLangBtn.addEventListener("click", e => { e.stopPropagation(); openLangMenu("source"); });
+el.targetLangBtn.addEventListener("click", e => { e.stopPropagation(); openLangMenu("target"); });
 document.addEventListener("click", e => {
   if (!el.langMenu.classList.contains("open")) return;
   if (e.target instanceof Element && (e.target.closest("#langMenu") || e.target.closest(".lang-picker"))) return;
@@ -2833,47 +2169,41 @@ document.addEventListener("click", e => {
 
 $("swapBtn").addEventListener("click", () => {
   closeLangMenu();
-  const a = sourceLang();
-  const b = targetLang();
-  if (a === "auto") {
-    showError(t("errSwapAuto"));
-    return;
-  }
+  const a = sourceLang(), b = targetLang();
+  if (a === "auto") return showError(t("errSwapAuto"));
   state.sourceLang = b;
   state.targetLang = a;
   renderLangButton("source");
   renderLangButton("target");
   clearBackTranslation();
   clearHanziStrokeBox();
-  el.examplesBox.style.display = "none";
+  setShow(el.examplesBox, false);
   if (state.lastResult) {
     el.source.value = state.lastResult.translation;
     updateCount();
     state.lastResult = null;
-    el.resultSection.style.display = "none";
+    setShow(el.resultSection, false);
   }
   updateLiveLabels();
   syncVisualViewport();
 });
 
 $("translateBtn").addEventListener("click", () => translateText());
-el.source.addEventListener("input", updateCount);
-el.source.addEventListener("focus", () => {
-  closeLangMenu();
-  setTimeout(syncVisualViewport, 120);
+el.source.addEventListener("input", () => {
+  updateCount();
+  if (state.speakingSource) stopSpeaking();
 });
+el.source.addEventListener("focus", () => { closeLangMenu(); setTimeout(syncVisualViewport, 120); });
 el.source.addEventListener("blur", () => setTimeout(syncVisualViewport, 120));
-
 $("clearTextBtn").addEventListener("click", () => {
+  stopSpeaking();
   el.source.value = "";
   updateCount();
 });
 
 $("pasteBtn").addEventListener("click", async () => {
   try {
-    if (!navigator.clipboard?.readText) {
-      throw new Error("Trình duyệt không hỗ trợ đọc clipboard. Hãy nhấn giữ ô nhập và chọn Dán.");
-    }
+    if (!navigator.clipboard?.readText) throw new Error("Trình duyệt không hỗ trợ đọc clipboard. Hãy nhấn giữ ô nhập và chọn Dán.");
     el.source.value = await navigator.clipboard.readText();
     updateCount();
     el.source.focus();
@@ -2882,60 +2212,15 @@ $("pasteBtn").addEventListener("click", async () => {
   }
 });
 
-function resetApp() {
-  closeLangMenu();
-  closeInfoModal();
-  if (state.liveRecorder || state.liveStarting) stopLiveRecording();
-  stopSpeechInput();
-  if ("speechSynthesis" in window) {
-    try { speechSynthesis.cancel(); } catch (_) {}
-  }
-  el.source.value = "";
-  updateCount();
-  state.lastResult = null;
-  clearBackTranslation();
-  clearHanziStrokeBox();
-  el.examplesBox.style.display = "none";
-  el.examplesList.replaceChildren();
-  el.resultSection.style.display = "none";
-  el.resultText.textContent = "";
-  el.pronunciation.textContent = "";
-  el.pronunciation.style.display = "none";
-  el.explanation.textContent = "";
-  el.alternatives.replaceChildren();
-  state.imageData = null;
-  $("imagePreview").removeAttribute("src");
-  $("imagePreviewWrap").style.display = "none";
-  state.strokes = [];
-  state.currentStroke = null;
-  redrawCanvas();
-  el.drawPanel.style.display = "none";
-  el.imagePanel.style.display = "none";
-  el.livePanel.style.display = "none";
-  $("liveToggle").classList.remove("active");
-  el.liveFeed.replaceChildren();
-  const empty = document.createElement("div");
-  empty.className = "small";
-  empty.id = "liveEmptyText";
-  empty.textContent = t("liveEmpty");
-  el.liveFeed.append(empty);
-  el.liveStatus.textContent = t("liveWaiting");
-  setStatus();
-  clearError();
-  syncVisualViewport();
-}
-$("resetBtn").addEventListener("click", resetApp);
-
 window.addEventListener("resize", () => {
   closeLangMenu();
   syncVisualViewport();
   if (el.drawPanel.style.display === "flex") resizeCanvas();
 });
 window.addEventListener("pagehide", () => {
+  stopSpeaking();
   stopSpeechInput();
-  if (state.liveRecorder && state.liveRecorder.state !== "inactive") {
-    try { state.liveRecorder.stop(); } catch (_) {}
-  }
+  if (state.liveRecorder && state.liveRecorder.state !== "inactive") { try { state.liveRecorder.stop(); } catch (_) {} }
   stopStream(state.liveStream);
   if (manifestBlobUrl && window.URL?.revokeObjectURL) {
     try { URL.revokeObjectURL(manifestBlobUrl); } catch (_) {}
@@ -2943,17 +2228,14 @@ window.addEventListener("pagehide", () => {
   }
 });
 
-/* ============================ KHỞI TẠO ============================ */
+/* ============================ INIT ============================ */
 initPWAWithGeneratedIcon();
 applyUILanguage();
+syncToolStates();
 syncVisualViewport();
-if ("speechSynthesis" in window && speechSynthesis.getVoices) {
-  speechSynthesis.getVoices();
-}
+if ("speechSynthesis" in window && speechSynthesis.getVoices) speechSynthesis.getVoices();
 if (window.ResizeObserver && el.canvas.parentElement) {
-  new ResizeObserver(() => {
-    if (el.drawPanel.style.display === "flex") resizeCanvas();
-  }).observe(el.canvas.parentElement);
+  new ResizeObserver(() => { if (el.drawPanel.style.display === "flex") resizeCanvas(); }).observe(el.canvas.parentElement);
 }
 </script>
 </body>
