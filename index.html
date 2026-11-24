@@ -743,7 +743,7 @@ function buildAppIconDataUrl(size = 512) {
   g.fillStyle = glow;
   g.fillRect(0, 0, size, size);
 
-  g.strokeStyle = "rgba(196, 229, 255, 0.28)");
+  g.strokeStyle = "rgba(196, 229, 255, 0.28)";
   g.lineWidth = Math.max(4, Math.round(size * 0.015));
   g.beginPath();
   g.roundRect(pad + 6, pad + 6, size - (pad + 6) * 2, size - (pad + 6) * 2, Math.max(16, rad - 6));
@@ -935,7 +935,7 @@ const I18N = {
     noKey: "Chưa có API Key",
     tryingFallback: "Đang thử model dự phòng...",
     switchedModel: m => `Đã tự động đổi sang model ${m}.`,
-    sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ gốc (chỉ gọi thêm phiên âm/ví dụ nếu cần).",
+    sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ, không tốn token dịch.",
     placeholder: "Nhập nội dung cần dịch...",
     clear: "Xóa",
     paste: "Dán",
@@ -1019,7 +1019,7 @@ const I18N = {
     noKey: "No API Key",
     tryingFallback: "Trying fallback model...",
     switchedModel: m => `Switched to working model ${m}.`,
-    sameChineseNotice: "Source and target are both Chinese: kept as-is (optional reading/examples call still uses API if configured).",
+    sameChineseNotice: "Source and target are both Chinese: kept as-is without translation tokens.",
     placeholder: "Enter text to translate...",
     clear: "Clear",
     paste: "Paste",
@@ -1103,7 +1103,7 @@ const I18N = {
     noKey: "未设置 API Key",
     tryingFallback: "正在尝试备用模型...",
     switchedModel: m => `已自动切换至可用模型 ${m}。`,
-    sameChineseNotice: "源语言和目标语言同为中文：直接保留原文（如需注音/例句仍会请求 API）。",
+    sameChineseNotice: "源语言和目标语言同为中文：直接保留原文，不消耗翻译 Token。",
     placeholder: "输入要翻译的内容...",
     clear: "清空",
     paste: "粘贴",
@@ -1639,11 +1639,18 @@ function stopStream(stream) {
   if (stream) stream.getTracks().forEach(track => { try { track.stop(); } catch (_) {} });
 }
 
-function notifyFallbackModelUsed(usedModel) {
-  const clean = String(usedModel || "").trim();
-  const configured = state.model.trim();
-  if (!clean || !configured || clean === configured) return;
-  showNotice(t("switchedModel", clean));
+function persistModelSelection(newModel) {
+  const clean = newModel.trim();
+  if (!clean) return;
+  const prev = state.model.trim();
+  state.model = clean;
+  try {
+    localStorage.setItem("smart_translate_model_v5", clean);
+  } catch (_) {}
+  setStatus();
+  if (prev !== clean) {
+    showNotice(t("switchedModel", clean));
+  }
 }
 
 function pushHistory(result) {
@@ -1857,7 +1864,7 @@ async function geminiRequest(parts, options = {}) {
         err.retryable = true;
         throw err;
       }
-      notifyFallbackModelUsed(currentModel);
+      persistModelSelection(currentModel);
       return parsed;
     } catch (err) {
       lastError = err;
@@ -2123,19 +2130,7 @@ async function translateDrawing() {
   try {
     setBusy(true, "drawSpinner");
     clearError();
-    const exportCanvas = document.createElement("canvas");
-    const pad = Math.max(16, Math.round((el.canvas.width || 300) * 0.06));
-    exportCanvas.width = (el.canvas.width || 300) + pad * 2;
-    exportCanvas.height = (el.canvas.height || 150) + pad * 2;
-    const ectx = exportCanvas.getContext("2d");
-    let dataUrl = el.canvas.toDataURL("image/png");
-    if (ectx) {
-      ectx.fillStyle = "#ffffff";
-      ectx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-      ectx.drawImage(el.canvas, pad, pad);
-      dataUrl = exportCanvas.toDataURL("image/png");
-    }
-    const base64Data = dataUrl.split(",")[1];
+    const base64Data = el.canvas.toDataURL("image/png").split(",")[1];
     const prompt = translationPrompt({
       sampleText: "word",
       extraContext: "Nhận dạng chữ viết tay rồi dịch. Nếu nét vẽ là từ/cụm từ ngắn thì điền đủ 3 ví dụ dùng từ trong câu; nếu dài thì đặt examples là []."
@@ -2405,10 +2400,7 @@ function speak(text, lang) {
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
   if (voice) utterance.voice = voice;
   utterance.onerror = () => {};
-  try {
-    if (speechSynthesis.paused) speechSynthesis.resume();
-    speechSynthesis.speak(utterance);
-  } catch (_) {}
+  try { speechSynthesis.speak(utterance); } catch (_) {}
 }
 $("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang()));
 $("speakSourceBtn").addEventListener("click", () => {
@@ -2673,11 +2665,9 @@ async function processLiveAudio(blob, mime, side) {
     const { from, to } = liveLanguages(side);
     const safeMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
     const supported = [
-      "audio/webm", "audio/mp4", "audio/m4a", "audio/x-m4a", "audio/ogg",
-      "audio/wav", "audio/wave", "audio/x-wav", "audio/mpeg", "audio/mp3",
-      "audio/aac", "audio/flac", "audio/3gpp"
+      "audio/webm", "audio/mp4", "audio/m4a", "audio/ogg",
+      "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"
     ].includes(safeMime);
-    const normalizedMime = safeMime === "audio/mp3" ? "audio/mpeg" : (safeMime === "audio/x-m4a" ? "audio/m4a" : (safeMime === "audio/wave" || safeMime === "audio/x-wav" ? "audio/wav" : safeMime));
 
     if (!supported) {
       throw new Error("Định dạng âm thanh " + (safeMime || "không rõ") + " chưa được hỗ trợ.");
@@ -2690,7 +2680,7 @@ async function processLiveAudio(blob, mime, side) {
     const result = await geminiRequest(
       [
         { text: prompt },
-        { inlineData: { mimeType: normalizedMime, data: b64 } }
+        { inlineData: { mimeType: safeMime, data: b64 } }
       ],
       {
         systemInstruction: "Phiên âm và dịch hội thoại nhanh chính xác. Trả về JSON.",
@@ -2862,26 +2852,11 @@ $("swapBtn").addEventListener("click", () => {
   clearBackTranslation();
   clearHanziStrokeBox();
   el.examplesBox.style.display = "none";
-  if (state.lastResult && state.lastResult.translation) {
-    const prevTranslation = state.lastResult.translation;
-    const prevSourceInput = el.source.value;
-    el.source.value = prevTranslation;
+  if (state.lastResult) {
+    el.source.value = state.lastResult.translation;
     updateCount();
-    state.lastResult = {
-      translation: prevSourceInput,
-      pronunciation: "",
-      pinyin: "",
-      examples: [],
-      explanation: "",
-      alternatives: [],
-      _sourceSample: prevTranslation
-    };
-    if (prevSourceInput.trim()) {
-      renderResult(state.lastResult, false);
-    } else {
-      state.lastResult = null;
-      el.resultSection.style.display = "none";
-    }
+    state.lastResult = null;
+    el.resultSection.style.display = "none";
   }
   updateLiveLabels();
   syncVisualViewport();
