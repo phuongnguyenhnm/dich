@@ -625,21 +625,22 @@ const FALLBACK_MODELS = [
 
 const LANGUAGES = [
   { code: "auto", label: { vi: "✦ Tự động nhận diện", en: "✦ Auto Detect", zh: "✦ 自动检测" }, prompt: "ngôn ngữ tự động nhận diện", speech: "vi-VN" },
-  { code: "Vietnamese", label: { vi: "VI · Tiếng Việt", en: "VI · Vietnamese", zh: "VI · 越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
-  { code: "Chinese", label: { vi: "ZH · Tiếng Trung", en: "ZH · Chinese", zh: "ZH · 中文" }, prompt: "tiếng Trung", speech: "zh-CN" },
-  { code: "English", label: { vi: "EN · Tiếng Anh", en: "EN · English", zh: "EN · 英语" }, prompt: "tiếng Anh", speech: "en-US" },
-  { code: "Japanese", label: { vi: "JA · Tiếng Nhật", en: "JA · Japanese", zh: "JA · 日语" }, prompt: "tiếng Nhật", speech: "ja-JP" },
-  { code: "Korean", label: { vi: "KO · Tiếng Hàn", en: "KO · Korean", zh: "KO · 韩语" }, prompt: "tiếng Hàn", speech: "ko-KR" },
-  { code: "French", label: { vi: "FR · Tiếng Pháp", en: "FR · French", zh: "FR · 法语" }, prompt: "tiếng Pháp", speech: "fr-FR" },
-  { code: "German", label: { vi: "DE · Tiếng Đức", en: "DE · German", zh: "DE · 德语" }, prompt: "tiếng Đức", speech: "de-DE" },
-  { code: "Spanish", label: { vi: "ES · Tiếng Tây Ban Nha", en: "ES · Spanish", zh: "ES · 西班牙语" }, prompt: "tiếng Tây Ban Nha", speech: "es-ES" },
-  { code: "Thai", label: { vi: "TH · Tiếng Thái", en: "TH · Thai", zh: "TH · 泰语" }, prompt: "tiếng Thái", speech: "th-TH" },
-  { code: "Russian", label: { vi: "RU · Tiếng Nga", en: "RU · Russian", zh: "RU · 俄语" }, prompt: "tiếng Nga", speech: "ru-RU" },
-  { code: "Italian", label: { vi: "IT · Tiếng Ý", en: "IT · Italian", zh: "IT · 意大利语" }, prompt: "tiếng Ý", speech: "it-IT" },
-  { code: "Portuguese", label: { vi: "PT · Tiếng Bồ Đào Nha", en: "PT · Portuguese", zh: "PT · 葡萄牙语" }, prompt: "tiếng Bồ Đào Nha", speech: "pt-PT" },
-  { code: "Arabic", label: { vi: "AR · Tiếng Ả Rập", en: "AR · Arabic", zh: "AR · 阿拉伯语" }, prompt: "tiếng Ả Rập", speech: "ar-SA" },
-  { code: "Indonesian", label: { vi: "ID · Tiếng Indonesia", en: "ID · Indonesian", zh: "ID · 印尼语" }, prompt: "tiếng Indonesia", speech: "id-ID" },
-  { code: "Hindi", label: { vi: "HI · Tiếng Hindi", en: "HI · Hindi", zh: "HI · 印地语" }, prompt: "tiếng Hindi", speech: "hi-IN" }
+  { code: "Vietnamese", label: { vi: "🇻🇳 Tiếng Việt", en: "🇻🇳 Vietnamese", zh: "🇻🇳 越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
+  { code: "Chinese", label: { vi: "🇨🇳 Tiếng Trung Giản thể", en: "🇨🇳 Simplified Chinese", zh: "🇨🇳 简体中文" }, prompt: "tiếng Trung Giản thể", speech: "zh-CN" },
+  { code: "Traditional Chinese", label: { vi: "🇹🇼 Tiếng Trung Phồn thể", en: "🇹🇼 Traditional Chinese", zh: "🇹🇼 繁体中文" }, prompt: "tiếng Trung Phồn thể", speech: "zh-TW" },
+  { code: "English", label: { vi: "🇺🇸 Tiếng Anh", en: "🇺🇸 English", zh: "🇺🇸 英语" }, prompt: "tiếng Anh", speech: "en-US" },
+  { code: "Japanese", label: { vi: "🇯🇵 Tiếng Nhật", en: "🇯🇵 Japanese", zh: "🇯🇵 日语" }, prompt: "tiếng Nhật", speech: "ja-JP" },
+  { code: "Korean", label: { vi: "🇰🇷 Tiếng Hàn", en: "🇰🇷 Korean", zh: "🇰🇷 韩语" }, prompt: "tiếng Hàn", speech: "ko-KR" },
+  { code: "French", label: { vi: "🇫🇷 Tiếng Pháp", en: "🇫🇷 French", zh: "🇫🇷 法语" }, prompt: "tiếng Pháp", speech: "fr-FR" },
+  { code: "German", label: { vi: "🇩🇪 Tiếng Đức", en: "🇩🇪 German", zh: "🇩🇪 德语" }, prompt: "tiếng Đức", speech: "de-DE" },
+  { code: "Spanish", label: { vi: "🇪🇸 Tiếng Tây Ban Nha", en: "🇪🇸 Spanish", zh: "🇪🇸 西班牙语" }, prompt: "tiếng Tây Ban Nha", speech: "es-ES" },
+  { code: "Thai", label: { vi: "🇹🇭 Tiếng Thái", en: "🇹🇭 Thai", zh: "🇹🇭 泰语" }, prompt: "tiếng Thái", speech: "th-TH" },
+  { code: "Russian", label: { vi: "🇷🇺 Tiếng Nga", en: "RU · Russian", zh: "🇷🇺 俄语" }, prompt: "tiếng Nga", speech: "ru-RU" },
+  { code: "Italian", label: { vi: "🇮🇹 Tiếng Ý", en: "🇮🇹 Italian", zh: "🇮🇹 意大利语" }, prompt: "tiếng Ý", speech: "it-IT" },
+  { code: "Portuguese", label: { vi: "🇵🇹 Tiếng Bồ Đào Nha", en: "🇵🇹 Portuguese", zh: "🇵🇹 葡萄牙语" }, prompt: "tiếng Bồ Đào Nha", speech: "pt-PT" },
+  { code: "Arabic", label: { vi: "🇸🇦 Tiếng Ả Rập", en: "🇸🇦 Arabic", zh: "🇸🇦 阿拉伯语" }, prompt: "tiếng Ả Rập", speech: "ar-SA" },
+  { code: "Indonesian", label: { vi: "🇮🇩 Tiếng Indonesia", en: "🇮🇩 Indonesian", zh: "🇮🇩 印尼语" }, prompt: "tiếng Indonesia", speech: "id-ID" },
+  { code: "Hindi", label: { vi: "🇮🇳 Tiếng Hindi", en: "🇮🇳 Hindi", zh: "🇮🇳 印地语" }, prompt: "tiếng Hindi", speech: "hi-IN" }
 ];
 
 const I18N = {
@@ -1363,7 +1364,8 @@ function translationPrompt({ mode = "translate", extraContext = "", fromOverride
   const to = toOverride || langPrompt(targetLang());
   return `Dịch từ ${from} sang ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
 - Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng và bố cục.
-- Tiếng Trung: dùng tiếng Trung giản thể tự nhiên, ưu tiên thuật ngữ nhà máy.
+- Tiếng Trung Giản thể: dùng chữ giản thể tự nhiên, ưu tiên thuật ngữ nhà máy.
+- Tiếng Trung Phồn thể: dùng chữ phồn thể chuẩn tự nhiên, ưu tiên thuật ngữ nhà máy.
 - Giao tiếp: dùng sắc thái lịch sự, tự nhiên.
 ${mode === "polish" ? "- Ưu tiên văn phong mượt mà, tự nhiên hơn." : "- Ưu tiên tốc độ và độ chính xác cao, giữ explanation/alternatives ngắn gọn."}
 ${extraContext}
@@ -1423,7 +1425,7 @@ async function backTranslateResult() {
 
   const srcCode = sourceLang();
   const tgtCode = targetLang();
-  const fallbackBackLang = state.uiLang === "zh" ? "tiếng Trung" : state.uiLang === "en" ? "tiếng Anh" : "tiếng Việt";
+  const fallbackBackLang = state.uiLang === "zh" ? "tiếng Trung Giản thể" : state.uiLang === "en" ? "tiếng Anh" : "tiếng Việt";
   const backTargetPrompt = srcCode === "auto" ? fallbackBackLang : langPrompt(srcCode);
   const backSourcePrompt = langPrompt(tgtCode);
 
@@ -1710,7 +1712,7 @@ function speak(text, lang) {
   const langInfo = getLangObj(lang);
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = langInfo?.speech || "en-US";
-  utterance.rate = lang === "Chinese" ? 0.92 : 1;
+  utterance.rate = (lang === "Chinese" || lang === "Traditional Chinese") ? 0.92 : 1;
   const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
   const prefix = utterance.lang.toLowerCase().split("-")[0];
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
@@ -2015,7 +2017,9 @@ async function processLiveAudio(blob, mime, side) {
     const translation = result.translation || "";
     addBubble(transcript, side, translation);
     const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
-    if (result.pinyin && targetCode === "Chinese") addBubble("Pinyin: " + result.pinyin, side, "");
+    if (result.pinyin && (targetCode === "Chinese" || targetCode === "Traditional Chinese")) {
+      addBubble("Pinyin: " + result.pinyin, side, "");
+    }
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
     if (translation) speak(translation, targetCode);
   } catch (e) {
