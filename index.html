@@ -153,12 +153,15 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .preview img{display:block;max-width:100%;max-height:104px;object-fit:contain}
 .divider{height:1px;background:#ffffff14;margin:1px 0;flex-shrink:0}
 .result{
-  display:none;flex-direction:column;gap:5px;padding-top:2px;flex-shrink:0;overflow-x:hidden;min-width:0
+  display:none;flex-direction:column;gap:6px;padding-top:2px;flex-shrink:0;overflow-x:hidden;min-width:0
 }
 .result-head{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
 .result-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--accent);font-weight:700}
 .result-text{font-size:15.5px;line-height:1.42;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
-.pinyin{color:var(--accent2);font-size:12.5px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word;display:none}
+.pronunciation{
+  color:var(--accent2);font-size:12.5px;line-height:1.38;
+  overflow-wrap:anywhere;word-break:break-word;display:none
+}
 
 /* Khung cách viết Hán tự kiểu mễ tự (1 ký tự) */
 .hanzi-stroke-box{
@@ -202,6 +205,23 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .hanzi-stroke-status{
   text-align:center;font-size:11px;color:var(--muted);min-height:15px
 }
+
+/* 3 ví dụ dùng từ trong câu */
+.examples-box{
+  display:none;flex-direction:column;gap:5px;padding:8px 9px;
+  border:1px solid var(--line);border-radius:10px;background:#122029
+}
+.examples-title{
+  font-size:10px;text-transform:uppercase;letter-spacing:.75px;
+  color:var(--good);font-weight:700
+}
+.example-item{
+  padding:5px 7px;border-radius:8px;background:#192832;
+  font-size:12px;line-height:1.4;overflow-wrap:anywhere
+}
+.example-sentence{font-weight:600;color:var(--text)}
+.example-reading{font-size:11px;color:var(--accent2);margin-top:1px}
+.example-meaning{font-size:11.5px;color:var(--muted);margin-top:1px}
 
 .back-trans{
   display:none;flex-direction:column;gap:3px;padding:7px 9px;
@@ -432,7 +452,7 @@ a{color:var(--accent)}
         </div>
       </div>
       <div class="result-text" id="resultText"></div>
-      <div class="pinyin" id="pinyinText"></div>
+      <div class="pronunciation" id="pronunciationText"></div>
 
       <!-- Cách viết Hán tự (chỉ hiện khi bản dịch tiếng Trung có 1 ký tự) -->
       <div class="hanzi-stroke-box" id="hanziStrokeBox">
@@ -451,6 +471,12 @@ a{color:var(--accent)}
           </button>
         </div>
         <div class="hanzi-stroke-status" id="hanziStrokeStatus"></div>
+      </div>
+
+      <!-- 3 ví dụ dùng từ trong câu (chỉ hiện khi kết quả là từ / cụm từ ngắn) -->
+      <div class="examples-box" id="examplesBox">
+        <span class="examples-title" id="examplesTitle">Ví dụ sử dụng trong câu</span>
+        <div id="examplesList" style="display:flex;flex-direction:column;gap:5px"></div>
       </div>
 
       <div class="back-trans" id="backTransBox">
@@ -820,6 +846,8 @@ const FALLBACK_MODELS = [
   "gemini-3.8-flash"
 ];
 
+const CHINESE_CODES = ["Chinese", "Traditional Chinese"];
+
 const LANGUAGES = [
   { code: "auto", flag: null, label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "ngôn ngữ tự động nhận diện", speech: "vi-VN" },
   { code: "Vietnamese", flag: "vn", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
@@ -847,6 +875,7 @@ const I18N = {
     noKey: "Chưa có API Key",
     tryingFallback: "Đang thử model dự phòng...",
     switchedModel: m => `Đã tự động đổi sang model ${m}.`,
+    sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ, không tốn token dịch.",
     placeholder: "Nhập nội dung cần dịch...",
     clear: "Xóa",
     paste: "Dán",
@@ -864,6 +893,7 @@ const I18N = {
     translateImage: "Dịch nội dung ảnh",
     imageHint: "Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.",
     resultLabel: "Bản dịch",
+    pronunciationPrefix: reading => `Cách đọc: ${reading}`,
     backTranslate: "Dịch ngược",
     backTransLabel: "Kiểm tra dịch ngược",
     hanziTitle: "Cách viết Hán tự",
@@ -872,6 +902,7 @@ const I18N = {
     hanziDone: total => `Hoàn tất ${total} nét • Chạm để xem lại`,
     hanziUnavailable: "Không có dữ liệu nét viết cho ký tự này.",
     hanziReplay: "Viết lại",
+    examplesTitle: "3 ví dụ dùng từ trong câu",
     useResult: "Đưa lên",
     copy: "Sao chép",
     copied: "Đã sao chép ✓",
@@ -923,6 +954,7 @@ const I18N = {
     noKey: "No API Key",
     tryingFallback: "Trying fallback model...",
     switchedModel: m => `Switched to working model ${m}.`,
+    sameChineseNotice: "Source and target are both Chinese: kept as-is without translation tokens.",
     placeholder: "Enter text to translate...",
     clear: "Clear",
     paste: "Paste",
@@ -940,6 +972,7 @@ const I18N = {
     translateImage: "Translate image",
     imageHint: "Supports PNG, JPG, WebP, GIF. Up to 12 MB.",
     resultLabel: "Translation",
+    pronunciationPrefix: reading => `Reading: ${reading}`,
     backTranslate: "Back-translate",
     backTransLabel: "Back-translation check",
     hanziTitle: "Stroke order",
@@ -948,6 +981,7 @@ const I18N = {
     hanziDone: total => `${total} strokes • Tap to replay`,
     hanziUnavailable: "Stroke data unavailable for this character.",
     hanziReplay: "Replay",
+    examplesTitle: "3 usage examples in sentences",
     useResult: "To input",
     copy: "Copy",
     copied: "Copied ✓",
@@ -999,6 +1033,7 @@ const I18N = {
     noKey: "未设置 API Key",
     tryingFallback: "正在尝试备用模型...",
     switchedModel: m => `已自动切换至可用模型 ${m}。`,
+    sameChineseNotice: "源语言和目标语言同为中文：直接保留原文，不消耗翻译 Token。",
     placeholder: "输入要翻译的内容...",
     clear: "清空",
     paste: "粘贴",
@@ -1016,6 +1051,7 @@ const I18N = {
     translateImage: "翻译图片内容",
     imageHint: "支持 PNG、JPG、WebP、GIF，最大 12 MB。",
     resultLabel: "译文",
+    pronunciationPrefix: reading => `读音：${reading}`,
     backTranslate: "回译校验",
     backTransLabel: "回译核对",
     hanziTitle: "汉字笔画顺序",
@@ -1024,6 +1060,7 @@ const I18N = {
     hanziDone: total => `共 ${total} 画 • 点击重播`,
     hanziUnavailable: "暂无该字的笔画数据。",
     hanziReplay: "重播",
+    examplesTitle: "3 个句中用法示例",
     useResult: "上屏",
     copy: "复制",
     copied: "已复制 ✓",
@@ -1113,7 +1150,7 @@ const el = {
   source: $("sourceText"),
   resultSection: $("resultSection"),
   resultText: $("resultText"),
-  pinyin: $("pinyinText"),
+  pronunciation: $("pronunciationText"),
   hanziStrokeBox: $("hanziStrokeBox"),
   hanziStrokeTitle: $("hanziStrokeTitle"),
   hanziStrokeMeta: $("hanziStrokeMeta"),
@@ -1121,6 +1158,9 @@ const el = {
   hanziWriterTarget: $("hanziWriterTarget"),
   hanziReplayBtn: $("hanziReplayBtn"),
   hanziStrokeStatus: $("hanziStrokeStatus"),
+  examplesBox: $("examplesBox"),
+  examplesTitle: $("examplesTitle"),
+  examplesList: $("examplesList"),
   backTransBox: $("backTransBox"),
   backTransLabel: $("backTransLabel"),
   backTransText: $("backTransText"),
@@ -1160,6 +1200,10 @@ function t(key, ...args) {
 
 function getLangObj(code) {
   return LANGUAGES.find(item => item.code === code) || null;
+}
+
+function isSameChinesePair() {
+  return CHINESE_CODES.includes(state.sourceLang) && state.sourceLang === state.targetLang;
 }
 
 function renderLangButton(type) {
@@ -1263,6 +1307,7 @@ function applyUILanguage() {
   setBtnLabel("backTranslateBtn", t("backTranslate"));
   el.hanziStrokeTitle.textContent = t("hanziTitle");
   el.hanziReplayBtn.title = el.hanziReplayBtn.ariaLabel = t("hanziReplay");
+  el.examplesTitle.textContent = t("examplesTitle");
   el.backTransLabel.textContent = t("backTransLabel");
   setBtnLabel("useResultBtn", t("useResult"));
   setBtnLabel("copyBtn", t("copy"));
@@ -1299,8 +1344,8 @@ function applyUILanguage() {
   updateCount();
   updateLiveLabels();
   setStatus();
-  if (state.currentHanziChar) {
-    refreshHanziStrokeBox(state.currentHanziChar);
+  if (state.lastResult) {
+    renderResult(state.lastResult, false);
   }
   syncVisualViewport();
 }
@@ -1341,7 +1386,7 @@ function playHanziStrokeAnimation() {
 }
 
 function refreshHanziStrokeBox(translationText) {
-  const isChineseTarget = targetLang() === "Chinese" || targetLang() === "Traditional Chinese";
+  const isChineseTarget = CHINESE_CODES.includes(targetLang());
   const singleChar = isChineseTarget ? extractSingleChineseChar(translationText) : "";
 
   if (!singleChar) {
@@ -1521,7 +1566,9 @@ function pushHistory(result) {
   if (!result?.translation) return;
   const entry = {
     translation: result.translation,
+    pronunciation: result.pronunciation || result.pinyin || "",
     pinyin: result.pinyin || "",
+    examples: Array.isArray(result.examples) ? result.examples.slice(0, 3) : [],
     explanation: result.explanation || "",
     alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : []
   };
@@ -1584,7 +1631,7 @@ async function optimizeImage(file) {
 
 /* ============================ GEMINI API (TỰ ĐỘNG ĐỔI MODEL OK) ============================ */
 async function rawGeminiRequest(modelName, parts, options) {
-  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1500, timeoutMs = CONFIG.requestTimeoutMs } = options;
+  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1600, timeoutMs = CONFIG.requestTimeoutMs } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = CONFIG.apiBase + encodeURIComponent(modelName.trim()) + ":generateContent";
@@ -1601,7 +1648,19 @@ async function rawGeminiRequest(modelName, parts, options) {
         properties: {
           transcript: { type: "string" },
           translation: { type: "string" },
+          pronunciation: { type: "string" },
           pinyin: { type: "string" },
+          examples: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                sentence: { type: "string" },
+                reading: { type: "string" },
+                meaning: { type: "string" }
+              }
+            }
+          },
           explanation: { type: "string" },
           alternatives: {
             type: "array",
@@ -1766,14 +1825,29 @@ function parseJsonResponse(text) {
   }
 }
 
-function translationPrompt({ mode = "translate", extraContext = "", fromOverride = "", toOverride = "" } = {}) {
+function isShortWordOrPhrase(text) {
+  const s = String(text || "").trim();
+  if (!s || s.length > 48 || /\n/.test(s)) return false;
+  const words = s.split(/\s+/).filter(Boolean);
+  if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) {
+    return Array.from(s).length <= 8;
+  }
+  return words.length <= 3;
+}
+
+function translationPrompt({ mode = "translate", extraContext = "", fromOverride = "", toOverride = "", sampleText = "" } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
+  const shortWord = isShortWordOrPhrase(sampleText);
   return `Dịch từ ${from} sang ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
 - Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng và bố cục.
 - Tiếng Trung Giản thể: dùng chữ giản thể tự nhiên, ưu tiên thuật ngữ nhà máy.
 - Tiếng Trung Phồn thể: dùng chữ phồn thể chuẩn tự nhiên, ưu tiên thuật ngữ nhà máy.
 - Giao tiếp: dùng sắc thái lịch sự, tự nhiên.
+- Luôn điền "pronunciation": cách đọc / phiên âm chuẩn của kết quả ở ${to} (VD tiếng Anh: IPA như "həˈlō"; tiếng Trung: Pinyin có dấu thanh như "Nǐ hǎo"; tiếng Nhật/Hàn/khác: phiên âm/cách đọc rõ ràng; nếu là chữ Latin/Việt đơn giản có thể ghi hướng dẫn phát âm ngắn gọn). Nếu là tiếng Trung cũng điền "pinyin".
+${shortWord
+  ? `- Kết quả là từ/cụm từ ngắn: hãy điền đúng 3 mục trong "examples" minh họa cách dùng từ trong câu ở ${to} (mỗi mục có "sentence", "reading", "meaning" bằng ${state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese"}).`
+  : `- Kết quả là văn bản dài hoặc đoạn văn: KHÔNG cần tạo ví dụ, đặt "examples" là mảng rỗng [].`}
 ${mode === "polish" ? "- Ưu tiên văn phong mượt mà, tự nhiên hơn." : "- Ưu tiên tốc độ và độ chính xác cao, giữ explanation/alternatives ngắn gọn."}
 ${extraContext}
 Trả về JSON đúng schema.`;
@@ -1794,8 +1868,51 @@ async function translateText(mode = "translate", inputOverride = null) {
     showError(t("errTooLong"));
     return;
   }
-  if (sourceLang() !== "auto" && sourceLang() === targetLang()) {
+  if (sourceLang() !== "auto" && sourceLang() === targetLang() && !CHINESE_CODES.includes(sourceLang())) {
     showError(t("errSameLang"));
+    return;
+  }
+
+  /* Riêng chữ Trung cùng ngôn ngữ nguồn & đích: giữ nguyên không dịch để đỡ tốn token AI */
+  if (isSameChinesePair()) {
+    const shortWord = isShortWordOrPhrase(input);
+    const localResult = {
+      translation: input,
+      pronunciation: "",
+      pinyin: "",
+      examples: [],
+      explanation: "",
+      alternatives: []
+    };
+    renderResult(localResult, true);
+    showNotice(t("sameChineseNotice"));
+
+    if (state.apiKey.trim() && (shortWord || Array.from(input).length <= 80)) {
+      try {
+        const meta = await geminiRequest(
+          [{ text: input }],
+          {
+            systemInstruction: `Phân tích từ/câu ${langPrompt(targetLang())} sau mà KHÔNG dịch sang ngôn ngữ khác.
+- Đặt "translation" giống hệt đầu vào: "${input}".
+- Điền "pronunciation" và "pinyin" chuẩn có dấu thanh.
+${shortWord
+  ? `- Vì là từ/cụm từ ngắn, hãy điền đúng 3 mục trong "examples" minh họa cách dùng trong câu ở ${langPrompt(targetLang())} (có "sentence", "reading", "meaning").`
+  : `- Văn bản dài: đặt "examples" là [].`}
+Trả về JSON đúng schema.`,
+            temperature: 0.1,
+            maxOutputTokens: 900,
+            requireTranslation: true
+          }
+        );
+        renderResult({
+          ...localResult,
+          translation: input,
+          pronunciation: meta.pronunciation || meta.pinyin || "",
+          pinyin: meta.pinyin || meta.pronunciation || "",
+          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : []
+        }, false);
+      } catch (_) {}
+    }
     return;
   }
 
@@ -1804,12 +1921,15 @@ async function translateText(mode = "translate", inputOverride = null) {
     const result = await geminiRequest(
       [{ text: input }],
       {
-        systemInstruction: translationPrompt({ mode }),
+        systemInstruction: translationPrompt({ mode, sampleText: input }),
         temperature: 0.1,
-        maxOutputTokens: mode === "polish" ? 2000 : 1400,
+        maxOutputTokens: mode === "polish" ? 2100 : 1600,
         requireTranslation: true
       }
     );
+    if (!isShortWordOrPhrase(result.translation) && !isShortWordOrPhrase(input)) {
+      result.examples = [];
+    }
     renderResult(result, true);
   } catch (e) {
     showError(e.message || e);
@@ -1845,6 +1965,7 @@ async function backTranslateResult() {
           mode: "translate",
           fromOverride: backSourcePrompt,
           toOverride: backTargetPrompt,
+          sampleText: translated,
           extraContext: "Dịch ngược chính xác sát nghĩa gốc để kiểm tra chéo bản dịch, giữ nguyên số, mã thiết bị và tên riêng."
         }),
         temperature: 0.1,
@@ -1877,15 +1998,18 @@ async function translateImage() {
     setBusy(true, "imageSpinner");
     const base64Data = state.imageData.split(",")[1];
     const prompt = translationPrompt({
-      extraContext: "OCR toàn bộ chữ trong ảnh rồi dịch."
+      extraContext: "OCR toàn bộ chữ trong ảnh rồi dịch. Nếu kết quả ngắn thì thêm 3 ví dụ dùng từ trong câu; nếu dài thì examples là []."
     });
     const result = await geminiRequest(
       [
         { text: prompt },
         { inlineData: { mimeType: "image/jpeg", data: base64Data } }
       ],
-      { systemInstruction: "OCR và dịch nhanh chính xác. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1800, requireTranslation: true }
+      { systemInstruction: "OCR và dịch nhanh chính xác. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1900, requireTranslation: true }
     );
+    if (!isShortWordOrPhrase(result.translation)) {
+      result.examples = [];
+    }
     renderResult(result, true);
   } catch (e) {
     showError(e.message || e);
@@ -1908,15 +2032,18 @@ async function translateDrawing() {
     clearError();
     const base64Data = el.canvas.toDataURL("image/png").split(",")[1];
     const prompt = translationPrompt({
-      extraContext: "Nhận dạng chữ viết tay rồi dịch."
+      extraContext: "Nhận dạng chữ viết tay rồi dịch. Nếu kết quả ngắn thì thêm 3 ví dụ dùng từ trong câu; nếu dài thì examples là []."
     });
     const result = await geminiRequest(
       [
         { text: prompt },
         { inlineData: { mimeType: "image/png", data: base64Data } }
       ],
-      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1500, requireTranslation: true }
+      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1600, requireTranslation: true }
     );
+    if (!isShortWordOrPhrase(result.translation)) {
+      result.examples = [];
+    }
     renderResult(result, true);
   } catch (e) {
     showError(e.message || e);
@@ -1925,13 +2052,59 @@ async function translateDrawing() {
   }
 }
 
+function renderExamples(result) {
+  el.examplesList.replaceChildren();
+  const shortWord = isShortWordOrPhrase(result?.translation || "");
+  const list = shortWord && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [];
+  if (!list.length) {
+    el.examplesBox.style.display = "none";
+    return;
+  }
+  list.forEach(ex => {
+    if (!ex || (!ex.sentence && !ex.meaning)) return;
+    const card = document.createElement("div");
+    card.className = "example-item";
+
+    if (ex.sentence) {
+      const sent = document.createElement("div");
+      sent.className = "example-sentence";
+      sent.textContent = ex.sentence;
+      card.append(sent);
+    }
+    if (ex.reading) {
+      const read = document.createElement("div");
+      read.className = "example-reading";
+      read.textContent = ex.reading;
+      card.append(read);
+    }
+    if (ex.meaning) {
+      const mean = document.createElement("div");
+      mean.className = "example-meaning";
+      mean.textContent = ex.meaning;
+      card.append(mean);
+    }
+    el.examplesList.append(card);
+  });
+  el.examplesBox.style.display = el.examplesList.children.length ? "flex" : "none";
+}
+
 function renderResult(result, saveToHistory = false) {
   state.lastResult = result;
-  clearBackTranslation();
+  if (saveToHistory) clearBackTranslation();
   el.resultText.textContent = result.translation || "";
-  el.pinyin.textContent = result.pinyin || "";
-  el.pinyin.style.display = result.pinyin ? "block" : "none";
+
+  const reading = (result.pronunciation || result.pinyin || "").trim();
+  if (reading) {
+    el.pronunciation.textContent = t("pronunciationPrefix", reading);
+    el.pronunciation.style.display = "block";
+  } else {
+    el.pronunciation.textContent = "";
+    el.pronunciation.style.display = "none";
+  }
+
   refreshHanziStrokeBox(result.translation || "");
+  renderExamples(result);
+
   el.explanation.textContent = result.explanation || "";
   el.explanation.style.display = result.explanation ? "block" : "none";
 
@@ -2120,7 +2293,7 @@ function speak(text, lang) {
   const langInfo = getLangObj(lang);
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = langInfo?.speech || "en-US";
-  utterance.rate = (lang === "Chinese" || lang === "Traditional Chinese") ? 0.92 : 1;
+  utterance.rate = CHINESE_CODES.includes(lang) ? 0.92 : 1;
   const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
   const prefix = utterance.lang.toLowerCase().split("-")[0];
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
@@ -2425,7 +2598,7 @@ async function processLiveAudio(blob, mime, side) {
     const translation = result.translation || "";
     addBubble(transcript, side, translation);
     const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
-    if (result.pinyin && (targetCode === "Chinese" || targetCode === "Traditional Chinese")) {
+    if (result.pinyin && CHINESE_CODES.includes(targetCode)) {
       addBubble("Pinyin: " + result.pinyin, side, "");
     }
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
@@ -2512,13 +2685,30 @@ $("settingsModal").addEventListener("click", e => {
 });
 
 function handleLangSelectionChanged() {
-  if (sourceLang() !== "auto" && sourceLang() === targetLang()) showError(t("errSameLang"));
-  else clearError();
+  if (sourceLang() !== "auto" && sourceLang() === targetLang() && !CHINESE_CODES.includes(sourceLang())) {
+    showError(t("errSameLang"));
+  } else {
+    clearError();
+  }
   clearBackTranslation();
-  if (state.lastResult?.translation) {
+
+  if (isSameChinesePair() && el.source.value.trim()) {
+    const sameText = el.source.value.trim();
+    renderResult({
+      translation: sameText,
+      pronunciation: state.lastResult?.pronunciation || state.lastResult?.pinyin || "",
+      pinyin: state.lastResult?.pinyin || "",
+      examples: isShortWordOrPhrase(sameText) && Array.isArray(state.lastResult?.examples) ? state.lastResult.examples.slice(0, 3) : [],
+      explanation: "",
+      alternatives: []
+    }, false);
+    showNotice(t("sameChineseNotice"));
+  } else if (state.lastResult?.translation) {
     refreshHanziStrokeBox(state.lastResult.translation);
+    renderExamples(state.lastResult);
   } else {
     clearHanziStrokeBox();
+    el.examplesBox.style.display = "none";
   }
   updateLiveLabels();
   syncVisualViewport();
@@ -2553,6 +2743,7 @@ $("swapBtn").addEventListener("click", () => {
   renderLangButton("target");
   clearBackTranslation();
   clearHanziStrokeBox();
+  el.examplesBox.style.display = "none";
   if (state.lastResult) {
     el.source.value = state.lastResult.translation;
     updateCount();
@@ -2602,9 +2793,12 @@ function resetApp() {
   state.lastResult = null;
   clearBackTranslation();
   clearHanziStrokeBox();
+  el.examplesBox.style.display = "none";
+  el.examplesList.replaceChildren();
   el.resultSection.style.display = "none";
   el.resultText.textContent = "";
-  el.pinyin.textContent = "";
+  el.pronunciation.textContent = "";
+  el.pronunciation.style.display = "none";
   el.explanation.textContent = "";
   el.alternatives.replaceChildren();
   state.imageData = null;
