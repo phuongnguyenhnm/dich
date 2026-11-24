@@ -692,8 +692,8 @@ const CONFIG = {
   maxQueuedRequests: 3,
   maxSameModelRetries: 1,
   maxFallbackModels: 1,
-  cachePrefix: "st_c_v2_",
-  cacheIndexKey: "st_cache_index_v2"
+  cachePrefix: "st_c_v3_",
+  cacheIndexKey: "st_cache_index_v3"
 };
 
 const FALLBACK_MODELS = [
@@ -1533,7 +1533,7 @@ function normalizeModelPayload(rawObj) {
   return {
     transcript: String(rawObj.transcript ?? rawObj.src ?? "").trim(),
     translation: String(rawObj.translation ?? rawObj.tr ?? "").trim(),
-    pronunciation: String(rawObj.pronunciation ?? rawObj.pr ?? "").trim(),
+    pronunciation: String(rawObj.pronunciation ?? rawObj.pr ?? rawObj.reading ?? rawObj.py ?? rawObj.pinyin ?? "").trim(),
     pinyin: String(rawObj.pinyin ?? rawObj.py ?? "").trim(),
     examples
   };
@@ -1718,20 +1718,26 @@ function buildLeanPrompt({ fromOverride = "", toOverride = "", sampleText = "", 
   const adaptiveExamples = extraTag === "OCR" || extraTag === "Handwriting";
   const needExamples = forceExamples || isShortWordOrPhrase(sampleText);
   const meaning = meaningLangCode();
+  const readingRule = `If ${to} uses a non-Latin writing system, ALWAYS provide its native-script text plus a complete standard Latin romanization: use Hanyu Pinyin with tone marks for Chinese, Hepburn for Japanese, Revised Romanization for Korean, and the standard accepted romanization for other scripts. Never replace native characters with romanization. For Latin-script languages, leave reading fields empty.`;
   const examplesRule = needExamples
-    ? `Return up to 3 short examples in ${to}; each has s (sentence), r (reading if needed), m (meaning in ${meaning}).`
+    ? `Return up to 3 short usage examples. Each ex item MUST contain s (the complete example sentence in ${to}'s native writing system), r (the complete romanization/pronunciation of that same sentence when applicable; for Chinese, tone-marked Hanyu Pinyin), and m (meaning in ${meaning}). Do not put the meaning in s. Do not omit native script from s.`
     : adaptiveExamples
-      ? `Only if the recognized text is a short word or phrase (at most 7 words), return up to 3 examples; otherwise return ex as an empty array. Meanings use ${meaning}.`
+      ? `Only if the recognized text is a short word or phrase (at most 7 words), return up to 3 examples with s in native script, r as full romanization when applicable, and m as meaning in ${meaning}; otherwise ex must be [].`
       : "Return ex as an empty array.";
-  return `${extraTag ? extraTag + ". " : ""}Translate ${from} to ${to}. Preserve names, numbers, codes and units. Return JSON only: {"tr":"translation","pr":"pronunciation","py":"pinyin if Chinese","ex":[{"s":"","r":"","m":""}]}. ${examplesRule}`;
+  return `${extraTag ? extraTag + ". " : ""}Translate ${from} to ${to}. Preserve names, numbers, codes and units. ${readingRule} Return JSON only: {"tr":"native-script translation","pr":"full romanization/pronunciation when applicable","py":"tone-marked Hanyu Pinyin for Chinese, otherwise empty","ex":[{"s":"native-script example","r":"full romanization when applicable","m":"meaning"}]}. ${examplesRule}`;
 }
 
 function buildSameChineseLeanPrompt(_input, toCode) {
   const needExamples = isShortWordOrPhrase(_input);
   const examplesRule = needExamples
-    ? `Add up to 3 short usage examples in ${toCode}; meanings in ${meaningLangCode()}.`
+    ? `Add up to 3 short examples. Each s MUST be a complete sentence in Chinese characters, r MUST be its complete tone-marked Hanyu Pinyin, and m is the meaning in ${meaningLangCode()}.`
     : "Return ex as an empty array.";
-  return `Keep the input unchanged as tr. Add pinyin/pronunciation only if useful. Return compact JSON only: {"tr":"","pr":"","py":"","ex":[{"s":"","r":"","m":""}]}. ${examplesRule}`;
+  return `Keep tr exactly as the original Chinese characters. ALWAYS return complete tone-marked Hanyu Pinyin in both pr and py. Never return pinyin instead of Chinese characters. Return compact JSON only: {"tr":"Chinese characters","pr":"tone-marked Hanyu Pinyin","py":"tone-marked Hanyu Pinyin","ex":[{"s":"Chinese characters","r":"tone-marked Hanyu Pinyin","m":"meaning"}]}. ${examplesRule}`;
+}
+
+function buildLongTranslationPrompt() {
+  const from = langPrompt(sourceLang()), to = langPrompt(targetLang());
+  return `Translate ${from} to ${to}. Preserve meaning, names, numbers, formatting and units. Keep the translation in the target language's native writing system. If the target uses a non-Latin script, also provide a complete standard romanization in pr (Hanyu Pinyin with tones for Chinese, Hepburn for Japanese, Revised Romanization for Korean, standard romanization for other scripts); otherwise pr and py are empty. Return JSON only: {"tr":"translation","pr":"romanization or pronunciation","py":"Hanyu Pinyin for Chinese or empty","ex":[]}. Do not explain.`;
 }
 
 async function runTranslationTask({
@@ -1830,15 +1836,16 @@ async function translateText(inputOverride = null) {
       cacheKey
     });
   } else {
-    const outputBudget = Math.min(12288, Math.max(256, Math.ceil(input.length / 2) + 160));
+    const needsRomanization = ["Chinese", "Traditional Chinese", "Japanese", "Korean", "Thai", "Russian", "Arabic", "Hindi"].includes(targetLang());
+    const outputBudget = Math.min(12288, Math.max(384, Math.ceil(input.length * (needsRomanization ? 1.2 : 0.5)) + 220));
     await runTranslationTask({
       spinnerId: "translateSpinner",
       parts: [{ text: input }],
-      systemInstruction: `Translate ${langPrompt(sourceLang())} to ${langPrompt(targetLang())}. Preserve meaning, names, numbers, formatting and units. Output only the translation; do not explain.`,
+      systemInstruction: buildLongTranslationPrompt(),
       maxOutputTokens: outputBudget,
       sourceSample: input,
       forceExamples: false,
-      expectJson: false,
+      expectJson: true,
       cacheKey
     });
   }
@@ -2298,7 +2305,7 @@ async function processLiveAudio(blob, mime, side) {
 
     el.liveStatus.textContent = "Đang nhận dạng và dịch…";
     const b64 = await blobToBase64(blob);
-    const prompt = `Transcribe ${from} and translate to ${to}. JSON:{"src":"","tr":"","py":"pinyin if ZH"}`;
+    const prompt = `Transcribe ${from} and translate to ${to}. Keep transcript and translation in native script. If target uses a non-Latin script, include complete standard romanization in pr (Hanyu Pinyin with tones for Chinese, Hepburn for Japanese, Revised Romanization for Korean); otherwise leave pr empty. JSON only:{"src":"transcript","tr":"translation","pr":"romanization","py":"Hanyu Pinyin if Chinese"}`;
 
     const result = await geminiRequest(
       [{ text: prompt }, { inlineData: { mimeType: safeMime, data: b64 } }],
@@ -2310,7 +2317,8 @@ async function processLiveAudio(blob, mime, side) {
     const translation = result.translation || "";
     addBubble(transcript, side, translation);
     const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
-    if (result.pinyin && CHINESE_CODES.includes(targetCode)) addBubble("Pinyin: " + result.pinyin, side, "");
+    const liveReading = result.pronunciation || result.pinyin || "";
+    if (liveReading) addBubble((CHINESE_CODES.includes(targetCode) ? "Pinyin: " : "Reading: ") + liveReading, side, "");
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
     if (translation) speak(translation, targetCode, false);
   } catch (e) {
