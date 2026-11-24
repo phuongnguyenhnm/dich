@@ -687,15 +687,18 @@ const CONFIG = {
   defaultModel: "gemini-3.5-flash-lite",
   maxHistory: 5,
   maxCacheEntries: 80,
-  modelCooldownMs: 25000
+  modelCooldownMs: 60000,
+  quotaCooldownMs: 60000,
+  maxQueuedRequests: 3,
+  maxSameModelRetries: 1,
+  maxFallbackModels: 1,
+  cachePrefix: "st_c_v2_",
+  cacheIndexKey: "st_cache_index_v2"
 };
 
 const FALLBACK_MODELS = [
-  "gemini-3.5-flash-lite",
-  "gemini-3.5-flash",
   "gemini-3.6-flash",
-  "gemini-3.7-flash",
-  "gemini-3.8-flash"
+  "gemini-3.5-flash-lite"
 ];
 
 const CHINESE_CODES = ["Chinese", "Traditional Chinese"];
@@ -859,7 +862,12 @@ const state = {
   apiKey: localStorage.getItem("smart_translate_key_v5") || "",
   model: localStorage.getItem("smart_translate_model_v5") || CONFIG.defaultModel,
   modelCooldownUntil: {},
+  globalCooldownUntil: 0,
   cache: new Map(),
+  cacheIndex: [],
+  requestQueueTail: Promise.resolve(),
+  pendingRequests: 0,
+  inFlightTextRequests: new Map(),
   sourceLang: "auto",
   targetLang: "Chinese",
   openPickerType: null,
@@ -1204,42 +1212,126 @@ function ensureConfig() {
 
 const stopStream = stream => stream?.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const backoffDelay = attempt => Math.round(600 * Math.pow(1.85, attempt) + Math.random() * 220);
+
+function cacheStorageKey(key) {
+  // Short deterministic key: never put full user text into sessionStorage key names.
+  let h1 = 0x811c9dc5, h2 = 0x9e3779b9;
+  const value = String(key || "");
+  for (let i = 0; i < value.length; i++) {
+    const c = value.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 0x01000193);
+    h2 = Math.imul(h2 ^ c, 0x85ebca6b);
+  }
+  return CONFIG.cachePrefix + (h1 >>> 0).toString(36) + (h2 >>> 0).toString(36);
+}
+
+function touchCacheKey(storageKey) {
+  state.cacheIndex = state.cacheIndex.filter(k => k !== storageKey);
+  state.cacheIndex.push(storageKey);
+}
+
+function loadCacheIndex() {
+  try {
+    // Remove legacy entries whose storage keys contained the complete user text.
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);
+      if (key && key.startsWith("st_c_") && !key.startsWith(CONFIG.cachePrefix)) {
+        sessionStorage.removeItem(key);
+      }
+    }
+  } catch (_) {}
+  try {
+    const parsed = JSON.parse(sessionStorage.getItem(CONFIG.cacheIndexKey) || "[]");
+    state.cacheIndex = Array.isArray(parsed)
+      ? parsed.filter(k => typeof k === "string" && k.startsWith(CONFIG.cachePrefix) && sessionStorage.getItem(k) !== null).slice(-CONFIG.maxCacheEntries)
+      : [];
+  } catch (_) {
+    state.cacheIndex = [];
+  }
+}
+
+function persistCacheIndex() {
+  try { sessionStorage.setItem(CONFIG.cacheIndexKey, JSON.stringify(state.cacheIndex)); } catch (_) {}
+}
 
 function readCached(key) {
-  if (state.cache.has(key)) return state.cache.get(key);
+  if (!key) return null;
+  const storageKey = cacheStorageKey(key);
+  if (state.cache.has(storageKey)) {
+    const value = state.cache.get(storageKey);
+    state.cache.delete(storageKey);
+    state.cache.set(storageKey, value);
+    touchCacheKey(storageKey);
+    return value;
+  }
   try {
-    const raw = sessionStorage.getItem("st_c_" + key);
+    const raw = sessionStorage.getItem(storageKey);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    state.cache.set(key, parsed);
+    if (!parsed || typeof parsed !== "object") return null;
+    state.cache.set(storageKey, parsed);
+    touchCacheKey(storageKey);
+    persistCacheIndex();
     return parsed;
   } catch (_) {
+    try { sessionStorage.removeItem(storageKey); } catch (__) {}
     return null;
   }
 }
 
 function writeCached(key, val) {
-  if (!key || !val) return;
-  if (state.cache.size >= CONFIG.maxCacheEntries) {
-    const oldest = state.cache.keys().next().value;
-    if (oldest) state.cache.delete(oldest);
+  if (!key || !val || typeof val !== "object") return;
+  const storageKey = cacheStorageKey(key);
+  state.cache.delete(storageKey);
+  state.cache.set(storageKey, val);
+  touchCacheKey(storageKey);
+
+  while (state.cacheIndex.length > CONFIG.maxCacheEntries) {
+    const oldest = state.cacheIndex.shift();
+    state.cache.delete(oldest);
+    try { sessionStorage.removeItem(oldest); } catch (_) {}
   }
-  state.cache.set(key, val);
-  try { sessionStorage.setItem("st_c_" + key, JSON.stringify(val)); } catch (_) {}
+  while (state.cache.size > CONFIG.maxCacheEntries) {
+    const oldest = state.cache.keys().next().value;
+    state.cache.delete(oldest);
+  }
+
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(val));
+    persistCacheIndex();
+  } catch (_) {
+    // Storage may be disabled/full. Memory cache remains usable.
+    try {
+      const oldest = state.cacheIndex.shift();
+      if (oldest) {
+        state.cache.delete(oldest);
+        sessionStorage.removeItem(oldest);
+      }
+      sessionStorage.setItem(storageKey, JSON.stringify(val));
+      persistCacheIndex();
+    } catch (__) {}
+  }
 }
 
-function markModelCoolingDown(modelName) {
-  state.modelCooldownUntil[modelName] = Date.now() + CONFIG.modelCooldownMs;
+function markModelCoolingDown(modelName, durationMs = CONFIG.modelCooldownMs) {
+  if (!modelName) return;
+  state.modelCooldownUntil[modelName] = Date.now() + Math.max(1000, durationMs);
+}
+
+function canonicalModelName(modelName) {
+  const name = String(modelName || "").trim();
+  const aliases = {
+    "gemini-3.5-flash": "gemini-3.6-flash",
+    "gemini-3.7-flash": "gemini-3.8-flash"
+  };
+  return aliases[name] || name;
 }
 
 function orderModelsForRequest() {
-  const preferred = state.model.trim();
-  const all = [preferred, ...FALLBACK_MODELS.filter(m => m !== preferred)];
+  const preferred = canonicalModelName(state.model);
+  const all = [...new Set([preferred, ...FALLBACK_MODELS.map(canonicalModelName).filter(m => m !== preferred)])];
   const now = Date.now();
-  const ready = all.filter(m => (state.modelCooldownUntil[m] || 0) <= now);
-  const cooling = all.filter(m => (state.modelCooldownUntil[m] || 0) > now);
-  return [...ready, ...cooling];
+  return all.filter(m => (state.modelCooldownUntil[m] || 0) <= now);
 }
 
 function persistModelSelection(newModel) {
@@ -1314,14 +1406,29 @@ async function optimizeImage(file) {
 }
 
 /* ============================ GEMINI API & SMART ROUTING ============================ */
-function makeRetryError(message, retryable = true, status = 0) {
+function makeRetryError(message, retryable = false, status = 0, retryAfterMs = 0) {
   const err = new Error(message);
   err.retryable = retryable;
   if (status) err.status = status;
+  if (retryAfterMs > 0) err.retryAfterMs = retryAfterMs;
   return err;
 }
 
-async function rawGeminiRequest(modelName, parts, options) {
+function parseRetryAfter(response) {
+  const raw = response?.headers?.get?.("Retry-After");
+  if (!raw) return 0;
+  const seconds = Number(raw);
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.min(seconds * 1000, 120000);
+  const date = Date.parse(raw);
+  return Number.isFinite(date) ? Math.max(0, Math.min(date - Date.now(), 120000)) : 0;
+}
+
+function retryDelay(attempt, serverDelay = 0, base = 900) {
+  const exponential = Math.min(15000, base * (2 ** attempt));
+  return Math.max(serverDelay, Math.round(exponential + Math.random() * 250));
+}
+
+async function rawGeminiRequest(modelName, parts, options = {}) {
   const {
     systemInstruction = "",
     temperature = 0.1,
@@ -1329,56 +1436,86 @@ async function rawGeminiRequest(modelName, parts, options) {
     timeoutMs = CONFIG.requestTimeoutMs,
     expectJson = true
   } = options;
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = `${CONFIG.apiBase}${encodeURIComponent(modelName.trim())}:generateContent`;
+  const generationConfig = { temperature, maxOutputTokens };
+  if (expectJson) generationConfig.responseMimeType = "application/json";
+  if (["gemini-3.5-flash-lite", "gemini-3.6-flash"].includes(modelName.trim())) {
+    generationConfig.thinkingConfig = { thinkingLevel: "minimal" };
+  } else if (modelName.trim() === "gemini-3.8-flash") {
+    generationConfig.thinkingConfig = { thinkingLevel: "low" };
+  }
 
   const payload = {
     contents: [{ role: "user", parts }],
-    generationConfig: { temperature, maxOutputTokens }
+    generationConfig
   };
   if (systemInstruction) payload.systemInstruction = { parts: [{ text: systemInstruction }] };
-  if (expectJson) payload.generationConfig.responseMimeType = "application/json";
 
   let response;
   try {
     response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": state.apiKey.trim() },
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": state.apiKey.trim()
+      },
       body: JSON.stringify(payload),
       signal: controller.signal
     });
   } catch (error) {
     clearTimeout(timer);
-    if (error.name === "AbortError") throw makeRetryError("Yêu cầu quá thời gian chờ.", true);
+    if (error?.name === "AbortError") {
+      throw makeRetryError("Yêu cầu quá thời gian chờ.", true);
+    }
     if (!navigator.onLine) throw new Error("Thiết bị đang ngoại tuyến.");
-    throw makeRetryError("Lỗi kết nối mạng: " + (error.message || "network"), true);
+    throw makeRetryError("Lỗi kết nối mạng: " + (error?.message || "network"), true);
   }
 
-  let raw = "";
-  try { raw = await response.text(); } catch (_) {
-    clearTimeout(timer);
+  let raw;
+  try {
+    raw = await response.text();
+  } catch (error) {
+    if (error?.name === "AbortError") throw makeRetryError("Đọc phản hồi quá thời gian chờ.", true);
     throw makeRetryError("Không đọc được phản hồi từ Gemini.", true);
+  } finally {
+    clearTimeout(timer);
   }
-  clearTimeout(timer);
 
   let data = {};
-  try { data = raw ? JSON.parse(raw) : {}; } catch (_) {
-    throw makeRetryError(`Dữ liệu phản hồi không hợp lệ (HTTP ${response.status}).`, response.status >= 500, response.status);
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch (_) {
+    throw makeRetryError(
+      `Dữ liệu phản hồi không hợp lệ (HTTP ${response.status}).`,
+      response.status >= 500,
+      response.status
+    );
   }
 
   if (!response.ok) {
     const msg = data?.error?.message || `HTTP ${response.status}`;
-    throw makeRetryError(msg, [404, 429].includes(response.status) || response.status >= 500, response.status);
+    // 429 is often project/API-key quota, not a model-specific failure.
+    const retryable = [429, 500, 502, 503, 504].includes(response.status);
+    throw makeRetryError(msg, retryable, response.status, parseRetryAfter(response));
   }
-  if (data.promptFeedback?.blockReason) throw new Error("Yêu cầu bị chặn: " + data.promptFeedback.blockReason);
+
+  if (data.promptFeedback?.blockReason) {
+    throw new Error("Yêu cầu bị chặn: " + data.promptFeedback.blockReason);
+  }
+
   const candidate = data.candidates?.[0];
   if (!candidate) throw makeRetryError("Gemini không trả về kết quả.", true);
   if (candidate.finishReason === "SAFETY") throw new Error("Nội dung bị bộ lọc an toàn chặn.");
+  if (candidate.finishReason === "MAX_TOKENS") {
+    throw makeRetryError("Kết quả bị cắt do giới hạn token đầu ra. Hãy chia nhỏ nội dung.", false);
+  }
 
-  const text = (candidate.content?.parts || []).map(p => p.text || "").join("").trim();
-  if (!text) throw makeRetryError("Gemini trả về nội dung trống.", true);
-  return text;
+  const output = (candidate.content?.parts || []).map(p => p.text || "").join("").trim();
+  if (!output) throw makeRetryError("Gemini trả về nội dung trống.", true);
+  return output;
 }
 
 function normalizeModelPayload(rawObj) {
@@ -1405,66 +1542,151 @@ function normalizeModelPayload(rawObj) {
 function parseModelOutput(text, expectJson) {
   if (!expectJson) return { translation: text.trim() };
   const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-  try { return normalizeModelPayload(JSON.parse(cleaned)); } catch (_) {
+  try {
+    return normalizeModelPayload(JSON.parse(cleaned));
+  } catch (_) {
     const i = cleaned.indexOf("{"), j = cleaned.lastIndexOf("}");
     if (i >= 0 && j > i) {
       try { return normalizeModelPayload(JSON.parse(cleaned.slice(i, j + 1))); } catch (__) {}
     }
-    throw makeRetryError("Không phân tích được JSON từ Gemini.", true);
+    throw makeRetryError("Không phân tích được JSON từ Gemini.", false);
   }
 }
 
-async function geminiRequest(parts, options = {}) {
+async function performGeminiRequest(parts, options = {}) {
   ensureConfig();
   const expectJson = options.expectJson !== false;
-  const models = orderModelsForRequest();
+  const preferred = canonicalModelName(state.model);
+  const now = Date.now();
+
+  if (state.globalCooldownUntil > now) {
+    const wait = Math.ceil((state.globalCooldownUntil - now) / 1000);
+    throw new Error(`Gemini đang tạm giới hạn quota. Vui lòng thử lại sau ${wait} giây.`);
+  }
+
+  const candidates = orderModelsForRequest();
+  const preferredReady = (state.modelCooldownUntil[preferred] || 0) <= now;
+  const ordered = preferredReady
+    ? [preferred, ...candidates.filter(m => m !== preferred)]
+    : candidates;
+  const models = ordered.slice(0, 1 + CONFIG.maxFallbackModels);
+
   let lastError = null;
-  let lastModel = models[0] || state.model.trim();
+  let lastModel = preferred;
 
-  for (let i = 0; i < models.length; i++) {
-    const m = models[i];
-    lastModel = m;
-    const sameModelRetries = i === 0 ? 1 : 0;
+  for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
+    const modelName = models[modelIndex];
+    // Never deliberately call a model while its cooldown is active.
+    if (modelIndex > 0 && (state.modelCooldownUntil[modelName] || 0) > Date.now()) continue;
+    lastModel = modelName;
 
-    for (let attempt = 0; attempt <= sameModelRetries; attempt++) {
+    const maxRetries = CONFIG.maxSameModelRetries;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const rawOut = await rawGeminiRequest(m, parts, { ...options, expectJson });
-        const parsed = parseModelOutput(rawOut, expectJson);
+        const rawOutput = await rawGeminiRequest(modelName, parts, { ...options, expectJson });
+        const parsed = parseModelOutput(rawOutput, expectJson);
         if (options.requireTranslation !== false && !parsed.translation) {
-          throw makeRetryError("Không có trường bản dịch hợp lệ.", true);
+          throw makeRetryError("Không có trường bản dịch hợp lệ.", false);
         }
-        persistModelSelection(m);
+        if (state.model.trim() !== modelName) persistModelSelection(modelName);
+        else setStatus();
+        delete state.modelCooldownUntil[modelName];
         return parsed;
       } catch (err) {
         lastError = err;
-        const retry = err.retryable || [404, 429, 500, 502, 503, 504].includes(err.status);
-        if ([429, 500, 502, 503, 504].includes(err.status)) markModelCoolingDown(m);
+        const status = Number(err?.status || 0);
 
-        if (retry && attempt < sameModelRetries) {
-          el.status.textContent = t("tryingFallback");
-          await sleep(backoffDelay(attempt));
+        if (status === 400 || status === 401 || status === 403) break;
+
+        if (status === 429) {
+          const delay = Math.max(
+            retryDelay(attempt, err.retryAfterMs, 1500),
+            err.retryAfterMs || CONFIG.quotaCooldownMs
+          );
+          state.globalCooldownUntil = Date.now() + delay;
+          // Quota is commonly project-wide: do not spray the same key across fallback models.
+          if (attempt < maxRetries) {
+            el.status.textContent = t("tryingFallback");
+            await sleep(delay);
+            continue;
+          }
+          break;
+        }
+
+        if ([500, 502, 503, 504].includes(status)) {
+          markModelCoolingDown(modelName, status === 503 ? 60000 : 30000);
+          if (attempt < maxRetries) {
+            const delay = retryDelay(attempt, err.retryAfterMs, status === 503 ? 1800 : 900);
+            el.status.textContent = t("tryingFallback");
+            await sleep(delay);
+            continue;
+          }
+          break;
+        }
+
+        // Network/timeout failures are not model-specific; retry once, then stop.
+        if (!status && err.retryable && attempt < maxRetries) {
+          await sleep(retryDelay(attempt, 0, 900));
           continue;
         }
-        if (retry && i < models.length - 1) {
-          el.status.textContent = t("tryingFallback");
-          await sleep(backoffDelay(attempt + 1));
-        }
+
+        // Unknown/non-retryable errors must not trigger model fallback.
         break;
       }
     }
+
+    // Only model-specific availability/not-found/server errors justify one fallback.
+    if (modelIndex === 0 && lastError &&
+        ([404, 500, 502, 503, 504].includes(Number(lastError.status || 0)))) {
+      continue;
+    }
+    break;
   }
 
   setStatus();
-  if (!lastError) throw new Error(t("errUnknown"));
+  if (!lastError) throw new Error("Không có model khả dụng ngoài thời gian cooldown.");
   const statusTag = lastError.status ? ` (${lastError.status})` : "";
   const detail = lastError.message ? `: ${lastError.message}` : "";
   if (lastError.status === 503) {
-    throw new Error(`Hệ thống Gemini đang quá tải${statusTag} trên ${lastModel}${detail}`);
+    throw new Error(`Gemini đang quá tải${statusTag} trên ${lastModel}${detail}. Vui lòng thử lại sau.`);
   }
   if (lastError.status === 429) {
-    throw new Error(`Vượt giới hạn tốc độ / quota${statusTag} trên ${lastModel}${detail}`);
+    throw new Error(`Gemini đã chạm giới hạn quota/tốc độ${statusTag}${detail}. Không chuyển model để tránh tiếp tục tiêu hao quota.`);
   }
   throw new Error(`Lỗi Gemini API${statusTag} [${lastModel}]${detail}`);
+}
+
+// A single FIFO queue serializes all API work, including OCR, back-translation and live audio.
+function enqueueGeminiRequest(parts, options = {}) {
+  const textOnly = Array.isArray(parts) && parts.every(p => typeof p?.text === "string");
+  const signature = textOnly
+    ? JSON.stringify([parts, options.systemInstruction || "", options.expectJson !== false,
+        options.requireTranslation !== false, options.maxOutputTokens || 0,
+        options.temperature ?? 0.1, state.model])
+    : "";
+
+  if (signature && state.inFlightTextRequests.has(signature)) {
+    return state.inFlightTextRequests.get(signature);
+  }
+  if (state.pendingRequests >= CONFIG.maxQueuedRequests) {
+    return Promise.reject(new Error("Hàng đợi dịch đang đầy. Vui lòng chờ yêu cầu hiện tại hoàn tất."));
+  }
+
+  state.pendingRequests++;
+  const task = state.requestQueueTail.catch(() => {}).then(() => performGeminiRequest(parts, options));
+  state.requestQueueTail = task.catch(() => {});
+  const tracked = task.finally(() => {
+    state.pendingRequests = Math.max(0, state.pendingRequests - 1);
+    if (signature && state.inFlightTextRequests.get(signature) === tracked) {
+      state.inFlightTextRequests.delete(signature);
+    }
+  });
+  if (signature) state.inFlightTextRequests.set(signature, tracked);
+  return tracked;
+}
+
+function geminiRequest(parts, options = {}) {
+  return enqueueGeminiRequest(parts, options);
 }
 
 function isShortWordOrPhrase(text) {
@@ -1493,23 +1715,30 @@ function normalizeExampleItem(ex) {
 function buildLeanPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false, extraTag = "" } = {}) {
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
-  const needEx = forceExamples || isShortWordOrPhrase(sampleText);
-  const m = meaningLangCode();
-  const exRule = needEx ? `ex:3 short sentences in ${to}({"s","r","m" in ${m}})` : `ex:[]`;
-  return `${extraTag ? extraTag + ". " : ""}${from}->${to}. Keep numbers/codes/names/units. JSON:{"tr":"","pr":"reading","py":"pinyin if ZH",${exRule}}`;
+  const adaptiveExamples = extraTag === "OCR" || extraTag === "Handwriting";
+  const needExamples = forceExamples || isShortWordOrPhrase(sampleText);
+  const meaning = meaningLangCode();
+  const examplesRule = needExamples
+    ? `Return up to 3 short examples in ${to}; each has s (sentence), r (reading if needed), m (meaning in ${meaning}).`
+    : adaptiveExamples
+      ? `Only if the recognized text is a short word or phrase (at most 7 words), return up to 3 examples; otherwise return ex as an empty array. Meanings use ${meaning}.`
+      : "Return ex as an empty array.";
+  return `${extraTag ? extraTag + ". " : ""}Translate ${from} to ${to}. Preserve names, numbers, codes and units. Return JSON only: {"tr":"translation","pr":"pronunciation","py":"pinyin if Chinese","ex":[{"s":"","r":"","m":""}]}. ${examplesRule}`;
 }
 
-function buildSameChineseLeanPrompt(input, toCode) {
-  const needEx = isShortWordOrPhrase(input);
-  const exRule = needEx ? `ex:3 short sentences in ${toCode}({"s","r","m" in ${meaningLangCode()}})` : `ex:[]`;
-  return `Keep ${toCode} text as tr. JSON:{"tr":${JSON.stringify(input)},"pr":"","py":"pinyin",${exRule}}`;
+function buildSameChineseLeanPrompt(_input, toCode) {
+  const needExamples = isShortWordOrPhrase(_input);
+  const examplesRule = needExamples
+    ? `Add up to 3 short usage examples in ${toCode}; meanings in ${meaningLangCode()}.`
+    : "Return ex as an empty array.";
+  return `Keep the input unchanged as tr. Add pinyin/pronunciation only if useful. Return compact JSON only: {"tr":"","pr":"","py":"","ex":[{"s":"","r":"","m":""}]}. ${examplesRule}`;
 }
 
 async function runTranslationTask({
   spinnerId, parts, systemInstruction = "", maxOutputTokens = 420,
   sourceSample = "", forceExamples = false, expectJson = true, cacheKey = ""
 }) {
-  if (state.isBusy) return showError(t("errBusy"));
+  if (state.isBusy || state.liveRecorder || state.liveStarting) return showError(t("errBusy"));
   clearError();
 
   if (cacheKey) {
@@ -1541,7 +1770,7 @@ async function runTranslationTask({
 }
 
 async function translateText(inputOverride = null) {
-  if (state.isBusy) return showError(t("errBusy"));
+  if (state.isBusy || state.liveRecorder || state.liveStarting) return showError(t("errBusy"));
   clearError();
   const input = escapeText(inputOverride ?? el.source.value).trim();
   if (!input) return showError(t("errEmptyText"));
@@ -1564,9 +1793,11 @@ async function translateText(inputOverride = null) {
         return;
       }
       try {
+        setBusy(true, "translateSpinner");
         const meta = await geminiRequest([{ text: input }], {
           systemInstruction: buildSameChineseLeanPrompt(input, langPrompt(targetLang())),
-          temperature: 0.1, maxOutputTokens: 360, requireTranslation: true, expectJson: true
+          temperature: 0.1, maxOutputTokens: shortWord ? 300 : 120,
+          requireTranslation: true, expectJson: true
         });
         const merged = {
           pronunciation: meta.pronunciation || meta.pinyin || "",
@@ -1575,7 +1806,11 @@ async function translateText(inputOverride = null) {
         };
         writeCached(ck, merged);
         renderResult({ ...localResult, ...merged, translation: input, _sourceSample: input }, false);
-      } catch (_) {}
+      } catch (error) {
+        showError(error.message || error);
+      } finally {
+        setBusy(false, "translateSpinner");
+      }
     }
     return;
   }
@@ -1588,18 +1823,19 @@ async function translateText(inputOverride = null) {
       spinnerId: "translateSpinner",
       parts: [{ text: input }],
       systemInstruction: buildLeanPrompt({ sampleText: input }),
-      maxOutputTokens: 440,
+      maxOutputTokens: 360,
       sourceSample: input,
       forceExamples: false,
       expectJson: true,
       cacheKey
     });
   } else {
+    const outputBudget = Math.min(12288, Math.max(256, Math.ceil(input.length / 2) + 160));
     await runTranslationTask({
       spinnerId: "translateSpinner",
-      parts: [{ text: `Translate ${langPrompt(sourceLang())} to ${langPrompt(targetLang())}. Output translation only.\n${input}` }],
-      systemInstruction: "",
-      maxOutputTokens: 900,
+      parts: [{ text: input }],
+      systemInstruction: `Translate ${langPrompt(sourceLang())} to ${langPrompt(targetLang())}. Preserve meaning, names, numbers, formatting and units. Output only the translation; do not explain.`,
+      maxOutputTokens: outputBudget,
       sourceSample: input,
       forceExamples: false,
       expectJson: false,
@@ -1609,7 +1845,7 @@ async function translateText(inputOverride = null) {
 }
 
 async function backTranslateResult() {
-  if (state.isBusy) return showError(t("errBusy"));
+  if (state.isBusy || state.liveRecorder || state.liveStarting) return showError(t("errBusy"));
   const translated = escapeText(state.lastResult?.translation || el.resultText.textContent || "").trim();
   if (!translated) return showError(t("errNoResultToBack"));
   clearError();
@@ -1647,12 +1883,12 @@ async function translateImage() {
   await runTranslationTask({
     spinnerId: "imageSpinner",
     parts: [
-      { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "OCR" }) },
+      { text: buildLeanPrompt({ sampleText: "", forceExamples: false, extraTag: "OCR" }) },
       { inlineData: { mimeType: "image/jpeg", data: state.imageData.split(",")[1] } }
     ],
     systemInstruction: "",
-    maxOutputTokens: 460,
-    forceExamples: true,
+    maxOutputTokens: 360,
+    forceExamples: false,
     expectJson: true
   });
 }
@@ -1662,12 +1898,12 @@ async function translateDrawing() {
   await runTranslationTask({
     spinnerId: "drawSpinner",
     parts: [
-      { text: buildLeanPrompt({ sampleText: "word", forceExamples: true, extraTag: "Handwriting" }) },
+      { text: buildLeanPrompt({ sampleText: "", forceExamples: false, extraTag: "Handwriting" }) },
       { inlineData: { mimeType: "image/png", data: el.canvas.toDataURL("image/png").split(",")[1] } }
     ],
     systemInstruction: "",
-    maxOutputTokens: 460,
-    forceExamples: true,
+    maxOutputTokens: 360,
+    forceExamples: false,
     expectJson: true
   });
 }
@@ -2053,7 +2289,7 @@ function blobToBase64(blob) {
 
 async function processLiveAudio(blob, mime, side) {
   if (state.isBusy) return showError(t("errBusy"));
-  state.isBusy = true;
+  setBusy(true);
   try {
     const { from, to } = liveLanguages(side);
     const safeMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
@@ -2081,7 +2317,7 @@ async function processLiveAudio(blob, mime, side) {
     showError(e.message || e);
     el.liveStatus.textContent = "Dịch thất bại. Bạn có thể ghi âm lại.";
   } finally {
-    state.isBusy = false;
+    setBusy(false);
   }
 }
 
@@ -2229,6 +2465,7 @@ window.addEventListener("pagehide", () => {
 });
 
 /* ============================ INIT ============================ */
+loadCacheIndex();
 initPWAWithGeneratedIcon();
 applyUILanguage();
 syncToolStates();
