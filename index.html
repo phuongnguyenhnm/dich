@@ -1,67 +1,2182 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dịch AI PWA</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css" />
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { scope: './' }));
-    }
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#101418">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AI Translation">
+<title>AI Translation</title>
+<link id="faviconLink" rel="icon" type="image/png" sizes="512x512">
+<link id="appleTouchIconLink" rel="apple-touch-icon" sizes="512x512">
+<link id="manifestLink" rel="manifest">
+<style>
+:root{
+  color-scheme:dark;--bg:#101418;--panel:#192127;--panel2:#202b33;--panel3:#27343d;
+  --line:#34434d;--text:#edf3f6;--muted:#9aabb5;--accent:#8ecbff;--accent2:#c4e5ff;
+  --danger:#ff9a9a;--good:#8fe0b0;--radius:18px
+}
+*{box-sizing:border-box;min-width:0}
+html,body{
+  position:fixed;inset:0;margin:0;padding:0;width:100%;height:100%;height:100dvh;
+  background:radial-gradient(ellipse at 50% -15%,#1d3544 0,transparent 55%),var(--bg);
+  color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  overflow:hidden;overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none
+}
+textarea,input{-webkit-user-select:text;user-select:text}
+button,input,select,textarea{font:inherit;max-width:100%}
+button{cursor:pointer;touch-action:manipulation}
+button:disabled{opacity:.45;cursor:not-allowed}
+.app{
+  width:min(100%,760px);height:100%;margin:0 auto;
+  padding:max(8px,env(safe-area-inset-top)) 12px max(8px,env(safe-area-inset-bottom));
+  display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:6px;
+  overflow:hidden;overscroll-behavior:none;touch-action:none
+}
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  min-height:40px;flex-shrink:0;z-index:2;touch-action:none
+}
+.brand{text-align:center;min-width:0;flex:1}
+.brand strong{font-size:16.5px;letter-spacing:.2px;display:block;line-height:1.15;color:var(--text)}
+.iconbtn{
+  width:36px;height:36px;border:1px solid var(--line);border-radius:50%;
+  background:var(--panel2);color:var(--text);font-size:18px;display:grid;place-items:center;flex-shrink:0
+}
+.iconbtn:hover{background:var(--panel3);border-color:var(--accent)}
+.status{
+  font-size:10.5px;color:var(--muted);padding:2px 9px;border:1px solid var(--line);
+  border-radius:99px;display:inline-block;margin-top:3px;max-width:260px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;background:var(--panel)
+}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--danger)}
+.dot.ready{background:var(--good)}
+.banners{display:flex;flex-direction:column;gap:5px;flex-shrink:0;overflow:hidden}
+.banners:empty{display:none}
+.error{
+  display:none;padding:7px 10px;border:1px solid #75464b;background:#3b2025;
+  color:#ffc1c1;border-radius:11px;font-size:11.5px;line-height:1.35;
+  overflow-wrap:anywhere;white-space:pre-wrap;max-height:64px;overflow-y:auto;overflow-x:hidden;
+  touch-action:pan-y;overscroll-behavior:contain
+}
+.notice{
+  display:none;padding:6px 10px;border:1px solid #3c657d;background:#152b38;
+  color:var(--accent2);border-radius:11px;font-size:11.5px;line-height:1.35;overflow-x:hidden
+}
+.card{
+  background:linear-gradient(160deg,#1c272e,#172027);border:1px solid #ffffff14;
+  border-radius:var(--radius);padding:9px 10px;box-shadow:0 8px 24px #0003;
+  display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;
+  touch-action:none;overscroll-behavior:none
+}
+.langrow{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);align-items:center;gap:6px;flex-shrink:0}
+.lang{
+  width:100%;min-width:0;border:1px solid var(--line);border-radius:11px;
+  padding:7px 8px;background:var(--panel2);color:var(--text);font-size:12.5px;appearance:none
+}
+.swap{
+  width:34px;height:34px;border:1px solid var(--line);border-radius:50%;
+  background:var(--panel3);color:var(--accent);font-size:17px;display:grid;place-items:center
+}
+.io-box{
+  display:flex;flex-direction:column;gap:7px;border:1px solid var(--line);
+  border-radius:14px;padding:8px 10px;background:#10171cb8;min-height:0;flex:1;
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  touch-action:pan-y;overscroll-behavior:contain
+}
+textarea{
+  width:100%;min-height:64px;max-height:104px;resize:none;border:0;outline:0;
+  background:transparent;color:var(--text);font-size:15.5px;line-height:1.4;padding:2px;flex-shrink:0;
+  overflow-y:auto;overflow-x:hidden;touch-action:pan-y
+}
+textarea::placeholder{color:#81929c}
+.row{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.tools{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line);border-radius:99px;background:var(--panel2);
+  color:var(--text);padding:5px 10px;font-size:11.5px;transition:all .15s;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap
+}
+.btn:hover{border-color:#607988;background:var(--panel3)}
+.btn.primary{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700}
+.btn.ghost{background:transparent}
+.small{font-size:11px;color:var(--muted)}
+.panel{
+  display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
+  border-radius:12px;background:#111a20;flex-shrink:0;overflow:hidden
+}
+.stage{height:112px;border:1px dashed #60717b;border-radius:10px;overflow:hidden;background:#ffffff;touch-action:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.preview{
+  display:none;align-items:center;justify-content:center;min-height:56px;max-height:110px;
+  overflow:hidden;border-radius:10px;background:#0d1419
+}
+.preview img{display:block;max-width:100%;max-height:104px;object-fit:contain}
+.divider{height:1px;background:#ffffff14;margin:1px 0;flex-shrink:0}
+.result{
+  display:none;flex-direction:column;gap:5px;padding-top:2px;flex-shrink:0;overflow-x:hidden
+}
+.result-head{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.result-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--accent);font-weight:700}
+.result-text{font-size:15.5px;line-height:1.42;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.pinyin{color:var(--accent2);font-size:12.5px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word;display:none}
+.back-trans{
+  display:none;flex-direction:column;gap:3px;padding:7px 9px;
+  border:1px dashed #4b697c;background:#12222c;border-radius:9px;
+  font-size:12px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word
+}
+.back-trans-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--good);font-weight:700
+}
+.explain{
+  display:none;padding:7px 9px;border-left:3px solid var(--accent);
+  background:#142631;border-radius:8px;font-size:11.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere
+}
+.extra{display:none;gap:5px;flex-direction:column}
+.extra-item{padding:7px 9px;background:var(--panel2);border-radius:9px;font-size:11.5px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+.extra-item b{color:var(--accent2)}
+.history-bar{display:none;gap:5px;flex-wrap:wrap;padding-top:2px;flex-shrink:0}
+.chip{
+  border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+  border-radius:99px;padding:3px 9px;font-size:10.5px;max-width:160px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.chip:hover{color:var(--text);border-color:var(--accent)}
+.spinner{
+  display:none;width:13px;height:13px;border:2px solid #092b4544;
+  border-top-color:#092b45;border-radius:50%;animation:spin .65s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.live{
+  display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
+  border-radius:13px;background:#111a20;flex-shrink:0;overflow:hidden
+}
+.feed{
+  display:flex;flex-direction:column;gap:6px;max-height:110px;min-height:56px;
+  overflow-y:auto;overflow-x:hidden;padding:7px;background:#10171c;border:1px solid var(--line);
+  border-radius:10px;touch-action:pan-y;overscroll-behavior:contain
+}
+.bubble{max-width:90%;padding:7px 9px;border-radius:11px;font-size:12.5px;line-height:1.38;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble.left{align-self:flex-start;background:var(--panel2)}
+.bubble.right{align-self:flex-end;background:#1d4055}
+.bubble small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.turnrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.turn{
+  padding:7px 6px;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel2);color:var(--text);font-size:11.5px;transition:all .15s
+}
+.turn.active{background:#48272c;border-color:#d77e84;color:#ffc1c1}
+.bottom{display:flex;flex-direction:column;gap:5px;flex-shrink:0;touch-action:none}
+.main-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.main-actions button{padding:9px 8px;font-size:12.5px}
+.dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;padding:1px 4px 0}
+.dockbtn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;border:0;
+  background:transparent;color:var(--muted);font-size:10.5px;transition:color .15s
+}
+.dockcircle{
+  width:38px;height:38px;border-radius:13px;background:var(--panel3);
+  display:grid;place-items:center;font-size:17px;color:var(--accent);transition:all .15s
+}
+.dockbtn.active .dockcircle{background:#583238;color:#ffb8b8}
+.mic{
+  width:50px;height:50px;border:0;border-radius:16px;background:var(--accent);
+  color:#08243a;font-size:21px;box-shadow:0 6px 18px #8ecbff22;
+  transition:all .15s;display:grid;place-items:center
+}
+.mic.recording{background:#ff8c8c;color:#351010;border-radius:50%;animation:pulse 1.1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 9px #ff8c8c00}}
+.modal{
+  display:none;position:fixed;inset:0;z-index:50;background:#000b;
+  align-items:center;justify-content:center;padding:14px;touch-action:none
+}
+.modalbox{
+  width:min(100%,480px);max-height:90dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);
+  border:1px solid var(--line);border-radius:18px;padding:16px;touch-action:pan-y;overscroll-behavior:contain
+}
+.modalbox h2{font-size:17px;margin:0 0 6px}
+.modalbox p{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 10px}
+.field{margin:10px 0}
+.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+.field input,.field select{
+  width:100%;padding:10px 11px;border-radius:10px;background:#10171c;
+  border:1px solid var(--line);color:var(--text);outline:none
+}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+a{color:var(--accent)}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">Dịch<span>AI</span></div>
-    <div class="actions"><button id="installBtn" hidden>Cài đặt</button></div>
-  </header>
-  <main class="container">
-    <section class="panel">
-      <div class="lang-row">
-        <select id="sourceLang"></select>
-        <button id="swapBtn" title="Đổi chiều">⇄</button>
-        <select id="targetLang"></select>
+<main class="app" id="appRoot">
+<header>
+  <button class="iconbtn" id="resetBtn" aria-label="Làm mới" title="Làm mới">↺</button>
+  <div class="brand">
+    <strong>AI Translation</strong>
+    <div><span class="status" id="statusPill">Đang tải...</span></div>
+  </div>
+  <div style="position:relative;flex-shrink:0;">
+    <button class="iconbtn" id="settingsBtn" aria-label="Cài đặt" title="Cài đặt">⚙</button>
+    <i class="dot" id="keyDot" style="position:absolute; top:4px; right:4px;"></i>
+  </div>
+</header>
+
+<div class="banners">
+  <div class="notice" id="noticeBox" role="status"></div>
+  <div class="error" id="errorBox" role="alert"></div>
+</div>
+
+<section class="card" id="mainCard">
+  <div class="langrow">
+    <select class="lang" id="sourceLang" aria-label="Ngôn ngữ nguồn"></select>
+    <button class="swap" id="swapBtn" title="Đổi ngôn ngữ" aria-label="Đổi ngôn ngữ">⇄</button>
+    <select class="lang" id="targetLang" aria-label="Ngôn ngữ đích"></select>
+  </div>
+
+  <div class="io-box" id="ioBox">
+    <textarea id="sourceText" placeholder="Nhập nội dung cần dịch..." spellcheck="true"></textarea>
+
+    <div class="row">
+      <div class="tools">
+        <button class="btn" id="clearTextBtn"><span class="btn-label">Xóa</span></button>
+        <button class="btn" id="pasteBtn"><span class="btn-label">Dán</span></button>
+        <button class="btn" id="drawToggle"><span class="btn-label">✍ Viết tay</span></button>
+        <button class="btn" id="imageToggle"><span class="btn-label">▧ Ảnh</span></button>
       </div>
-      <div class="io-row">
-        <textarea id="inputText" placeholder="Nhập văn bản..."></textarea>
+      <span class="small" id="charCount">0 ký tự</span>
+    </div>
+
+    <!-- Bảng vẽ -->
+    <div class="panel" id="drawPanel">
+      <div class="stage"><canvas id="drawCanvas"></canvas></div>
+      <div class="row">
         <div class="tools">
-          <button id="micBtn">🎤</button>
-          <button id="imageBtn">🖼️</button>
-          <button id="conversationBtn">💬</button>
+          <button class="btn" id="undoDraw"><span class="btn-label">↶ Hoàn tác</span></button>
+          <button class="btn" id="clearDraw"><span class="btn-label">Xóa nét</span></button>
+          <select class="btn" id="brushSize" aria-label="Cỡ bút">
+            <option value="2" id="brushThinOpt">Mảnh</option>
+            <option value="4" id="brushMedOpt" selected>Vừa</option>
+            <option value="7" id="brushThickOpt">Đậm</option>
+          </select>
+        </div>
+        <button class="btn primary" id="translateDrawBtn">
+          <span class="btn-label">Dịch chữ viết</span>
+          <i class="spinner" id="drawSpinner"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tải ảnh -->
+    <div class="panel" id="imagePanel">
+      <div class="preview" id="imagePreviewWrap"><img id="imagePreview" alt="Ảnh cần dịch"></div>
+      <div class="row">
+        <div class="tools">
+          <button class="btn" id="chooseImageBtn"><span class="btn-label">Chọn ảnh</span></button>
+          <button class="btn" id="removeImageBtn"><span class="btn-label">Bỏ ảnh</span></button>
+        </div>
+        <button class="btn primary" id="translateImageBtn">
+          <span class="btn-label">Dịch nội dung ảnh</span>
+          <i class="spinner" id="imageSpinner"></i>
+        </button>
+      </div>
+      <input type="file" id="imageFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+      <div class="small" id="imageHint">Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.</div>
+    </div>
+
+    <!-- Kết quả nằm gọn trong cùng 1 ô -->
+    <div class="result" id="resultSection" aria-live="polite">
+      <div class="divider"></div>
+      <div class="result-head">
+        <span class="result-label" id="resultLabel">Bản dịch</span>
+        <div class="tools">
+          <button class="btn" id="backTranslateBtn">
+            <span class="btn-label">⇄ Dịch ngược</span>
+            <i class="spinner" id="backSpin"></i>
+          </button>
+          <button class="btn" id="useResultBtn"><span class="btn-label">↵ Đưa lên</span></button>
+          <button class="btn" id="copyBtn"><span class="btn-label">Sao chép</span></button>
+          <button class="btn" id="speakBtn"><span class="btn-label">🔊 Đọc</span></button>
         </div>
       </div>
-      <div class="result-row">
-        <div id="outputText" class="output"></div>
-        <div class="result-tools">
-          <button id="speakBtn">🔊</button>
-          <button id="copyBtn">📋</button>
-        </div>
+      <div class="result-text" id="resultText"></div>
+      <div class="pinyin" id="pinyinText"></div>
+      <div class="back-trans" id="backTransBox">
+        <span class="back-trans-label" id="backTransLabel">Kiểm tra dịch ngược</span>
+        <div id="backTransText"></div>
       </div>
-      <div id="imagePane" class="image-pane" hidden>
-        <div class="image-controls">
-          <input type="file" id="imageFile" accept="image/*" />
-          <input type="url" id="imageUrl" placeholder="Dán URL ảnh..." />
-          <button id="loadUrlBtn">Tải ảnh từ URL</button>
-        </div>
-        <canvas id="imageCanvas"></canvas>
-        <pre id="ocrText" class="ocr-text"></pre>
-      </div>
-      <div id="conversationPane" class="conversation" hidden>
-        <div class="side left">
-          <h4>Ngôn ngữ A</h4>
-          <div class="transcript" id="transcriptA"></div>
-          <button id="micA">🎤</button>
-        </div>
-        <div class="side right">
-          <h4>Ngôn ngữ B</h4>
-          <div class="transcript" id="transcriptB"></div>
-          <button id="micB">🎤</button>
-        </div>
-      </div>
-    </section>
-  </main>
-  <script src="app.js" type="module"></script>
+      <div class="explain" id="explanation"></div>
+      <div class="extra" id="alternatives"></div>
+    </div>
+
+    <div class="history-bar" id="historyBar"></div>
+  </div>
+
+  <!-- Hội thoại trực tiếp -->
+  <section class="live" id="livePanel">
+    <div class="row">
+      <b id="liveTitle">Hội thoại trực tiếp</b>
+      <button class="btn" id="clearLiveBtn"><span class="btn-label">Xóa hội thoại</span></button>
+    </div>
+    <div class="small" id="liveDesc">Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.</div>
+    <div class="feed" id="liveFeed"><div class="small" id="liveEmptyText">Chưa có nội dung hội thoại.</div></div>
+    <div class="turnrow">
+      <button class="turn" id="sideABtn">🎙 Người A</button>
+      <button class="turn" id="sideBBtn">🎙 Người B</button>
+    </div>
+    <div class="row">
+      <span class="small" id="liveStatus">Đang chờ người nói.</span>
+      <button class="btn ghost" id="stopLiveBtn"><span class="btn-label">Dừng ghi âm</span></button>
+    </div>
+  </section>
+</section>
+
+<div class="bottom">
+  <div class="main-actions">
+    <button class="btn primary" id="translateBtn">
+      <span class="btn-label">Dịch văn bản</span>
+      <i class="spinner" id="translateSpinner"></i>
+    </button>
+    <button class="btn" id="polishBtn">
+      <span class="btn-label">Dịch tự nhiên hơn</span>
+    </button>
+  </div>
+  <div class="dock">
+    <button class="dockbtn" id="liveToggle"><span class="dockcircle">⇄</span><span id="liveDockLabel">Hội thoại</span></button>
+    <button class="mic" id="micBtn" aria-label="Nhập bằng giọng nói">🎙</button>
+    <button class="dockbtn" id="ttsSourceBtn"><span class="dockcircle">🔊</span><span id="ttsSourceLabel">Đọc nguồn</span></button>
+  </div>
+  <div class="small" id="disclaimerText" style="text-align:center">Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.</div>
+</div>
+</main>
+
+<!-- Cài đặt -->
+<div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+ <div class="modalbox">
+  <h2 id="settingsTitle">Cài đặt Gemini API</h2>
+  <p id="settingsDesc">API Key được lưu trong trình duyệt của bạn (<code>localStorage</code>) và gửi trực tiếp tới Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Lấy API Key tại đây</a>.</p>
+  <div class="field">
+    <label for="uiLangSelect" id="uiLangLabel">Ngôn ngữ giao diện</label>
+    <select id="uiLangSelect">
+      <option value="vi">Tiếng Việt</option>
+      <option value="en">English</option>
+      <option value="zh">简体中文</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="apiKey" id="apiKeyLabel">API Key</label>
+    <input id="apiKey" type="password" autocomplete="off" placeholder="AIzaSy...">
+  </div>
+  <div class="field">
+    <label for="modelName" id="modelLabel">Gemini Model</label>
+    <select id="modelName">
+      <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Mặc định)</option>
+      <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+      <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+      <option value="gemini-3.7-flash">gemini-3.7-flash</option>
+      <option value="gemini-3.8-flash">gemini-3.8-flash</option>
+      <option value="custom" id="customModelOption">Tùy chỉnh tên model...</option>
+    </select>
+  </div>
+  <div class="field" id="customModelField" style="display:none;">
+    <label for="customModelInput" id="customModelLabel">Tên model tùy chỉnh</label>
+    <input id="customModelInput" type="text" placeholder="Ví dụ: gemini-3.5-flash-lite" spellcheck="false">
+  </div>
+  <div class="modalfoot">
+    <button class="btn" id="cancelSettings"><span class="btn-label">Đóng</span></button>
+    <button class="btn primary" id="saveSettings"><span class="btn-label">Lưu cài đặt</span></button>
+  </div>
+ </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================ CHỐNG KÉO LỆCH KHI VUỐT TAY ============================ */
+function lockViewportPosition() {
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.documentElement.scrollLeft = 0;
+  document.body.scrollTop = 0;
+  document.body.scrollLeft = 0;
+  const app = document.getElementById("appRoot");
+  if (app) {
+    app.scrollTop = 0;
+    app.scrollLeft = 0;
+  }
+}
+
+document.addEventListener("touchmove", e => {
+  const target = e.target;
+  if (!(target instanceof Element)) return;
+  if (target.closest("#drawCanvas")) return;
+  const scrollBox = target.closest(".io-box, .feed, .modalbox, #errorBox, textarea");
+  if (!scrollBox) {
+    e.preventDefault();
+    return;
+  }
+  const canScrollY = scrollBox.scrollHeight > scrollBox.clientHeight + 1;
+  const canScrollX = scrollBox.scrollWidth > scrollBox.clientWidth + 1;
+  if (!canScrollY && !canScrollX) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener("scroll", lockViewportPosition, { passive: true });
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", lockViewportPosition, { passive: true });
+  window.visualViewport.addEventListener("scroll", lockViewportPosition, { passive: true });
+}
+
+/* ============================ TẠO ICON BẰNG CODE & PWA ============================ */
+function buildAppIconDataUrl(size = 512) {
+  const c = document.createElement("canvas");
+  c.width = size;
+  c.height = size;
+  const g = c.getContext("2d");
+  if (!g) return "";
+
+  const pad = Math.round(size * 0.04);
+  const rad = Math.round(size * 0.22);
+
+  const bgGrad = g.createLinearGradient(0, 0, size, size);
+  bgGrad.addColorStop(0, "#0b2538");
+  bgGrad.addColorStop(0.55, "#114663");
+  bgGrad.addColorStop(1, "#187a8c");
+
+  g.save();
+  g.beginPath();
+  g.roundRect(pad, pad, size - pad * 2, size - pad * 2, rad);
+  g.clip();
+  g.fillStyle = bgGrad;
+  g.fillRect(0, 0, size, size);
+
+  const glow = g.createRadialGradient(size * 0.78, size * 0.22, 10, size * 0.78, size * 0.22, size * 0.55);
+  glow.addColorStop(0, "rgba(165, 238, 255, 0.36)");
+  glow.addColorStop(1, "rgba(165, 238, 255, 0)");
+  g.fillStyle = glow;
+  g.fillRect(0, 0, size, size);
+
+  g.strokeStyle = "rgba(196, 229, 255, 0.28)";
+  g.lineWidth = Math.max(4, Math.round(size * 0.015));
+  g.beginPath();
+  g.roundRect(pad + 6, pad + 6, size - (pad + 6) * 2, size - (pad + 6) * 2, Math.max(16, rad - 6));
+  g.stroke();
+
+  const boxPad = Math.round(size * 0.16);
+  const boxRad = Math.round(size * 0.14);
+  g.fillStyle = "rgba(10, 22, 32, 0.42)";
+  g.beginPath();
+  g.roundRect(boxPad, boxPad, size - boxPad * 2, size - boxPad * 2, boxRad);
+  g.fill();
+  g.strokeStyle = "rgba(142, 203, 255, 0.35)";
+  g.lineWidth = Math.max(2, Math.round(size * 0.007));
+  g.stroke();
+
+  g.fillStyle = "#8ecbff";
+  g.font = `800 ${Math.round(size * 0.21)}px system-ui, -apple-system, sans-serif`;
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  g.fillText("A", size * 0.34, size * 0.38);
+
+  g.fillStyle = "#e6f6ff";
+  g.font = `700 ${Math.round(size * 0.19)}px "PingFang SC", "Microsoft YaHei", system-ui, sans-serif`;
+  g.fillText("文", size * 0.66, size * 0.63);
+
+  g.strokeStyle = "#8fe0b0";
+  g.lineWidth = Math.max(5, Math.round(size * 0.018));
+  g.lineCap = "round";
+  g.lineJoin = "round";
+
+  g.beginPath();
+  g.moveTo(size * 0.50, size * 0.33);
+  g.lineTo(size * 0.68, size * 0.33);
+  g.lineTo(size * 0.62, size * 0.27);
+  g.moveTo(size * 0.68, size * 0.33);
+  g.lineTo(size * 0.62, size * 0.39);
+  g.stroke();
+
+  g.beginPath();
+  g.moveTo(size * 0.50, size * 0.67);
+  g.lineTo(size * 0.32, size * 0.67);
+  g.lineTo(size * 0.38, size * 0.61);
+  g.moveTo(size * 0.32, size * 0.67);
+  g.lineTo(size * 0.38, size * 0.73);
+  g.stroke();
+
+  const sx = size * 0.77;
+  const sy = size * 0.22;
+  const sr = size * 0.045;
+  g.fillStyle = "#c4e5ff";
+  g.beginPath();
+  g.moveTo(sx, sy - sr);
+  g.quadraticCurveTo(sx, sy, sx + sr, sy);
+  g.quadraticCurveTo(sx, sy, sx, sy + sr);
+  g.quadraticCurveTo(sx, sy, sx - sr, sy);
+  g.quadraticCurveTo(sx, sy, sx, sy - sr);
+  g.fill();
+
+  g.restore();
+  return c.toDataURL("image/png");
+}
+
+let manifestBlobUrl = null;
+function initPWAWithGeneratedIcon() {
+  const iconUrl = buildAppIconDataUrl(512);
+  if (!iconUrl) return;
+  const fav = document.getElementById("faviconLink");
+  const appleIcon = document.getElementById("appleTouchIconLink");
+  const manifestLink = document.getElementById("manifestLink");
+  if (fav) fav.href = iconUrl;
+  if (appleIcon) appleIcon.href = iconUrl;
+
+  if (manifestLink && window.Blob && window.URL?.createObjectURL) {
+    try {
+      if (manifestBlobUrl) URL.revokeObjectURL(manifestBlobUrl);
+      const manifest = {
+        name: "AI Translation",
+        short_name: "AI Translation",
+        start_url: ".",
+        scope: ".",
+        display: "standalone",
+        background_color: "#101418",
+        theme_color: "#101418",
+        icons: [
+          {
+            src: iconUrl,
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+          }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+      manifestBlobUrl = URL.createObjectURL(blob);
+      manifestLink.href = manifestBlobUrl;
+    } catch (_) {}
+  }
+}
+
+/* ============================ CẤU HÌNH ============================ */
+const CONFIG = {
+  apiBase: "https://generativelanguage.googleapis.com/v1beta/models/",
+  requestTimeoutMs: 45000,
+  maxImageBytes: 12 * 1024 * 1024,
+  maxImageDimension: 1400,
+  maxAudioBytes: 18 * 1024 * 1024,
+  defaultModel: "gemini-3.5-flash-lite",
+  maxHistory: 5
+};
+
+const FALLBACK_MODELS = [
+  "gemini-3.5-flash-lite",
+  "gemini-3.5-flash",
+  "gemini-3.6-flash",
+  "gemini-3.7-flash",
+  "gemini-3.8-flash"
+];
+
+const LANGUAGES = [
+  { code: "auto", label: { vi: "✨ Tự động nhận diện", en: "✨ Auto Detect", zh: "✨ 自动检测" }, prompt: "ngôn ngữ tự động nhận diện", speech: "vi-VN" },
+  { code: "Vietnamese", label: { vi: "🇻🇳 Tiếng Việt", en: "🇻🇳 Vietnamese", zh: "🇻🇳 越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
+  { code: "Chinese", label: { vi: "🇨🇳 Tiếng Trung", en: "🇨🇳 Chinese", zh: "🇨🇳 中文" }, prompt: "tiếng Trung", speech: "zh-CN" },
+  { code: "English", label: { vi: "🇺🇸 Tiếng Anh", en: "🇺🇸 English", zh: "🇺🇸 英语" }, prompt: "tiếng Anh", speech: "en-US" },
+  { code: "Japanese", label: { vi: "🇯🇵 Tiếng Nhật", en: "🇯🇵 Japanese", zh: "🇯🇵 日语" }, prompt: "tiếng Nhật", speech: "ja-JP" },
+  { code: "Korean", label: { vi: "🇰🇷 Tiếng Hàn", en: "🇰🇷 Korean", zh: "🇰🇷 韩语" }, prompt: "tiếng Hàn", speech: "ko-KR" },
+  { code: "French", label: { vi: "🇫🇷 Tiếng Pháp", en: "🇫🇷 French", zh: "🇫🇷 法语" }, prompt: "tiếng Pháp", speech: "fr-FR" },
+  { code: "German", label: { vi: "🇩🇪 Tiếng Đức", en: "🇩🇪 German", zh: "🇩🇪 德语" }, prompt: "tiếng Đức", speech: "de-DE" },
+  { code: "Spanish", label: { vi: "🇪🇸 Tiếng Tây Ban Nha", en: "🇪🇸 Spanish", zh: "🇪🇸 西班牙语" }, prompt: "tiếng Tây Ban Nha", speech: "es-ES" },
+  { code: "Thai", label: { vi: "🇹🇭 Tiếng Thái", en: "🇹🇭 Thai", zh: "🇹🇭 泰语" }, prompt: "tiếng Thái", speech: "th-TH" },
+  { code: "Russian", label: { vi: "🇷🇺 Tiếng Nga", en: "🇷🇺 Russian", zh: "🇷🇺 俄语" }, prompt: "tiếng Nga", speech: "ru-RU" },
+  { code: "Italian", label: { vi: "🇮🇹 Tiếng Ý", en: "🇮🇹 Italian", zh: "🇮🇹 意大利语" }, prompt: "tiếng Ý", speech: "it-IT" },
+  { code: "Portuguese", label: { vi: "🇵🇹 Tiếng Bồ Đào Nha", en: "🇵🇹 Portuguese", zh: "🇵🇹 葡萄牙语" }, prompt: "tiếng Bồ Đào Nha", speech: "pt-PT" },
+  { code: "Arabic", label: { vi: "🇸🇦 Tiếng Ả Rập", en: "🇸🇦 Arabic", zh: "🇸🇦 阿拉伯语" }, prompt: "tiếng Ả Rập", speech: "ar-SA" },
+  { code: "Indonesian", label: { vi: "🇮🇩 Tiếng Indonesia", en: "🇮🇩 Indonesian", zh: "🇮🇩 印尼语" }, prompt: "tiếng Indonesia", speech: "id-ID" },
+  { code: "Hindi", label: { vi: "🇮🇳 Tiếng Hindi", en: "🇮🇳 Hindi", zh: "🇮🇳 印地语" }, prompt: "tiếng Hindi", speech: "hi-IN" }
+];
+
+const I18N = {
+  vi: {
+    pageTitle: "AI Translation",
+    ready: "Sẵn sàng",
+    noKey: "Chưa có API Key",
+    tryingFallback: "Đang thử model dự phòng...",
+    switchedModel: m => `Đã tự động đổi sang model ${m}.`,
+    placeholder: "Nhập nội dung cần dịch...",
+    clear: "Xóa",
+    paste: "Dán",
+    draw: "✍ Viết tay",
+    image: "▧ Ảnh",
+    charCount: n => `${n.toLocaleString("vi-VN")} ký tự`,
+    undo: "↶ Hoàn tác",
+    clearDraw: "Xóa nét",
+    thin: "Mảnh",
+    medium: "Vừa",
+    thick: "Đậm",
+    translateDraw: "Dịch chữ viết",
+    chooseImage: "Chọn ảnh",
+    removeImage: "Bỏ ảnh",
+    translateImage: "Dịch nội dung ảnh",
+    imageHint: "Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.",
+    resultLabel: "Bản dịch",
+    backTranslate: "⇄ Dịch ngược",
+    backTransLabel: "Kiểm tra dịch ngược",
+    useResult: "↵ Đưa lên",
+    copy: "Sao chép",
+    copied: "Đã sao chép ✓",
+    speak: "🔊 Đọc",
+    liveTitle: "Hội thoại trực tiếp",
+    clearLive: "Xóa hội thoại",
+    liveDesc: "Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.",
+    liveEmpty: "Chưa có nội dung hội thoại.",
+    personA: "Người A",
+    personB: "Người B",
+    autoLabel: "Tự động",
+    liveWaiting: "Đang chờ người nói.",
+    stopLive: "Dừng ghi âm",
+    translateBtn: "Dịch văn bản",
+    polishBtn: "Dịch tự nhiên hơn",
+    liveDock: "Hội thoại",
+    ttsSource: "Đọc nguồn",
+    disclaimer: "Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.",
+    settingsTitle: "Cài đặt Gemini API",
+    settingsDesc: 'API Key được lưu trong trình duyệt của bạn (<code>localStorage</code>) và gửi trực tiếp tới Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Lấy API Key tại đây</a>.',
+    uiLangLabel: "Ngôn ngữ giao diện",
+    apiKeyLabel: "API Key",
+    modelLabel: "Gemini Model",
+    customModelOption: "Tùy chỉnh tên model...",
+    customModelLabel: "Tên model tùy chỉnh",
+    close: "Đóng",
+    save: "Lưu cài đặt",
+    resetLabel: "Làm mới",
+    settingsLabel: "Cài đặt",
+    swapLabel: "Đổi ngôn ngữ",
+    micLabel: "Nhập bằng giọng nói",
+    errUnknown: "Đã xảy ra lỗi không xác định.",
+    errNeedKey: "Bạn cần nhập Gemini API Key trong phần Cài đặt trước khi sử dụng.",
+    errBadModel: "Tên model không hợp lệ. Ví dụ: gemini-3.5-flash-lite",
+    errEmptyText: "Vui lòng nhập nội dung cần dịch.",
+    errNoResultToBack: "Chưa có bản dịch để kiểm tra dịch ngược.",
+    errTooLong: "Nội dung quá dài (tối đa 20.000 ký tự mỗi lượt).",
+    errNoImage: "Bạn chưa chọn ảnh.",
+    errNoDraw: "Hãy viết chữ lên bảng trước.",
+    errSameLang: "Ngôn ngữ nguồn và đích đang giống nhau.",
+    errSwapAuto: "Không thể đổi chiều khi nguồn đang ở chế độ tự động. Hãy chọn ngôn ngữ cụ thể.",
+    errBusy: "Đang xử lý yêu cầu trước đó. Vui lòng chờ hoàn tất.",
+    errSwitchSpeaker: "Hãy dừng lượt ghi âm hiện tại trước khi chuyển người nói.",
+    errNoMedia: "Trình duyệt không hỗ trợ ghi âm. Hãy dùng trình duyệt hiện đại và cấp quyền micro."
+  },
+  en: {
+    pageTitle: "AI Translation",
+    ready: "Ready",
+    noKey: "No API Key",
+    tryingFallback: "Trying fallback model...",
+    switchedModel: m => `Switched to working model ${m}.`,
+    placeholder: "Enter text to translate...",
+    clear: "Clear",
+    paste: "Paste",
+    draw: "✍ Draw",
+    image: "▧ Image",
+    charCount: n => `${n.toLocaleString("en-US")} chars`,
+    undo: "↶ Undo",
+    clearDraw: "Clear ink",
+    thin: "Thin",
+    medium: "Medium",
+    thick: "Thick",
+    translateDraw: "Translate handwriting",
+    chooseImage: "Choose image",
+    removeImage: "Remove image",
+    translateImage: "Translate image",
+    imageHint: "Supports PNG, JPG, WebP, GIF. Up to 12 MB.",
+    resultLabel: "Translation",
+    backTranslate: "⇄ Dịch ngược",
+    backTransLabel: "Back-translation check",
+    useResult: "↵ To input",
+    copy: "Copy",
+    copied: "Copied ✓",
+    speak: "🔊 Speak",
+    liveTitle: "Live Conversation",
+    clearLive: "Clear chat",
+    liveDesc: "Pick a speaker. The app records, transcribes, and translates into the other language. Tap again to stop.",
+    liveEmpty: "No conversation yet.",
+    personA: "Person A",
+    personB: "Person B",
+    autoLabel: "Auto",
+    liveWaiting: "Waiting for speaker.",
+    stopLive: "Stop recording",
+    translateBtn: "Translate text",
+    polishBtn: "More natural",
+    liveDock: "Live",
+    ttsSource: "Read source",
+    disclaimer: "AI translations may need verification in specialized or technical contexts.",
+    settingsTitle: "Gemini API Settings",
+    settingsDesc: 'Your API Key is stored locally in your browser (<code>localStorage</code>) and sent directly to Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Get an API Key here</a>.',
+    uiLangLabel: "Interface Language",
+    apiKeyLabel: "API Key",
+    modelLabel: "Gemini Model",
+    customModelOption: "Custom model name...",
+    customModelLabel: "Custom model name",
+    close: "Close",
+    save: "Save settings",
+    resetLabel: "Reset",
+    settingsLabel: "Settings",
+    swapLabel: "Swap languages",
+    micLabel: "Voice input",
+    errUnknown: "An unknown error occurred.",
+    errNeedKey: "Please enter your Gemini API Key in Settings before using.",
+    errBadModel: "Invalid model name. Example: gemini-3.5-flash-lite",
+    errEmptyText: "Please enter text to translate.",
+    errNoResultToBack: "No translation available to back-translate.",
+    errTooLong: "Text is too long (max 20,000 characters per request).",
+    errNoImage: "Please choose an image first.",
+    errNoDraw: "Please write on the canvas first.",
+    errSameLang: "Source and target languages are the same.",
+    errSwapAuto: "Cannot swap when source is set to Auto Detect. Select a specific language.",
+    errBusy: "A previous request is still processing. Please wait.",
+    errSwitchSpeaker: "Stop the current recording before switching speakers.",
+    errNoMedia: "Your browser does not support audio recording. Use a modern browser and grant mic access."
+  },
+  zh: {
+    pageTitle: "AI Translation",
+    ready: "就绪",
+    noKey: "未设置 API Key",
+    tryingFallback: "正在尝试备用模型...",
+    switchedModel: m => `已自动切换至可用模型 ${m}。`,
+    placeholder: "输入要翻译的内容...",
+    clear: "清空",
+    paste: "粘贴",
+    draw: "✍ 手写",
+    image: "▧ 图片",
+    charCount: n => `${n.toLocaleString("zh-CN")} 字`,
+    undo: "↶ 撤销",
+    clearDraw: "清除笔迹",
+    thin: "细",
+    medium: "中",
+    thick: "粗",
+    translateDraw: "翻译手写",
+    chooseImage: "选择图片",
+    removeImage: "移除图片",
+    translateImage: "翻译图片内容",
+    imageHint: "支持 PNG、JPG、WebP、GIF，最大 12 MB。",
+    resultLabel: "译文",
+    backTranslate: "⇄ 回译校验",
+    backTransLabel: "回译核对",
+    useResult: "↵ 上屏",
+    copy: "复制",
+    copied: "已复制 ✓",
+    speak: "🔊 朗读",
+    liveTitle: "实时对话翻译",
+    clearLive: "清空对话",
+    liveDesc: "选择说话方进行录音、识别并翻译为对方语言；再次点击正在录音的按钮即可停止。",
+    liveEmpty: "暂无对话内容。",
+    personA: "说话方 A",
+    personB: "说话方 B",
+    autoLabel: "自动",
+    liveWaiting: "等待说话。",
+    stopLive: "停止录音",
+    translateBtn: "翻译文本",
+    polishBtn: "更自然表达",
+    liveDock: "对话",
+    ttsSource: "朗读原文",
+    disclaimer: "AI 译文在专业或技术场景下建议人工复核。",
+    settingsTitle: "Gemini API 设置",
+    settingsDesc: 'API Key 保存在浏览器本地（<code>localStorage</code>）并直接发送至 Google。<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">点击此处获取 API Key</a>。',
+    uiLangLabel: "界面语言",
+    apiKeyLabel: "API Key",
+    modelLabel: "Gemini 模型",
+    customModelOption: "自定义模型名称...",
+    customModelLabel: "自定义模型名称",
+    close: "关闭",
+    save: "保存设置",
+    resetLabel: "重置",
+    settingsLabel: "设置",
+    swapLabel: "切换语言",
+    micLabel: "语音输入",
+    errUnknown: "发生未知错误。",
+    errNeedKey: "请先在设置中输入 Gemini API Key。",
+    errBadModel: "模型名称无效，例如：gemini-3.5-flash-lite",
+    errEmptyText: "请输入要翻译的内容。",
+    errNoResultToBack: "暂无译文可供回译校验。",
+    errTooLong: "内容过长（每次最多 20,000 字）。",
+    errNoImage: "请先选择图片。",
+    errNoDraw: "请先在手写板上书写。",
+    errSameLang: "源语言和目标语言相同。",
+    errSwapAuto: "源语言为“自动检测”时无法互换，请选择具体语言。",
+    errBusy: "上一个请求仍在处理中，请稍候。",
+    errSwitchSpeaker: "切换说话方前请先停止当前录音。",
+    errNoMedia: "当前浏览器不支持录音，请使用现代浏览器并授予麦克风权限。"
+  }
+};
+
+const $ = id => document.getElementById(id);
+
+const state = {
+  uiLang: localStorage.getItem("smart_translate_ui_lang_v1") || "vi",
+  apiKey: localStorage.getItem("smart_translate_key_v5") || "",
+  model: localStorage.getItem("smart_translate_model_v5") || CONFIG.defaultModel,
+  lastResult: null,
+  history: [],
+  imageData: null,
+  isBusy: false,
+  liveRecorder: null,
+  liveStream: null,
+  liveSide: null,
+  liveStarting: false,
+  liveStartToken: 0,
+  liveChunks: [],
+  startingSide: null,
+  recognition: null,
+  speechActive: false,
+  strokes: [],
+  currentStroke: null,
+  canvasDpr: 1,
+  canvasWidth: 0,
+  canvasHeight: 0,
+  noticeTimer: null
+};
+
+const el = {
+  notice: $("noticeBox"),
+  error: $("errorBox"),
+  status: $("statusPill"),
+  keyDot: $("keyDot"),
+  ioBox: $("ioBox"),
+  source: $("sourceText"),
+  resultSection: $("resultSection"),
+  resultText: $("resultText"),
+  pinyin: $("pinyinText"),
+  backTransBox: $("backTransBox"),
+  backTransLabel: $("backTransLabel"),
+  backTransText: $("backTransText"),
+  explanation: $("explanation"),
+  alternatives: $("alternatives"),
+  historyBar: $("historyBar"),
+  translate: $("translateBtn"),
+  translateSpin: $("translateSpinner"),
+  backSpin: $("backSpin"),
+  sourceLang: $("sourceLang"),
+  targetLang: $("targetLang"),
+  drawPanel: $("drawPanel"),
+  imagePanel: $("imagePanel"),
+  canvas: $("drawCanvas"),
+  livePanel: $("livePanel"),
+  liveFeed: $("liveFeed"),
+  liveStatus: $("liveStatus"),
+  mic: $("micBtn")
+};
+
+function setBtnLabel(btnId, text) {
+  const btn = $(btnId);
+  const label = btn?.querySelector(".btn-label");
+  if (label) label.textContent = text;
+}
+
+function t(key, ...args) {
+  const pack = I18N[state.uiLang] || I18N.vi;
+  const val = pack[key] ?? I18N.vi[key] ?? key;
+  return typeof val === "function" ? val(...args) : val;
+}
+
+function getLangObj(code) {
+  return LANGUAGES.find(item => item.code === code) || null;
+}
+
+function populateLanguageSelects() {
+  const prevSource = el.sourceLang.value || "auto";
+  const prevTarget = el.targetLang.value || "Chinese";
+
+  el.sourceLang.replaceChildren();
+  LANGUAGES.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.code;
+    opt.textContent = item.label[state.uiLang] || item.label.vi;
+    el.sourceLang.append(opt);
+  });
+
+  el.targetLang.replaceChildren();
+  LANGUAGES.filter(item => item.code !== "auto").forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.code;
+    opt.textContent = item.label[state.uiLang] || item.label.vi;
+    el.targetLang.append(opt);
+  });
+
+  el.sourceLang.value = LANGUAGES.some(l => l.code === prevSource) ? prevSource : "auto";
+  el.targetLang.value = LANGUAGES.some(l => l.code !== "auto" && l.code === prevTarget) ? prevTarget : "Chinese";
+}
+
+function applyUILanguage() {
+  document.documentElement.lang = state.uiLang;
+  document.title = t("pageTitle");
+  el.source.placeholder = t("placeholder");
+  setBtnLabel("clearTextBtn", t("clear"));
+  setBtnLabel("pasteBtn", t("paste"));
+  setBtnLabel("drawToggle", t("draw"));
+  setBtnLabel("imageToggle", t("image"));
+  setBtnLabel("undoDraw", t("undo"));
+  setBtnLabel("clearDraw", t("clearDraw"));
+  $("brushThinOpt").textContent = t("thin");
+  $("brushMedOpt").textContent = t("medium");
+  $("brushThickOpt").textContent = t("thick");
+  setBtnLabel("translateDrawBtn", t("translateDraw"));
+  setBtnLabel("chooseImageBtn", t("chooseImage"));
+  setBtnLabel("removeImageBtn", t("removeImage"));
+  setBtnLabel("translateImageBtn", t("translateImage"));
+  $("imageHint").textContent = t("imageHint");
+  $("resultLabel").textContent = t("resultLabel");
+  setBtnLabel("backTranslateBtn", t("backTranslate"));
+  el.backTransLabel.textContent = t("backTransLabel");
+  setBtnLabel("useResultBtn", t("useResult"));
+  setBtnLabel("copyBtn", t("copy"));
+  setBtnLabel("speakBtn", t("speak"));
+  $("liveTitle").textContent = t("liveTitle");
+  setBtnLabel("clearLiveBtn", t("clearLive"));
+  $("liveDesc").textContent = t("liveDesc");
+  const emptyFeed = el.liveFeed.querySelector("#liveEmptyText");
+  if (emptyFeed) emptyFeed.textContent = t("liveEmpty");
+  setBtnLabel("stopLiveBtn", t("stopLive"));
+  setBtnLabel("translateBtn", t("translateBtn"));
+  setBtnLabel("polishBtn", t("polishBtn"));
+  $("liveDockLabel").textContent = t("liveDock");
+  $("ttsSourceLabel").textContent = t("ttsSource");
+  $("disclaimerText").textContent = t("disclaimer");
+
+  $("settingsTitle").textContent = t("settingsTitle");
+  $("settingsDesc").innerHTML = t("settingsDesc");
+  $("uiLangLabel").textContent = t("uiLangLabel");
+  $("apiKeyLabel").textContent = t("apiKeyLabel");
+  $("modelLabel").textContent = t("modelLabel");
+  $("customModelOption").textContent = t("customModelOption");
+  $("customModelLabel").textContent = t("customModelLabel");
+  setBtnLabel("cancelSettings", t("close"));
+  setBtnLabel("saveSettings", t("save"));
+
+  $("resetBtn").title = $("resetBtn").ariaLabel = t("resetLabel");
+  $("settingsBtn").title = $("settingsBtn").ariaLabel = t("settingsLabel");
+  $("swapBtn").title = $("swapBtn").ariaLabel = t("swapLabel");
+  el.mic.title = el.mic.ariaLabel = t("micLabel");
+
+  populateLanguageSelects();
+  updateCount();
+  updateLiveLabels();
+  setStatus();
+  lockViewportPosition();
+}
+
+/* ============================ TIỆN ÍCH UI ============================ */
+function showNotice(message) {
+  if (state.noticeTimer) clearTimeout(state.noticeTimer);
+  el.notice.textContent = String(message || "");
+  el.notice.style.display = message ? "block" : "none";
+  if (message) {
+    state.noticeTimer = setTimeout(() => {
+      el.notice.style.display = "none";
+      el.notice.textContent = "";
+    }, 4500);
+  }
+}
+function showError(message) {
+  el.error.textContent = String(message || t("errUnknown"));
+  el.error.style.display = "block";
+}
+function clearError() {
+  el.error.textContent = "";
+  el.error.style.display = "none";
+}
+function clearBackTranslation() {
+  el.backTransText.textContent = "";
+  el.backTransBox.style.display = "none";
+}
+function setStatus() {
+  const ready = Boolean(state.apiKey.trim());
+  el.status.textContent = ready ? `${t("ready")} • ${state.model}` : t("noKey");
+  el.keyDot.classList.toggle("ready", ready);
+}
+function setBusy(busy, spinnerId) {
+  state.isBusy = busy;
+  if (spinnerId && $(spinnerId)) $(spinnerId).style.display = busy ? "inline-block" : "none";
+  ["translateBtn", "polishBtn", "translateDrawBtn", "translateImageBtn", "backTranslateBtn"].forEach(id => {
+    if ($(id)) $(id).disabled = busy;
+  });
+}
+function openSettings() {
+  $("uiLangSelect").value = state.uiLang;
+  $("apiKey").value = state.apiKey;
+  const isKnown = Array.from($("modelName").options).some(o => o.value === state.model && o.value !== "custom");
+  if (isKnown) {
+    $("modelName").value = state.model;
+    $("customModelField").style.display = "none";
+  } else {
+    $("modelName").value = "custom";
+    $("customModelInput").value = state.model;
+    $("customModelField").style.display = "block";
+  }
+  $("settingsModal").style.display = "flex";
+}
+function closeSettings() {
+  $("settingsModal").style.display = "none";
+  lockViewportPosition();
+}
+function updateCount() {
+  $("charCount").textContent = t("charCount", el.source.value.length);
+}
+function escapeText(value) {
+  return String(value ?? "").replace(/\u0000/g, "");
+}
+function sourceLang() {
+  return el.sourceLang.value;
+}
+function targetLang() {
+  return el.targetLang.value;
+}
+function langPrompt(value) {
+  const found = getLangObj(value);
+  return found ? found.prompt : value;
+}
+
+function ensureConfig() {
+  if (!state.apiKey.trim()) {
+    openSettings();
+    throw new Error(t("errNeedKey"));
+  }
+  if (!/^[a-zA-Z0-9._-]{2,100}$/.test(state.model.trim())) {
+    throw new Error(t("errBadModel"));
+  }
+}
+
+function stopStream(stream) {
+  if (stream) stream.getTracks().forEach(track => { try { track.stop(); } catch (_) {} });
+}
+
+function persistModelSelection(newModel) {
+  const clean = newModel.trim();
+  if (!clean) return;
+  const prev = state.model.trim();
+  state.model = clean;
+  try {
+    localStorage.setItem("smart_translate_model_v5", clean);
+  } catch (_) {}
+  setStatus();
+  if (prev !== clean) {
+    showNotice(t("switchedModel", clean));
+  }
+}
+
+function pushHistory(result) {
+  if (!result?.translation) return;
+  const entry = {
+    translation: result.translation,
+    pinyin: result.pinyin || "",
+    explanation: result.explanation || "",
+    alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : []
+  };
+  state.history = [entry, ...state.history.filter(h => h.translation !== entry.translation)].slice(0, CONFIG.maxHistory);
+  renderHistory();
+}
+
+function renderHistory() {
+  el.historyBar.replaceChildren();
+  if (!state.history.length) {
+    el.historyBar.style.display = "none";
+    return;
+  }
+  state.history.forEach(item => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip";
+    btn.textContent = item.translation;
+    btn.title = item.translation;
+    btn.addEventListener("click", () => renderResult(item, false));
+    el.historyBar.append(btn);
+  });
+  el.historyBar.style.display = "flex";
+}
+
+/* ============================ XỬ LÝ ẢNH ============================ */
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Không thể đọc tệp ảnh."));
+    reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("Dữ liệu ảnh không hợp lệ."));
+    reader.readAsDataURL(file);
+  });
+}
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Không thể mở ảnh. Tệp có thể bị hỏng."));
+    img.src = src;
+  });
+}
+async function optimizeImage(file) {
+  if (!file || !file.type.startsWith("image/")) throw new Error("Vui lòng chọn một tệp hình ảnh.");
+  if (file.size > CONFIG.maxImageBytes) throw new Error("Ảnh vượt quá 12 MB. Hãy chọn ảnh nhỏ hơn.");
+  const original = await fileToDataUrl(file);
+  const img = await loadImage(original);
+  const maxDim = Math.max(img.naturalWidth || 1, img.naturalHeight || 1);
+  const scale = Math.min(1, CONFIG.maxImageDimension / maxDim);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round((img.naturalWidth || 1) * scale));
+  canvas.height = Math.max(1, Math.round((img.naturalHeight || 1) * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Trình duyệt không hỗ trợ xử lý ảnh.");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", 0.85);
+}
+
+/* ============================ GEMINI API (TỰ ĐỘNG ĐỔI MODEL OK) ============================ */
+async function rawGeminiRequest(modelName, parts, options) {
+  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1500, timeoutMs = CONFIG.requestTimeoutMs } = options;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const url = CONFIG.apiBase + encodeURIComponent(modelName.trim()) + ":generateContent";
+
+  const body = {
+    systemInstruction: { parts: [{ text: systemInstruction || "Fast accurate translator. Return valid JSON." }] },
+    contents: [{ role: "user", parts }],
+    generationConfig: {
+      temperature,
+      maxOutputTokens,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "object",
+        properties: {
+          transcript: { type: "string" },
+          translation: { type: "string" },
+          pinyin: { type: "string" },
+          explanation: { type: "string" },
+          alternatives: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                text: { type: "string" },
+                note: { type: "string" }
+              }
+            }
+          }
+        },
+        required: ["translation"]
+      }
+    }
+  };
+
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": state.apiKey.trim()
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+  } catch (error) {
+    clearTimeout(timer);
+    if (error.name === "AbortError") {
+      const err = new Error("Yêu cầu quá thời gian chờ.");
+      err.retryable = true;
+      throw err;
+    }
+    if (!navigator.onLine) throw new Error("Thiết bị đang ngoại tuyến.");
+    const err = new Error("Lỗi kết nối mạng: " + (error.message || "network"));
+    err.retryable = true;
+    throw err;
+  }
+
+  let raw;
+  try {
+    raw = await response.text();
+  } catch (_) {
+    clearTimeout(timer);
+    const err = new Error("Không đọc được phản hồi từ Gemini.");
+    err.retryable = true;
+    throw err;
+  }
+  clearTimeout(timer);
+
+  let data;
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch (_) {
+    const err = new Error(`Dữ liệu phản hồi không hợp lệ (HTTP ${response.status}).`);
+    err.status = response.status;
+    err.retryable = response.status >= 500;
+    throw err;
+  }
+
+  if (!response.ok) {
+    const msg = data?.error?.message || `HTTP ${response.status}`;
+    const err = new Error(msg);
+    err.status = response.status;
+    err.retryable = response.status === 404 || response.status === 429 || response.status >= 500;
+    throw err;
+  }
+
+  if (data.promptFeedback?.blockReason) {
+    throw new Error("Yêu cầu bị chặn: " + data.promptFeedback.blockReason);
+  }
+  const candidate = data.candidates?.[0];
+  if (!candidate) {
+    const err = new Error("Gemini không trả về kết quả.");
+    err.retryable = true;
+    throw err;
+  }
+  if (candidate.finishReason === "SAFETY") {
+    throw new Error("Nội dung bị bộ lọc an toàn chặn.");
+  }
+
+  const text = (candidate.content?.parts || []).map(p => p.text || "").join("").trim();
+  if (!text) {
+    const err = new Error("Gemini trả về nội dung trống.");
+    err.retryable = true;
+    throw err;
+  }
+  return text;
+}
+
+async function geminiRequest(parts, options = {}) {
+  ensureConfig();
+
+  const modelsToTry = [state.model.trim()];
+  FALLBACK_MODELS.forEach(m => {
+    if (!modelsToTry.includes(m)) modelsToTry.push(m);
+  });
+
+  let lastError = null;
+  for (let i = 0; i < modelsToTry.length; i++) {
+    const currentModel = modelsToTry[i];
+    try {
+      const rawText = await rawGeminiRequest(currentModel, parts, options);
+      const parsed = parseJsonResponse(rawText);
+      if (options.requireTranslation !== false && !parsed.translation) {
+        const err = new Error("Không có trường bản dịch hợp lệ.");
+        err.retryable = true;
+        throw err;
+      }
+      persistModelSelection(currentModel);
+      return parsed;
+    } catch (err) {
+      lastError = err;
+      const canTryNext = (
+        err.retryable ||
+        err.status === 503 ||
+        err.status === 404 ||
+        err.status === 429 ||
+        err.status === 500 ||
+        err.status === 502 ||
+        err.status === 504
+      );
+      if (canTryNext && i < modelsToTry.length - 1) {
+        el.status.textContent = t("tryingFallback");
+        continue;
+      }
+      break;
+    }
+  }
+
+  setStatus();
+  if (!lastError) throw new Error(t("errUnknown"));
+  if (lastError.status === 503) {
+    throw new Error("Hệ thống Gemini đang quá tải (503). Vui lòng thử lại sau vài giây.");
+  }
+  if (lastError.status === 400) throw new Error("Yêu cầu không hợp lệ: " + lastError.message);
+  if (lastError.status === 401 || lastError.status === 403) {
+    throw new Error("API Key không hợp lệ hoặc chưa được cấp quyền: " + lastError.message);
+  }
+  if (lastError.status === 404) throw new Error("Model không tồn tại hoặc không khả dụng: " + lastError.message);
+  if (lastError.status === 429) throw new Error("Đã vượt giới hạn tốc độ hoặc quota.");
+  throw new Error("Lỗi Gemini API: " + lastError.message);
+}
+
+function parseJsonResponse(text) {
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try {
+    return JSON.parse(cleaned);
+  } catch (_) {
+    const first = cleaned.indexOf("{");
+    const last = cleaned.lastIndexOf("}");
+    if (first >= 0 && last > first) {
+      try {
+        return JSON.parse(cleaned.slice(first, last + 1));
+      } catch (__) {}
+    }
+    const err = new Error("Không phân tích được JSON từ Gemini.");
+    err.retryable = true;
+    throw err;
+  }
+}
+
+function translationPrompt({ mode = "translate", extraContext = "", fromOverride = "", toOverride = "" } = {}) {
+  const from = fromOverride || langPrompt(sourceLang());
+  const to = toOverride || langPrompt(targetLang());
+  return `Dịch từ ${from} sang ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
+- Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng và bố cục.
+- Tiếng Trung: dùng tiếng Trung giản thể tự nhiên, ưu tiên thuật ngữ nhà máy.
+- Giao tiếp: dùng sắc thái lịch sự, tự nhiên.
+${mode === "polish" ? "- Ưu tiên văn phong mượt mà, tự nhiên hơn." : "- Ưu tiên tốc độ và độ chính xác cao, giữ explanation/alternatives ngắn gọn."}
+${extraContext}
+Trả về JSON đúng schema.`;
+}
+
+async function translateText(mode = "translate", inputOverride = null) {
+  if (state.isBusy) {
+    showError(t("errBusy"));
+    return;
+  }
+  clearError();
+  const input = escapeText(inputOverride ?? el.source.value).trim();
+  if (!input) {
+    showError(t("errEmptyText"));
+    return;
+  }
+  if (input.length > 20000) {
+    showError(t("errTooLong"));
+    return;
+  }
+  if (sourceLang() !== "auto" && sourceLang() === targetLang()) {
+    showError(t("errSameLang"));
+    return;
+  }
+
+  try {
+    setBusy(true, "translateSpinner");
+    const result = await geminiRequest(
+      [{ text: input }],
+      {
+        systemInstruction: translationPrompt({ mode }),
+        temperature: 0.1,
+        maxOutputTokens: mode === "polish" ? 2000 : 1400,
+        requireTranslation: true
+      }
+    );
+    renderResult(result, true);
+  } catch (e) {
+    showError(e.message || e);
+  } finally {
+    setBusy(false, "translateSpinner");
+  }
+}
+
+async function backTranslateResult() {
+  if (state.isBusy) {
+    showError(t("errBusy"));
+    return;
+  }
+  const translated = escapeText(state.lastResult?.translation || el.resultText.textContent || "").trim();
+  if (!translated) {
+    showError(t("errNoResultToBack"));
+    return;
+  }
+  clearError();
+
+  const srcCode = sourceLang();
+  const tgtCode = targetLang();
+  const fallbackBackLang = state.uiLang === "zh" ? "tiếng Trung" : state.uiLang === "en" ? "tiếng Anh" : "tiếng Việt";
+  const backTargetPrompt = srcCode === "auto" ? fallbackBackLang : langPrompt(srcCode);
+  const backSourcePrompt = langPrompt(tgtCode);
+
+  try {
+    setBusy(true, "backSpin");
+    const res = await geminiRequest(
+      [{ text: translated }],
+      {
+        systemInstruction: translationPrompt({
+          mode: "translate",
+          fromOverride: backSourcePrompt,
+          toOverride: backTargetPrompt,
+          extraContext: "Dịch ngược chính xác sát nghĩa gốc để kiểm tra chéo bản dịch, giữ nguyên số, mã thiết bị và tên riêng."
+        }),
+        temperature: 0.1,
+        maxOutputTokens: 1200,
+        requireTranslation: true
+      }
+    );
+    el.backTransLabel.textContent = `${t("backTransLabel")} (${srcCode === "auto" ? fallbackBackLang : backTargetPrompt})`;
+    el.backTransText.textContent = res.translation || "";
+    el.backTransBox.style.display = "flex";
+    el.ioBox.scrollTop = el.ioBox.scrollHeight;
+  } catch (e) {
+    showError(e.message || e);
+  } finally {
+    setBusy(false, "backSpin");
+  }
+}
+
+async function translateImage() {
+  if (state.isBusy) {
+    showError(t("errBusy"));
+    return;
+  }
+  clearError();
+  if (!state.imageData) {
+    showError(t("errNoImage"));
+    return;
+  }
+  try {
+    setBusy(true, "imageSpinner");
+    const base64Data = state.imageData.split(",")[1];
+    const prompt = translationPrompt({
+      extraContext: "OCR toàn bộ chữ trong ảnh rồi dịch."
+    });
+    const result = await geminiRequest(
+      [
+        { text: prompt },
+        { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+      ],
+      { systemInstruction: "OCR và dịch nhanh chính xác. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1800, requireTranslation: true }
+    );
+    renderResult(result, true);
+  } catch (e) {
+    showError(e.message || e);
+  } finally {
+    setBusy(false, "imageSpinner");
+  }
+}
+
+async function translateDrawing() {
+  if (state.isBusy) {
+    showError(t("errBusy"));
+    return;
+  }
+  if (!state.strokes.length) {
+    showError(t("errNoDraw"));
+    return;
+  }
+  try {
+    setBusy(true, "drawSpinner");
+    clearError();
+    const base64Data = el.canvas.toDataURL("image/png").split(",")[1];
+    const prompt = translationPrompt({
+      extraContext: "Nhận dạng chữ viết tay rồi dịch."
+    });
+    const result = await geminiRequest(
+      [
+        { text: prompt },
+        { inlineData: { mimeType: "image/png", data: base64Data } }
+      ],
+      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1500, requireTranslation: true }
+    );
+    renderResult(result, true);
+  } catch (e) {
+    showError(e.message || e);
+  } finally {
+    setBusy(false, "drawSpinner");
+  }
+}
+
+function renderResult(result, saveToHistory = false) {
+  state.lastResult = result;
+  clearBackTranslation();
+  el.resultText.textContent = result.translation || "";
+  el.pinyin.textContent = result.pinyin || "";
+  el.pinyin.style.display = result.pinyin ? "block" : "none";
+  el.explanation.textContent = result.explanation || "";
+  el.explanation.style.display = result.explanation ? "block" : "none";
+
+  el.alternatives.replaceChildren();
+  const alternatives = Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : [];
+  alternatives.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "extra-item";
+    const b = document.createElement("b");
+    b.textContent = item.text || "";
+    const note = document.createElement("div");
+    note.textContent = item.note || "";
+    div.append(b, note);
+    el.alternatives.append(div);
+  });
+  el.alternatives.style.display = alternatives.length ? "flex" : "none";
+
+  if (saveToHistory) pushHistory(result);
+
+  el.resultSection.style.display = "flex";
+  el.ioBox.scrollTop = el.ioBox.scrollHeight;
+  lockViewportPosition();
+}
+
+/* ============================ CANVAS VẼ TAY ============================ */
+const ctx = el.canvas.getContext("2d");
+function canvasPoint(event) {
+  const rect = el.canvas.getBoundingClientRect();
+  return {
+    x: ((event.clientX - rect.left) / (rect.width || 1)) * state.canvasWidth,
+    y: ((event.clientY - rect.top) / (rect.height || 1)) * state.canvasHeight
+  };
+}
+function resizeCanvas() {
+  const rect = el.canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const oldW = state.canvasWidth;
+  const oldH = state.canvasHeight;
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const newW = Math.round(rect.width * ratio);
+  const newH = Math.round(rect.height * ratio);
+  if (el.canvas.width === newW && el.canvas.height === newH) return;
+
+  el.canvas.width = newW;
+  el.canvas.height = newH;
+  state.canvasWidth = newW;
+  state.canvasHeight = newH;
+  state.canvasDpr = ratio;
+
+  if (oldW && oldH) {
+    const sx = newW / oldW;
+    const sy = newH / oldH;
+    state.strokes.forEach(stroke => stroke.points.forEach(p => { p.x *= sx; p.y *= sy; }));
+  }
+  redrawCanvas();
+}
+function redrawCanvas() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = "#101820";
+
+  state.strokes.forEach(stroke => {
+    if (!stroke.points.length) return;
+    ctx.lineWidth = stroke.size * state.canvasDpr;
+    ctx.beginPath();
+    ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+    stroke.points.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+    if (stroke.points.length === 1) ctx.lineTo(stroke.points[0].x + 0.1, stroke.points[0].y + 0.1);
+    ctx.stroke();
+  });
+}
+el.canvas.addEventListener("pointerdown", e => {
+  if (el.drawPanel.style.display === "none") return;
+  e.preventDefault();
+  try { el.canvas.setPointerCapture(e.pointerId); } catch (_) {}
+  state.currentStroke = { size: Number($("brushSize").value) || 4, points: [canvasPoint(e)] };
+});
+el.canvas.addEventListener("pointermove", e => {
+  if (!state.currentStroke) return;
+  e.preventDefault();
+  state.currentStroke.points.push(canvasPoint(e));
+  state.strokes.push(state.currentStroke);
+  redrawCanvas();
+  state.strokes.pop();
+});
+function finishStroke() {
+  if (state.currentStroke) {
+    state.strokes.push(state.currentStroke);
+    state.currentStroke = null;
+    redrawCanvas();
+  }
+}
+el.canvas.addEventListener("pointerup", finishStroke);
+el.canvas.addEventListener("pointercancel", finishStroke);
+
+$("undoDraw").addEventListener("click", () => { state.strokes.pop(); redrawCanvas(); });
+$("clearDraw").addEventListener("click", () => { state.strokes = []; state.currentStroke = null; redrawCanvas(); });
+$("drawToggle").addEventListener("click", () => {
+  const show = el.drawPanel.style.display !== "flex";
+  el.drawPanel.style.display = show ? "flex" : "none";
+  if (show) {
+    el.imagePanel.style.display = "none";
+    requestAnimationFrame(resizeCanvas);
+  }
+});
+
+/* ============================ ẢNH (TẢI LÊN) ============================ */
+$("imageToggle").addEventListener("click", () => {
+  const show = el.imagePanel.style.display !== "flex";
+  el.imagePanel.style.display = show ? "flex" : "none";
+  if (show) el.drawPanel.style.display = "none";
+});
+$("chooseImageBtn").addEventListener("click", () => $("imageFile").click());
+$("imageFile").addEventListener("change", async e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  clearError();
+  try {
+    const optimized = await optimizeImage(file);
+    state.imageData = optimized;
+    $("imagePreview").src = optimized;
+    $("imagePreviewWrap").style.display = "flex";
+  } catch (err) {
+    showError(err.message || err);
+  } finally {
+    e.target.value = "";
+  }
+});
+$("removeImageBtn").addEventListener("click", () => {
+  state.imageData = null;
+  $("imagePreview").removeAttribute("src");
+  $("imagePreviewWrap").style.display = "none";
+});
+$("translateImageBtn").addEventListener("click", translateImage);
+$("translateDrawBtn").addEventListener("click", translateDrawing);
+
+/* ============================ DỊCH NGƯỢC / ĐƯA LÊN / CLIPBOARD / TTS ============================ */
+$("backTranslateBtn").addEventListener("click", backTranslateResult);
+
+$("useResultBtn").addEventListener("click", () => {
+  const text = state.lastResult?.translation;
+  if (!text) return;
+  el.source.value = text;
+  updateCount();
+  el.ioBox.scrollTop = 0;
+  el.source.focus();
+  lockViewportPosition();
+});
+
+$("copyBtn").addEventListener("click", async () => {
+  const text = state.lastResult?.translation;
+  if (!text) return;
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.append(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      if (!ok) throw new Error("Trình duyệt không cho phép sao chép.");
+    }
+    setBtnLabel("copyBtn", t("copied"));
+    setTimeout(() => { setBtnLabel("copyBtn", t("copy")); }, 1500);
+  } catch (e) {
+    showError("Không thể sao chép: " + e.message);
+  }
+});
+
+function speak(text, lang) {
+  if (!("speechSynthesis" in window)) {
+    showError("Trình duyệt không hỗ trợ đọc văn bản.");
+    return;
+  }
+  if (!text) return;
+  try { speechSynthesis.cancel(); } catch (_) {}
+  const langInfo = getLangObj(lang);
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = langInfo?.speech || "en-US";
+  utterance.rate = lang === "Chinese" ? 0.92 : 1;
+  const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+  const prefix = utterance.lang.toLowerCase().split("-")[0];
+  const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+  if (voice) utterance.voice = voice;
+  utterance.onerror = () => {};
+  try { speechSynthesis.speak(utterance); } catch (_) {}
+}
+$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang()));
+$("ttsSourceBtn").addEventListener("click", () => {
+  const src = sourceLang();
+  speak(el.source.value, src === "auto" ? "Vietnamese" : src);
+});
+
+/* ============================ GIỌNG NÓI & HỘI THOẠI ============================ */
+function syncMicVisual() {
+  const liveActive = Boolean(state.liveRecorder && state.liveRecorder.state === "recording");
+  el.mic.classList.toggle("recording", liveActive || state.speechActive);
+}
+
+function stopSpeechInput() {
+  state.speechActive = false;
+  if (state.recognition) {
+    try { state.recognition.stop(); } catch (_) {}
+    state.recognition = null;
+  }
+  syncMicVisual();
+}
+
+function startSpeechInput() {
+  if (state.liveRecorder || state.liveStarting) {
+    stopLiveRecording();
+    return;
+  }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showError("Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini.");
+    return;
+  }
+  if (state.speechActive && state.recognition) {
+    stopSpeechInput();
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  state.recognition = recognition;
+  state.speechActive = true;
+  const langInfo = getLangObj(sourceLang());
+  recognition.lang = (langInfo && langInfo.code !== "auto")
+    ? langInfo.speech
+    : (state.uiLang === "zh" ? "zh-CN" : state.uiLang === "en" ? "en-US" : "vi-VN");
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  let finalText = el.source.value ? el.source.value.trim() + " " : "";
+  recognition.onresult = e => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const value = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += value + " ";
+      else interim += value;
+    }
+    el.source.value = (finalText + interim).trim();
+    updateCount();
+  };
+  recognition.onerror = e => {
+    if (e.error !== "aborted" && e.error !== "no-speech") {
+      showError("Lỗi nhận dạng giọng nói: " + e.error);
+    }
+  };
+  recognition.onend = () => {
+    if (state.recognition === recognition) state.recognition = null;
+    state.speechActive = false;
+    syncMicVisual();
+  };
+  try {
+    recognition.start();
+    syncMicVisual();
+  } catch (e) {
+    state.recognition = null;
+    state.speechActive = false;
+    syncMicVisual();
+    showError("Không thể bắt đầu nhận dạng: " + e.message);
+  }
+}
+el.mic.addEventListener("click", startSpeechInput);
+
+function updateLiveLabels() {
+  const srcObj = getLangObj(sourceLang());
+  const tgtObj = getLangObj(targetLang());
+  const srcName = sourceLang() === "auto" ? t("autoLabel") : (srcObj?.label[state.uiLang] || sourceLang());
+  const tgtName = tgtObj?.label[state.uiLang] || targetLang();
+  $("sideABtn").textContent = `🎙 ${t("personA")} (${srcName})`;
+  $("sideBBtn").textContent = `🎙 ${t("personB")} (${tgtName})`;
+}
+
+function addBubble(text, side, translation) {
+  const empty = el.liveFeed.querySelector("#liveEmptyText");
+  if (empty) empty.remove();
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + (side === "A" ? "left" : "right");
+  const main = document.createElement("div");
+  main.textContent = text;
+  bubble.append(main);
+  if (translation) {
+    const sub = document.createElement("small");
+    sub.textContent = "→ " + translation;
+    bubble.append(sub);
+  }
+  el.liveFeed.append(bubble);
+  el.liveFeed.scrollTop = el.liveFeed.scrollHeight;
+}
+
+function liveLanguages(side) {
+  const src = sourceLang() === "auto" ? "ngôn ngữ tự động nhận diện của người nói" : langPrompt(sourceLang());
+  const tgt = langPrompt(targetLang());
+  return side === "A" ? { from: src, to: tgt } : { from: tgt, to: src };
+}
+
+function supportedRecorderMime() {
+  if (!window.MediaRecorder) return "";
+  const candidates = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/aac",
+    "audio/ogg;codecs=opus"
+  ];
+  return candidates.find(type => MediaRecorder.isTypeSupported?.(type)) || "";
+}
+
+async function stopLiveRecording() {
+  state.liveStartToken++;
+  state.liveStarting = false;
+  const recorder = state.liveRecorder;
+  if (recorder && recorder.state !== "inactive") {
+    try { recorder.stop(); } catch (_) {}
+  } else {
+    stopStream(state.liveStream);
+    state.liveStream = null;
+    state.liveRecorder = null;
+    state.liveSide = null;
+    state.startingSide = null;
+    updateLiveButtons();
+  }
+}
+
+function updateLiveButtons() {
+  $("sideABtn").classList.toggle("active", state.liveSide === "A" || (state.liveStarting && state.startingSide === "A"));
+  $("sideBBtn").classList.toggle("active", state.liveSide === "B" || (state.liveStarting && state.startingSide === "B"));
+  syncMicVisual();
+}
+
+async function beginLiveRecording(side) {
+  if (state.isBusy) {
+    showError(t("errBusy"));
+    return;
+  }
+  if (state.speechActive) stopSpeechInput();
+  if (state.liveStarting) return;
+  if (state.liveRecorder) {
+    if (state.liveSide === side) {
+      await stopLiveRecording();
+      return;
+    }
+    showError(t("errSwitchSpeaker"));
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    showError(t("errNoMedia"));
+    return;
+  }
+  if (!state.apiKey.trim()) {
+    openSettings();
+    showError(t("errNeedKey"));
+    return;
+  }
+
+  state.liveStarting = true;
+  state.startingSide = side;
+  const startToken = ++state.liveStartToken;
+  updateLiveButtons();
+  el.liveStatus.textContent = "Đang xin quyền microphone…";
+  clearError();
+
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+    });
+    if (!state.liveStarting || startToken !== state.liveStartToken) {
+      stopStream(stream);
+      return;
+    }
+    const mime = supportedRecorderMime();
+    const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    state.liveStream = stream;
+    state.liveRecorder = recorder;
+    state.liveSide = side;
+    state.liveStarting = false;
+    state.liveChunks = [];
+
+    recorder.ondataavailable = e => {
+      if (e.data && e.data.size > 0) state.liveChunks.push(e.data);
+    };
+    recorder.onerror = e => {
+      showError("Lỗi ghi âm: " + (e.error?.message || "không xác định"));
+    };
+    recorder.onstop = async () => {
+      const chunks = state.liveChunks.slice();
+      state.liveChunks = [];
+      const actualMime = recorder.mimeType || chunks[0]?.type || "";
+      stopStream(state.liveStream);
+      state.liveStream = null;
+      state.liveRecorder = null;
+      state.liveSide = null;
+      state.startingSide = null;
+      state.liveStarting = false;
+      updateLiveButtons();
+
+      if (!chunks.length) {
+        el.liveStatus.textContent = "Không thu được âm thanh.";
+        return;
+      }
+      const blob = new Blob(chunks, { type: actualMime || "audio/mp4" });
+      if (blob.size > CONFIG.maxAudioBytes) {
+        showError("Đoạn ghi âm quá lớn. Hãy nói ngắn hơn.");
+        return;
+      }
+      await processLiveAudio(blob, actualMime || blob.type, side);
+    };
+    recorder.start(250);
+    el.liveStatus.textContent = "Đang nghe… Chạm lại để dừng.";
+    updateLiveButtons();
+  } catch (e) {
+    stopStream(stream);
+    state.liveStarting = false;
+    state.liveRecorder = null;
+    state.liveStream = null;
+    state.liveSide = null;
+    state.startingSide = null;
+    updateLiveButtons();
+    showError("Không thể truy cập microphone: " + (e.message || e));
+    el.liveStatus.textContent = "Không bật được microphone.";
+  }
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Không thể đọc dữ liệu ghi âm."));
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const index = result.indexOf(",");
+      if (index < 0) reject(new Error("Dữ liệu âm thanh không hợp lệ."));
+      else resolve(result.slice(index + 1));
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function processLiveAudio(blob, mime, side) {
+  if (state.isBusy) {
+    showError(t("errBusy"));
+    return;
+  }
+  state.isBusy = true;
+  try {
+    const { from, to } = liveLanguages(side);
+    const safeMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
+    const supported = [
+      "audio/webm", "audio/mp4", "audio/m4a", "audio/ogg",
+      "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"
+    ].includes(safeMime);
+
+    if (!supported) {
+      throw new Error("Định dạng âm thanh " + (safeMime || "không rõ") + " chưa được hỗ trợ.");
+    }
+
+    el.liveStatus.textContent = "Đang nhận dạng và dịch…";
+    const b64 = await blobToBase64(blob);
+    const prompt = `Nghe audio (${from}), phiên âm chính xác rồi dịch tự nhiên sang ${to}. Giữ nguyên số, tên riêng, mã thiết bị. Nếu không rõ ghi [không nghe rõ]. Trả JSON đúng schema.`;
+
+    const result = await geminiRequest(
+      [
+        { text: prompt },
+        { inlineData: { mimeType: safeMime, data: b64 } }
+      ],
+      {
+        systemInstruction: "Phiên âm và dịch hội thoại nhanh chính xác. Trả về JSON.",
+        temperature: 0.1,
+        maxOutputTokens: 1200,
+        timeoutMs: 60000,
+        requireTranslation: false
+      }
+    );
+
+    if (!result.transcript && !result.translation) {
+      throw new Error("Không nhận dạng được lời nói.");
+    }
+
+    const transcript = result.transcript || "(...)";
+    const translation = result.translation || "";
+    addBubble(transcript, side, translation);
+    const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
+    if (result.pinyin && targetCode === "Chinese") addBubble("Pinyin: " + result.pinyin, side, "");
+    el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
+    if (translation) speak(translation, targetCode);
+  } catch (e) {
+    showError(e.message || e);
+    el.liveStatus.textContent = "Dịch thất bại. Bạn có thể ghi âm lại.";
+  } finally {
+    state.isBusy = false;
+  }
+}
+
+$("sideABtn").addEventListener("click", () => beginLiveRecording("A"));
+$("sideBBtn").addEventListener("click", () => beginLiveRecording("B"));
+$("stopLiveBtn").addEventListener("click", stopLiveRecording);
+
+$("liveToggle").addEventListener("click", () => {
+  const show = el.livePanel.style.display !== "flex";
+  el.livePanel.style.display = show ? "flex" : "none";
+  $("liveToggle").classList.toggle("active", show);
+  if (show) {
+    el.drawPanel.style.display = "none";
+    el.imagePanel.style.display = "none";
+    updateLiveLabels();
+  } else if (state.liveRecorder || state.liveStarting) {
+    stopLiveRecording();
+  }
+});
+
+$("clearLiveBtn").addEventListener("click", () => {
+  if (state.liveRecorder || state.liveStarting) stopLiveRecording();
+  el.liveFeed.replaceChildren();
+  const empty = document.createElement("div");
+  empty.className = "small";
+  empty.id = "liveEmptyText";
+  empty.textContent = t("liveEmpty");
+  el.liveFeed.append(empty);
+  el.liveStatus.textContent = t("liveWaiting");
+});
+
+/* ============================ CÀI ĐẶT / ĐỔI NGÔN NGỮ / RESET ============================ */
+$("settingsBtn").addEventListener("click", openSettings);
+$("cancelSettings").addEventListener("click", closeSettings);
+
+$("modelName").addEventListener("change", e => {
+  $("customModelField").style.display = e.target.value === "custom" ? "block" : "none";
+});
+
+$("saveSettings").addEventListener("click", () => {
+  const nextUiLang = $("uiLangSelect").value;
+  const key = $("apiKey").value.trim();
+  let model = $("modelName").value;
+  if (model === "custom") {
+    model = $("customModelInput").value.trim() || CONFIG.defaultModel;
+  }
+  if (!key) {
+    showError(t("errNeedKey"));
+    return;
+  }
+  if (!/^[a-zA-Z0-9._-]{2,100}$/.test(model)) {
+    showError(t("errBadModel"));
+    return;
+  }
+
+  state.uiLang = I18N[nextUiLang] ? nextUiLang : "vi";
+  state.apiKey = key;
+  state.model = model;
+  try {
+    localStorage.setItem("smart_translate_ui_lang_v1", state.uiLang);
+    localStorage.setItem("smart_translate_key_v5", key);
+    localStorage.setItem("smart_translate_model_v5", model);
+  } catch (e) {
+    showError("Không thể lưu cài đặt trên trình duyệt: " + e.message);
+    return;
+  }
+  applyUILanguage();
+  closeSettings();
+  clearError();
+});
+
+$("settingsModal").addEventListener("click", e => {
+  if (e.target === $("settingsModal")) closeSettings();
+});
+
+$("swapBtn").addEventListener("click", () => {
+  const a = sourceLang();
+  const b = targetLang();
+  if (a === "auto") {
+    showError(t("errSwapAuto"));
+    return;
+  }
+  el.sourceLang.value = b;
+  el.targetLang.value = a;
+  clearBackTranslation();
+  if (state.lastResult) {
+    el.source.value = state.lastResult.translation;
+    updateCount();
+    state.lastResult = null;
+    el.resultSection.style.display = "none";
+  }
+  updateLiveLabels();
+  lockViewportPosition();
+});
+
+$("sourceLang").addEventListener("change", () => {
+  if (sourceLang() !== "auto" && sourceLang() === targetLang()) showError(t("errSameLang"));
+  else clearError();
+  clearBackTranslation();
+  updateLiveLabels();
+  lockViewportPosition();
+});
+$("targetLang").addEventListener("change", () => {
+  if (sourceLang() !== "auto" && sourceLang() === targetLang()) showError(t("errSameLang"));
+  else clearError();
+  clearBackTranslation();
+  updateLiveLabels();
+  lockViewportPosition();
+});
+
+$("translateBtn").addEventListener("click", () => translateText("translate"));
+$("polishBtn").addEventListener("click", () => translateText("polish"));
+el.source.addEventListener("input", updateCount);
+el.source.addEventListener("blur", lockViewportPosition);
+
+$("clearTextBtn").addEventListener("click", () => {
+  el.source.value = "";
+  updateCount();
+});
+
+$("pasteBtn").addEventListener("click", async () => {
+  try {
+    if (!navigator.clipboard?.readText) {
+      throw new Error("Trình duyệt không hỗ trợ đọc clipboard. Hãy nhấn giữ ô nhập và chọn Dán.");
+    }
+    el.source.value = await navigator.clipboard.readText();
+    updateCount();
+    el.source.focus();
+  } catch (e) {
+    showError("Không thể dán nội dung: " + e.message);
+  }
+});
+
+function resetApp() {
+  if (state.liveRecorder || state.liveStarting) stopLiveRecording();
+  stopSpeechInput();
+  if ("speechSynthesis" in window) {
+    try { speechSynthesis.cancel(); } catch (_) {}
+  }
+  el.source.value = "";
+  updateCount();
+  state.lastResult = null;
+  clearBackTranslation();
+  el.resultSection.style.display = "none";
+  el.resultText.textContent = "";
+  el.pinyin.textContent = "";
+  el.explanation.textContent = "";
+  el.alternatives.replaceChildren();
+  state.imageData = null;
+  $("imagePreview").removeAttribute("src");
+  $("imagePreviewWrap").style.display = "none";
+  state.strokes = [];
+  state.currentStroke = null;
+  redrawCanvas();
+  el.drawPanel.style.display = "none";
+  el.imagePanel.style.display = "none";
+  el.livePanel.style.display = "none";
+  $("liveToggle").classList.remove("active");
+  el.liveFeed.replaceChildren();
+  const empty = document.createElement("div");
+  empty.className = "small";
+  empty.id = "liveEmptyText";
+  empty.textContent = t("liveEmpty");
+  el.liveFeed.append(empty);
+  el.liveStatus.textContent = t("liveWaiting");
+  setStatus();
+  clearError();
+  lockViewportPosition();
+}
+$("resetBtn").addEventListener("click", resetApp);
+
+window.addEventListener("resize", () => {
+  lockViewportPosition();
+  if (el.drawPanel.style.display === "flex") resizeCanvas();
+});
+window.addEventListener("pagehide", () => {
+  stopSpeechInput();
+  if (state.liveRecorder && state.liveRecorder.state !== "inactive") {
+    try { state.liveRecorder.stop(); } catch (_) {}
+  }
+  stopStream(state.liveStream);
+  if (manifestBlobUrl && window.URL?.revokeObjectURL) {
+    try { URL.revokeObjectURL(manifestBlobUrl); } catch (_) {}
+    manifestBlobUrl = null;
+  }
+});
+
+/* ============================ KHỞI TẠO ============================ */
+initPWAWithGeneratedIcon();
+applyUILanguage();
+lockViewportPosition();
+if ("speechSynthesis" in window && speechSynthesis.getVoices) {
+  speechSynthesis.getVoices();
+}
+if (window.ResizeObserver && el.canvas.parentElement) {
+  new ResizeObserver(() => {
+    if (el.drawPanel.style.display === "flex") resizeCanvas();
+  }).observe(el.canvas.parentElement);
+}
+</script>
 </body>
 </html>
