@@ -1518,6 +1518,43 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
   return output;
 }
 
+function normalizePinyinToneNumbers(value) {
+  if (typeof value !== "string" || !value) return value || "";
+  const toneMarks = {
+    a: ["ā", "á", "ǎ", "à"], e: ["ē", "é", "ě", "è"],
+    i: ["ī", "í", "ǐ", "ì"], o: ["ō", "ó", "ǒ", "ò"],
+    u: ["ū", "ú", "ǔ", "ù"], ü: ["ǖ", "ǘ", "ǚ", "ǜ"]
+  };
+  const convertSyllable = (syllable, tone) => {
+    const n = Number(tone);
+    if (n === 5 || n === 0) return syllable.replace(/v/gi, m => m === "V" ? "Ü" : "ü");
+    if (n < 1 || n > 4) return syllable + tone;
+    let lower = syllable.toLowerCase().replace(/v/g, "ü");
+    let idx = lower.indexOf("a");
+    if (idx < 0) idx = lower.indexOf("e");
+    if (idx < 0) {
+      const ou = lower.indexOf("ou");
+      if (ou >= 0) idx = ou;
+    }
+    if (idx < 0) {
+      for (let i = lower.length - 1; i >= 0; i--) {
+        if ("aeiouü".includes(lower[i])) { idx = i; break; }
+      }
+    }
+    if (idx < 0) return syllable + tone;
+    const marked = toneMarks[lower[idx]]?.[n - 1];
+    if (!marked) return syllable + tone;
+    const output = lower.slice(0, idx) + marked + lower.slice(idx + 1);
+    return /^[A-Z]/.test(syllable) ? output.charAt(0).toUpperCase() + output.slice(1) : output;
+  };
+  // Gemini sometimes returns numbered Pinyin (e.g. you3, bu4). Convert each
+  // whitespace-delimited syllable while preserving punctuation and spacing.
+  return value.replace(/[A-Za-zÜüVv]+[1-5]/g, token => {
+    const match = token.match(/^([A-Za-zÜüVv]+)([1-5])$/);
+    return match ? convertSyllable(match[1], match[2]) : token;
+  });
+}
+
 function normalizeModelPayload(rawObj) {
   if (!rawObj || typeof rawObj !== "object") return {};
   const rawEx = Array.isArray(rawObj.examples) ? rawObj.examples : (Array.isArray(rawObj.ex) ? rawObj.ex : []);
@@ -1525,7 +1562,7 @@ function normalizeModelPayload(rawObj) {
     if (typeof item === "string") return { sentence: item, reading: "", meaning: "" };
     return {
       sentence: String(item?.sentence ?? item?.s ?? "").trim(),
-      reading: String(item?.reading ?? item?.r ?? item?.pinyin ?? "").trim(),
+      reading: normalizePinyinToneNumbers(String(item?.reading ?? item?.r ?? item?.pinyin ?? "").trim()),
       meaning: String(item?.meaning ?? item?.m ?? "").trim()
     };
   }).filter(x => x.sentence || x.meaning);
@@ -1533,8 +1570,8 @@ function normalizeModelPayload(rawObj) {
   return {
     transcript: String(rawObj.transcript ?? rawObj.src ?? "").trim(),
     translation: String(rawObj.translation ?? rawObj.tr ?? "").trim(),
-    pronunciation: String(rawObj.pronunciation ?? rawObj.pr ?? rawObj.reading ?? rawObj.py ?? rawObj.pinyin ?? "").trim(),
-    pinyin: String(rawObj.pinyin ?? rawObj.py ?? "").trim(),
+    pronunciation: normalizePinyinToneNumbers(String(rawObj.pronunciation ?? rawObj.pr ?? rawObj.reading ?? rawObj.py ?? rawObj.pinyin ?? "").trim()),
+    pinyin: normalizePinyinToneNumbers(String(rawObj.pinyin ?? rawObj.py ?? "").trim()),
     examples
   };
 }
@@ -1764,7 +1801,7 @@ function validateTranslationPayload(result, target = targetLang()) {
   if (!hasHanzi || hasLatin) {
     throw new Error("AI trả về sai định dạng tiếng Trung (thiếu Hán tự hoặc trộn Pinyin vào bản dịch). Hãy thử dịch lại.");
   }
-  const reading = String(result.pinyin || result.pronunciation || "").trim();
+  const reading = normalizePinyinToneNumbers(String(result.pinyin || result.pronunciation || "").trim());
   if (!reading || /[\u3400-\u4DBF\u4E00-\u9FFF]/.test(reading)) {
     throw new Error("AI chưa trả về Pinyin hợp lệ cho Hán tự. Hãy thử dịch lại.");
   }
