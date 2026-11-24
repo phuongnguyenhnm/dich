@@ -743,7 +743,7 @@ function buildAppIconDataUrl(size = 512) {
   g.fillStyle = glow;
   g.fillRect(0, 0, size, size);
 
-  g.strokeStyle = "rgba(196, 229, 255, 0.28)";
+  g.strokeStyle = "rgba(196, 229, 255, 0.28)");
   g.lineWidth = Math.max(4, Math.round(size * 0.015));
   g.beginPath();
   g.roundRect(pad + 6, pad + 6, size - (pad + 6) * 2, size - (pad + 6) * 2, Math.max(16, rad - 6));
@@ -935,7 +935,7 @@ const I18N = {
     noKey: "Chưa có API Key",
     tryingFallback: "Đang thử model dự phòng...",
     switchedModel: m => `Đã tự động đổi sang model ${m}.`,
-    sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ, không tốn token dịch.",
+    sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ gốc (chỉ gọi thêm phiên âm/ví dụ nếu cần).",
     placeholder: "Nhập nội dung cần dịch...",
     clear: "Xóa",
     paste: "Dán",
@@ -1019,7 +1019,7 @@ const I18N = {
     noKey: "No API Key",
     tryingFallback: "Trying fallback model...",
     switchedModel: m => `Switched to working model ${m}.`,
-    sameChineseNotice: "Source and target are both Chinese: kept as-is without translation tokens.",
+    sameChineseNotice: "Source and target are both Chinese: kept as-is (optional reading/examples call still uses API if configured).",
     placeholder: "Enter text to translate...",
     clear: "Clear",
     paste: "Paste",
@@ -1103,7 +1103,7 @@ const I18N = {
     noKey: "未设置 API Key",
     tryingFallback: "正在尝试备用模型...",
     switchedModel: m => `已自动切换至可用模型 ${m}。`,
-    sameChineseNotice: "源语言和目标语言同为中文：直接保留原文，不消耗翻译 Token。",
+    sameChineseNotice: "源语言和目标语言同为中文：直接保留原文（如需注音/例句仍会请求 API）。",
     placeholder: "输入要翻译的内容...",
     clear: "清空",
     paste: "粘贴",
@@ -1639,18 +1639,11 @@ function stopStream(stream) {
   if (stream) stream.getTracks().forEach(track => { try { track.stop(); } catch (_) {} });
 }
 
-function persistModelSelection(newModel) {
-  const clean = newModel.trim();
-  if (!clean) return;
-  const prev = state.model.trim();
-  state.model = clean;
-  try {
-    localStorage.setItem("smart_translate_model_v5", clean);
-  } catch (_) {}
-  setStatus();
-  if (prev !== clean) {
-    showNotice(t("switchedModel", clean));
-  }
+function notifyFallbackModelUsed(usedModel) {
+  const clean = String(usedModel || "").trim();
+  const configured = state.model.trim();
+  if (!clean || !configured || clean === configured) return;
+  showNotice(t("switchedModel", clean));
 }
 
 function pushHistory(result) {
@@ -1722,7 +1715,7 @@ async function optimizeImage(file) {
 
 /* ============================ GEMINI API (TỰ ĐỘNG ĐỔI MODEL OK) ============================ */
 async function rawGeminiRequest(modelName, parts, options) {
-  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1200, timeoutMs = CONFIG.requestTimeoutMs } = options;
+  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1800, timeoutMs = CONFIG.requestTimeoutMs } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = CONFIG.apiBase + encodeURIComponent(modelName.trim()) + ":generateContent";
@@ -1864,7 +1857,7 @@ async function geminiRequest(parts, options = {}) {
         err.retryable = true;
         throw err;
       }
-      persistModelSelection(currentModel);
+      notifyFallbackModelUsed(currentModel);
       return parsed;
     } catch (err) {
       lastError = err;
@@ -1935,17 +1928,19 @@ function translationPrompt({ extraContext = "", fromOverride = "", toOverride = 
   const from = fromOverride || langPrompt(sourceLang());
   const to = toOverride || langPrompt(targetLang());
   const shortWord = isShortWordOrPhrase(sampleText);
-  const meaningLang = state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
-  const isZhTarget = CHINESE_CODES.includes(targetLang()) && !toOverride;
-  return `Dịch ${from} -> ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
-- Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng, bố cục.
-- Trung Giản thể/Phồn thể: tự nhiên, ưu tiên thuật ngữ nhà máy; giao tiếp lịch sự, tự nhiên.
-- "pronunciation": cách đọc/IPA/Pinyin chuẩn ngắn gọn ở ${to}${isZhTarget ? '; điền cả "pinyin".' : '.'}
+  const meaningLang = state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese";
+  return `Dịch từ ${from} sang ${to} (chuyên gia dịch thuật & kỹ thuật nhà máy).
+- Giữ nguyên số, mã máy, mã lỗi, tên riêng, đơn vị, ký hiệu, xuống dòng và bố cục.
+- Tiếng Trung Giản thể: dùng chữ giản thể tự nhiên, ưu tiên thuật ngữ nhà máy.
+- Tiếng Trung Phồn thể: dùng chữ phồn thể chuẩn tự nhiên, ưu tiên thuật ngữ nhà máy.
+- Giao tiếp: dùng sắc thái lịch sự, tự nhiên.
+- Luôn điền "pronunciation": cách đọc / phiên âm chuẩn của kết quả ở ${to} (VD tiếng Anh: IPA như "həˈlō"; tiếng Trung: Pinyin có dấu thanh như "Nǐ hǎo"; tiếng Nhật/Hàn/khác: phiên âm/cách đọc rõ ràng). Nếu là tiếng Trung cũng điền "pinyin".
 ${shortWord
-  ? `- Từ/cụm ngắn: điền tối đa 3 "examples" (câu dùng từ/cụm đó ở ${to}: "sentence", "reading", "meaning" bằng ${meaningLang}); nếu rõ nghĩa/dài có thể để [].`
-  : `- Văn bản dài: đặt "examples": [].`}
-- "explanation", "alternatives": ngắn gọn hoặc rỗng.
-${extraContext ? extraContext + "\n" : ""}Trả JSON đúng schema.`;
+  ? `- BẮT BUỘC vì đầu vào là từ hoặc cụm từ ngắn: hãy điền ĐỦ 3 phần tử trong mảng "examples" (mỗi phần tử minh họa từ/cụm từ đó trong một câu hoàn chỉnh bằng ${to}, kèm "reading" là cách đọc/phiên âm câu đó, và "meaning" là nghĩa tiếng ${meaningLang}).`
+  : `- Văn bản dài hoặc đoạn văn: KHÔNG cần tạo ví dụ, đặt "examples" là mảng rỗng [].`}
+- Giữ explanation/alternatives ngắn gọn.
+${extraContext}
+Trả về JSON đúng schema.`;
 }
 
 async function translateText(inputOverride = null) {
@@ -1983,15 +1978,20 @@ async function translateText(inputOverride = null) {
     renderResult(localResult, true);
     showNotice(t("sameChineseNotice"));
 
-    if (state.apiKey.trim() && shortWord) {
+    if (state.apiKey.trim() && (shortWord || Array.from(input).length <= 80)) {
       try {
-        const meaningLang = state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
         const meta = await geminiRequest(
           [{ text: input }],
           {
-            systemInstruction: `Không dịch sang ngôn ngữ khác. Đặt "translation" = "${input}". Điền "pinyin" & "pronunciation" ngắn gọn và tối đa 3 "examples" (sentence, reading, meaning bằng ${meaningLang}). Trả JSON đúng schema.`,
+            systemInstruction: `Phân tích từ/câu ${langPrompt(targetLang())} sau mà KHÔNG dịch sang ngôn ngữ khác.
+- Đặt "translation" giống hệt đầu vào: "${input}".
+- Điền "pronunciation" và "pinyin" chuẩn có dấu thanh.
+${shortWord
+  ? `- BẮT BUỘC vì là từ/cụm từ ngắn: điền ĐỦ 3 phần tử trong mảng "examples" (mỗi phần tử có "sentence" là câu dùng từ này ở ${langPrompt(targetLang())}, "reading" là pinyin câu đó, "meaning" là nghĩa tiếng ${state.uiLang === "en" ? "English" : state.uiLang === "zh" ? "Simplified Chinese" : "Vietnamese"}).`
+  : `- Văn bản dài: đặt "examples" là [].`}
+Trả về JSON đúng schema.`,
             temperature: 0.1,
-            maxOutputTokens: 700,
+            maxOutputTokens: 1100,
             requireTranslation: true
           }
         );
@@ -2000,7 +2000,7 @@ async function translateText(inputOverride = null) {
           translation: input,
           pronunciation: meta.pronunciation || meta.pinyin || "",
           pinyin: meta.pinyin || meta.pronunciation || "",
-          examples: Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : [],
+          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.slice(0, 3) : [],
           _sourceSample: input
         }, false);
       } catch (_) {}
@@ -2015,7 +2015,7 @@ async function translateText(inputOverride = null) {
       {
         systemInstruction: translationPrompt({ sampleText: input }),
         temperature: 0.1,
-        maxOutputTokens: isShortWordOrPhrase(input) ? 1200 : 850,
+        maxOutputTokens: 1800,
         requireTranslation: true
       }
     );
@@ -2061,7 +2061,7 @@ async function backTranslateResult() {
           extraContext: "Dịch ngược chính xác sát nghĩa gốc để kiểm tra chéo bản dịch, giữ nguyên số, mã thiết bị và tên riêng."
         }),
         temperature: 0.1,
-        maxOutputTokens: 700,
+        maxOutputTokens: 1200,
         requireTranslation: true
       }
     );
@@ -2098,7 +2098,7 @@ async function translateImage() {
         { text: prompt },
         { inlineData: { mimeType: "image/jpeg", data: base64Data } }
       ],
-      { systemInstruction: "OCR & dịch nhanh chính xác, giữ nguyên mã/số. Trả JSON.", temperature: 0.1, maxOutputTokens: 1400, requireTranslation: true }
+      { systemInstruction: "OCR và dịch nhanh chính xác. Trả về JSON.", temperature: 0.1, maxOutputTokens: 2000, requireTranslation: true }
     );
     if (!shouldShowExamplesForResult(result, "")) {
       result.examples = [];
@@ -2123,7 +2123,19 @@ async function translateDrawing() {
   try {
     setBusy(true, "drawSpinner");
     clearError();
-    const base64Data = el.canvas.toDataURL("image/png").split(",")[1];
+    const exportCanvas = document.createElement("canvas");
+    const pad = Math.max(16, Math.round((el.canvas.width || 300) * 0.06));
+    exportCanvas.width = (el.canvas.width || 300) + pad * 2;
+    exportCanvas.height = (el.canvas.height || 150) + pad * 2;
+    const ectx = exportCanvas.getContext("2d");
+    let dataUrl = el.canvas.toDataURL("image/png");
+    if (ectx) {
+      ectx.fillStyle = "#ffffff";
+      ectx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+      ectx.drawImage(el.canvas, pad, pad);
+      dataUrl = exportCanvas.toDataURL("image/png");
+    }
+    const base64Data = dataUrl.split(",")[1];
     const prompt = translationPrompt({
       sampleText: "word",
       extraContext: "Nhận dạng chữ viết tay rồi dịch. Nếu nét vẽ là từ/cụm từ ngắn thì điền đủ 3 ví dụ dùng từ trong câu; nếu dài thì đặt examples là []."
@@ -2133,7 +2145,7 @@ async function translateDrawing() {
         { text: prompt },
         { inlineData: { mimeType: "image/png", data: base64Data } }
       ],
-      { systemInstruction: "Nhận dạng chữ viết tay & dịch nhanh. Trả JSON.", temperature: 0.1, maxOutputTokens: 1200, requireTranslation: true }
+      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1800, requireTranslation: true }
     );
     if (!shouldShowExamplesForResult(result, "")) {
       result.examples = [];
@@ -2393,7 +2405,10 @@ function speak(text, lang) {
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
   if (voice) utterance.voice = voice;
   utterance.onerror = () => {};
-  try { speechSynthesis.speak(utterance); } catch (_) {}
+  try {
+    if (speechSynthesis.paused) speechSynthesis.resume();
+    speechSynthesis.speak(utterance);
+  } catch (_) {}
 }
 $("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang()));
 $("speakSourceBtn").addEventListener("click", () => {
@@ -2658,9 +2673,11 @@ async function processLiveAudio(blob, mime, side) {
     const { from, to } = liveLanguages(side);
     const safeMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
     const supported = [
-      "audio/webm", "audio/mp4", "audio/m4a", "audio/ogg",
-      "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"
+      "audio/webm", "audio/mp4", "audio/m4a", "audio/x-m4a", "audio/ogg",
+      "audio/wav", "audio/wave", "audio/x-wav", "audio/mpeg", "audio/mp3",
+      "audio/aac", "audio/flac", "audio/3gpp"
     ].includes(safeMime);
+    const normalizedMime = safeMime === "audio/mp3" ? "audio/mpeg" : (safeMime === "audio/x-m4a" ? "audio/m4a" : (safeMime === "audio/wave" || safeMime === "audio/x-wav" ? "audio/wav" : safeMime));
 
     if (!supported) {
       throw new Error("Định dạng âm thanh " + (safeMime || "không rõ") + " chưa được hỗ trợ.");
@@ -2673,7 +2690,7 @@ async function processLiveAudio(blob, mime, side) {
     const result = await geminiRequest(
       [
         { text: prompt },
-        { inlineData: { mimeType: safeMime, data: b64 } }
+        { inlineData: { mimeType: normalizedMime, data: b64 } }
       ],
       {
         systemInstruction: "Phiên âm và dịch hội thoại nhanh chính xác. Trả về JSON.",
@@ -2845,11 +2862,26 @@ $("swapBtn").addEventListener("click", () => {
   clearBackTranslation();
   clearHanziStrokeBox();
   el.examplesBox.style.display = "none";
-  if (state.lastResult) {
-    el.source.value = state.lastResult.translation;
+  if (state.lastResult && state.lastResult.translation) {
+    const prevTranslation = state.lastResult.translation;
+    const prevSourceInput = el.source.value;
+    el.source.value = prevTranslation;
     updateCount();
-    state.lastResult = null;
-    el.resultSection.style.display = "none";
+    state.lastResult = {
+      translation: prevSourceInput,
+      pronunciation: "",
+      pinyin: "",
+      examples: [],
+      explanation: "",
+      alternatives: [],
+      _sourceSample: prevTranslation
+    };
+    if (prevSourceInput.trim()) {
+      renderResult(state.lastResult, false);
+    } else {
+      state.lastResult = null;
+      el.resultSection.style.display = "none";
+    }
   }
   updateLiveLabels();
   syncVisualViewport();
