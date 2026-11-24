@@ -125,13 +125,13 @@ header{
   touch-action:pan-y;overscroll-behavior:contain
 }
 textarea{
-  width:100%;min-height:60px;max-height:100px;resize:none;border:0;outline:0;
+  width:100%;min-height:56px;max-height:96px;resize:none;border:0;outline:0;
   background:transparent;color:var(--text);font-size:15.5px;line-height:1.4;padding:2px;flex-shrink:0;
   overflow-y:auto;overflow-x:hidden;touch-action:pan-y
 }
 textarea::placeholder{color:#81929c}
 .row{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;flex-shrink:0}
-.tools{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.tools{display:flex;gap:5px;align-items:center;flex-wrap:wrap;flex:1;min-width:0}
 .btn{
   border:1px solid var(--line);border-radius:99px;background:var(--panel2);
   color:var(--text);padding:5px 8.5px;font-size:11.5px;transition:all .15s;
@@ -140,6 +140,12 @@ textarea::placeholder{color:#81929c}
 .btn:hover{border-color:#607988;background:var(--panel3)}
 .btn.primary{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700}
 .btn.ghost{background:transparent}
+.btn.active-tool{background:#583238;border-color:#d77e84;color:#ffc1c1}
+.btn.mic-chip{
+  background:var(--accent);border-color:transparent;color:#08243a;font-weight:700;padding:5px 10px
+}
+.btn.mic-chip.recording{background:#ff8c8c;color:#351010;animation:pulse 1.1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px #ff8c8c00}}
 .small{font-size:11px;color:var(--muted)}
 .panel{
   display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
@@ -254,7 +260,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .live{
   display:none;flex-direction:column;gap:7px;padding:8px;border:1px solid var(--line);
-  border-radius:13px;background:#111a20;flex-shrink:0;overflow:hidden
+  border-radius:12px;background:#111a20;flex-shrink:0;overflow:hidden
 }
 .feed{
   display:flex;flex-direction:column;gap:6px;max-height:110px;min-height:56px;
@@ -274,30 +280,13 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .turn.active{background:#48272c;border-color:#d77e84;color:#ffc1c1}
 .bottom{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
 .main-actions{display:grid;grid-template-columns:1fr;gap:8px}
-.main-actions button{padding:9px 10px;font-size:12.5px;width:100%}
-.dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;padding:1px 4px 0}
-.dockbtn{
-  display:flex;flex-direction:column;align-items:center;gap:2px;border:0;
-  background:transparent;color:var(--muted);font-size:10.5px;transition:color .15s;padding:0
-}
-.dockcircle{
-  width:40px;height:40px;border-radius:13px;background:var(--panel3);
-  display:grid;place-items:center;color:var(--accent);transition:all .15s
-}
-.dockbtn.active .dockcircle{background:#583238;color:#ffb8b8}
-.mic{
-  width:52px;height:52px;border:0;border-radius:16px;background:var(--accent);
-  color:#08243a;box-shadow:0 6px 18px #8ecbff22;
-  transition:all .15s;display:grid;place-items:center;padding:0;flex-shrink:0
-}
-.mic.recording{background:#ff8c8c;color:#351010;border-radius:50%;animation:pulse 1.1s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 9px #ff8c8c00}}
+.main-actions button{padding:9.5px 10px;font-size:13px;width:100%}
 .modal{
   display:none;position:fixed;inset:0;z-index:50;background:#000b;
   align-items:center;justify-content:center;padding:14px
 }
 .modalbox{
-  width:min(100%,480px);max-height:90dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);
+  width:min(100%,460px);max-height:90dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);
   border:1px solid var(--line);border-radius:18px;padding:16px;touch-action:pan-y;overscroll-behavior:contain
 }
 .modalbox h2{font-size:17px;margin:0 0 6px}
@@ -310,25 +299,25 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 }
 .field input:focus,.field select:focus{border-color:var(--accent)}
 .modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-.author-card{
-  display:flex;flex-direction:column;gap:10px;margin:10px 0 12px
+.author-box{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:10px;padding:14px 12px;margin:10px 0 12px;
+  border:1px solid var(--line);border-radius:14px;background:#111a20
 }
-.author-row{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#111a20
+.author-name{font-size:16px;font-weight:700;color:var(--text)}
+.author-cta{font-size:12.5px;color:var(--accent2)}
+.social-icons{
+  display:flex;align-items:center;justify-content:center;gap:14px;margin-top:4px
 }
-.author-info{display:flex;flex-direction:column;gap:2px;min-width:0}
-.author-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
-.author-value{font-size:13.5px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
-.contact-action{
-  width:38px;height:38px;border-radius:11px;border:1px solid #47687d;
-  background:#183242;color:var(--accent2);display:grid;place-items:center;
-  flex-shrink:0;text-decoration:none;transition:all .15s
+.social-btn{
+  width:46px;height:46px;border-radius:14px;border:1px solid #47687d;
+  background:#183242;color:var(--text);display:grid;place-items:center;
+  text-decoration:none;transition:all .15s
 }
-.contact-action:hover{background:#21465c;border-color:var(--accent);color:#ffffff}
-.zalo-badge{
-  font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1
-}
+.social-btn:hover{transform:translateY(-1px);border-color:var(--accent);background:#21465c}
+.social-btn.fb{color:#79b8ff}
+.social-btn.zalo{color:#67d4ff;font-size:12px;font-weight:800;letter-spacing:.3px}
+.social-btn.phone{color:#8fe0b0}
 a{color:var(--accent)}
 </style>
 </head>
@@ -418,9 +407,35 @@ a{color:var(--accent)}
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
           <span class="btn-label">Ảnh</span>
         </button>
+        <button class="btn" id="liveToggle">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0-3-3m3 3-3 3"/><path d="M16 17H4m0 0 3-3m-3 3 3 3"/></svg></span>
+          <span class="btn-label">Hội thoại</span>
+        </button>
+        <button class="btn mic-chip" id="micBtn" aria-label="Nhập bằng giọng nói" title="Nhập bằng giọng nói">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></span>
+          <span class="btn-label">Mic</span>
+        </button>
       </div>
       <span class="small" id="charCount">0 ký tự</span>
     </div>
+
+    <!-- Hội thoại trực tiếp (nằm gọn ngay tại khu vực nhập liệu) -->
+    <section class="live" id="livePanel">
+      <div class="row">
+        <b id="liveTitle">Hội thoại trực tiếp</b>
+        <button class="btn" id="clearLiveBtn"><span class="btn-label">Xóa hội thoại</span></button>
+      </div>
+      <div class="small" id="liveDesc">Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.</div>
+      <div class="feed" id="liveFeed"><div class="small" id="liveEmptyText">Chưa có nội dung hội thoại.</div></div>
+      <div class="turnrow">
+        <button class="turn" id="sideABtn">Người A</button>
+        <button class="turn" id="sideBBtn">Người B</button>
+      </div>
+      <div class="row">
+        <span class="small" id="liveStatus">Đang chờ người nói.</span>
+        <button class="btn ghost" id="stopLiveBtn"><span class="btn-label">Dừng ghi âm</span></button>
+      </div>
+    </section>
 
     <!-- Bảng vẽ -->
     <div class="panel" id="drawPanel">
@@ -522,24 +537,6 @@ a{color:var(--accent)}
 
     <div class="history-bar" id="historyBar"></div>
   </div>
-
-  <!-- Hội thoại trực tiếp -->
-  <section class="live" id="livePanel">
-    <div class="row">
-      <b id="liveTitle">Hội thoại trực tiếp</b>
-      <button class="btn" id="clearLiveBtn"><span class="btn-label">Xóa hội thoại</span></button>
-    </div>
-    <div class="small" id="liveDesc">Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.</div>
-    <div class="feed" id="liveFeed"><div class="small" id="liveEmptyText">Chưa có nội dung hội thoại.</div></div>
-    <div class="turnrow">
-      <button class="turn" id="sideABtn">Người A</button>
-      <button class="turn" id="sideBBtn">Người B</button>
-    </div>
-    <div class="row">
-      <span class="small" id="liveStatus">Đang chờ người nói.</span>
-      <button class="btn ghost" id="stopLiveBtn"><span class="btn-label">Dừng ghi âm</span></button>
-    </div>
-  </section>
 </section>
 
 <div class="bottom">
@@ -549,25 +546,6 @@ a{color:var(--accent)}
       <i class="spinner" id="translateSpinner"></i>
     </button>
   </div>
-  <div class="dock">
-    <button class="dockbtn" id="liveToggle">
-      <span class="dockcircle">
-        <svg class="ico" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 7h12m0 0-3-3m3 3-3 3"/>
-          <path d="M16 17H4m0 0 3-3m-3 3 3 3"/>
-        </svg>
-      </span>
-      <span id="liveDockLabel">Hội thoại</span>
-    </button>
-    <button class="mic" id="micBtn" aria-label="Nhập bằng giọng nói">
-      <svg class="ico" viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="2" width="6" height="11" rx="3"/>
-        <path d="M5 10a7 7 0 0 0 14 0"/>
-        <path d="M12 17v5m-3 0h6"/>
-      </svg>
-    </button>
-    <div aria-hidden="true"></div>
-  </div>
   <div class="small" id="disclaimerText" style="text-align:center">Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.</div>
 </div>
 </main>
@@ -576,32 +554,22 @@ a{color:var(--accent)}
 <div class="modal" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
  <div class="modalbox">
   <h2 id="infoTitle">Thông tin tác giả</h2>
-  <p id="infoDesc">Thông tin liên hệ của tác giả ứng dụng AI Translation.</p>
-  <div class="author-card">
-    <div class="author-row">
-      <div class="author-info">
-        <span class="author-label" id="authorNameLabel">Tác giả</span>
-        <span class="author-value">Nguyễn Văn Phương</span>
-      </div>
-    </div>
-    <div class="author-row">
-      <div class="author-info">
-        <span class="author-label" id="authorPhoneLabel">Số điện thoại</span>
-        <span class="author-value">0845425888</span>
-      </div>
-      <a class="contact-action" href="tel:0845425888" id="callAuthorBtn" aria-label="Gọi điện 0845425888" title="Gọi điện 0845425888">
-        <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+  <div class="author-box">
+    <div class="author-name">Nguyễn Văn Phương</div>
+    <div class="author-cta" id="authorCtaText">Mọi góp ý vui lòng liên hệ</div>
+    <div class="social-icons">
+      <a class="social-btn fb" href="https://facebook.com/nguyenphuonghnm" target="_blank" rel="noopener noreferrer" id="fbAuthorBtn" aria-label="Facebook" title="Facebook">
+        <svg class="ico" viewBox="0 0 24 24" width="21" height="21" fill="currentColor">
+          <path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.5H7.7v3.2h2.7V22h3.1z"/>
         </svg>
       </a>
-    </div>
-    <div class="author-row">
-      <div class="author-info">
-        <span class="author-label">Zalo</span>
-        <span class="author-value">0974569711</span>
-      </div>
-      <a class="contact-action" href="https://zalo.me/0974569711" target="_blank" rel="noopener noreferrer" id="zaloAuthorBtn" aria-label="Kết bạn Zalo 0974569711" title="Kết bạn Zalo 0974569711">
-        <span class="zalo-badge">Zalo</span>
+      <a class="social-btn zalo" href="https://zalo.me/0974569711" target="_blank" rel="noopener noreferrer" id="zaloAuthorBtn" aria-label="Zalo" title="Zalo">
+        <span>Zalo</span>
+      </a>
+      <a class="social-btn phone" href="tel:0845425888" id="callAuthorBtn" aria-label="Gọi điện" title="Gọi điện">
+        <svg class="ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
       </a>
     </div>
   </div>
@@ -941,6 +909,8 @@ const I18N = {
     paste: "Dán",
     draw: "Viết tay",
     image: "Ảnh",
+    liveBtn: "Hội thoại",
+    micChip: "Mic",
     charCount: n => `${n.toLocaleString("vi-VN")} ký tự`,
     undo: "Hoàn tác",
     clearDraw: "Xóa nét",
@@ -977,14 +947,12 @@ const I18N = {
     liveWaiting: "Đang chờ người nói.",
     stopLive: "Dừng ghi âm",
     translateBtn: "Dịch văn bản",
-    liveDock: "Hội thoại",
     disclaimer: "Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.",
     infoTitle: "Thông tin tác giả",
-    infoDesc: "Thông tin liên hệ của tác giả ứng dụng AI Translation.",
-    authorNameLabel: "Tác giả",
-    authorPhoneLabel: "Số điện thoại",
-    callAuthorTitle: "Gọi điện 0845425888",
-    zaloAuthorTitle: "Kết bạn Zalo 0974569711",
+    authorCtaText: "Mọi góp ý vui lòng liên hệ",
+    fbTitle: "Facebook",
+    zaloTitle: "Zalo",
+    callTitle: "Gọi điện",
     settingsTitle: "Cài đặt Gemini API",
     settingsDesc: 'API Key được lưu trong trình duyệt của bạn (<code>localStorage</code>) và gửi trực tiếp tới Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Lấy API Key tại đây</a>.',
     uiLangLabel: "Ngôn ngữ giao diện",
@@ -1025,6 +993,8 @@ const I18N = {
     paste: "Paste",
     draw: "Draw",
     image: "Image",
+    liveBtn: "Live",
+    micChip: "Mic",
     charCount: n => `${n.toLocaleString("en-US")} chars`,
     undo: "Undo",
     clearDraw: "Clear ink",
@@ -1061,14 +1031,12 @@ const I18N = {
     liveWaiting: "Waiting for speaker.",
     stopLive: "Stop recording",
     translateBtn: "Translate text",
-    liveDock: "Live",
     disclaimer: "AI translations may need verification in specialized or technical contexts.",
     infoTitle: "Author Information",
-    infoDesc: "Contact information for the author of AI Translation.",
-    authorNameLabel: "Author",
-    authorPhoneLabel: "Phone number",
-    callAuthorTitle: "Call 0845425888",
-    zaloAuthorTitle: "Add Zalo 0974569711",
+    authorCtaText: "For any feedback, please contact",
+    fbTitle: "Facebook",
+    zaloTitle: "Zalo",
+    callTitle: "Call",
     settingsTitle: "Gemini API Settings",
     settingsDesc: 'Your API Key is stored locally in your browser (<code>localStorage</code>) and sent directly to Google. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Get an API Key here</a>.',
     uiLangLabel: "Interface Language",
@@ -1109,6 +1077,8 @@ const I18N = {
     paste: "粘贴",
     draw: "手写",
     image: "图片",
+    liveBtn: "对话",
+    micChip: "麦克风",
     charCount: n => `${n.toLocaleString("zh-CN")} 字`,
     undo: "撤销",
     clearDraw: "清除笔迹",
@@ -1145,14 +1115,12 @@ const I18N = {
     liveWaiting: "等待说话。",
     stopLive: "停止录音",
     translateBtn: "翻译文本",
-    liveDock: "对话",
     disclaimer: "AI 译文在专业或技术场景下建议人工复核。",
     infoTitle: "作者信息",
-    infoDesc: "AI Translation 作者联系方式。",
-    authorNameLabel: "作者",
-    authorPhoneLabel: "电话号码",
-    callAuthorTitle: "拨打电话 0845425888",
-    zaloAuthorTitle: "添加 Zalo 0974569711",
+    authorCtaText: "如有任何建议请联系",
+    fbTitle: "Facebook",
+    zaloTitle: "Zalo",
+    callTitle: "拨打电话",
     settingsTitle: "Gemini API 设置",
     settingsDesc: 'API Key 保存在浏览器本地（<code>localStorage</code>）并直接发送至 Google。<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">点击此处获取 API Key</a>。',
     uiLangLabel: "界面语言",
@@ -1369,6 +1337,8 @@ function applyUILanguage() {
   setBtnLabel("speakSourceBtn", t("speak"));
   setBtnLabel("drawToggle", t("draw"));
   setBtnLabel("imageToggle", t("image"));
+  setBtnLabel("liveToggle", t("liveBtn"));
+  setBtnLabel("micBtn", t("micChip"));
   setBtnLabel("undoDraw", t("undo"));
   setBtnLabel("clearDraw", t("clearDraw"));
   $("brushThinOpt").textContent = t("thin");
@@ -1395,15 +1365,13 @@ function applyUILanguage() {
   if (emptyFeed) emptyFeed.textContent = t("liveEmpty");
   setBtnLabel("stopLiveBtn", t("stopLive"));
   setBtnLabel("translateBtn", t("translateBtn"));
-  $("liveDockLabel").textContent = t("liveDock");
   $("disclaimerText").textContent = t("disclaimer");
 
   $("infoTitle").textContent = t("infoTitle");
-  $("infoDesc").textContent = t("infoDesc");
-  $("authorNameLabel").textContent = t("authorNameLabel");
-  $("authorPhoneLabel").textContent = t("authorPhoneLabel");
-  $("callAuthorBtn").title = $("callAuthorBtn").ariaLabel = t("callAuthorTitle");
-  $("zaloAuthorBtn").title = $("zaloAuthorBtn").ariaLabel = t("zaloAuthorTitle");
+  $("authorCtaText").textContent = t("authorCtaText");
+  $("fbAuthorBtn").title = $("fbAuthorBtn").ariaLabel = t("fbTitle");
+  $("zaloAuthorBtn").title = $("zaloAuthorBtn").ariaLabel = t("zaloTitle");
+  $("callAuthorBtn").title = $("callAuthorBtn").ariaLabel = t("callTitle");
   setBtnLabel("closeInfoBtn", t("close"));
 
   $("settingsTitle").textContent = t("settingsTitle");
@@ -1661,7 +1629,8 @@ function pushHistory(result) {
     pinyin: result.pinyin || "",
     examples: Array.isArray(result.examples) ? result.examples.slice(0, 3) : [],
     explanation: result.explanation || "",
-    alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : []
+    alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : [],
+    _sourceSample: result._sourceSample || ""
   };
   state.history = [entry, ...state.history.filter(h => h.translation !== entry.translation)].slice(0, CONFIG.maxHistory);
   renderHistory();
@@ -1722,7 +1691,7 @@ async function optimizeImage(file) {
 
 /* ============================ GEMINI API (TỰ ĐỘNG ĐỔI MODEL OK) ============================ */
 async function rawGeminiRequest(modelName, parts, options) {
-  const { systemInstruction, temperature = 0.1, maxOutputTokens = 1800, timeoutMs = CONFIG.requestTimeoutMs } = options;
+  const { systemInstruction, temperature = 0.1, maxOutputTokens = 2000, timeoutMs = CONFIG.requestTimeoutMs } = options;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = CONFIG.apiBase + encodeURIComponent(modelName.trim()) + ":generateContent";
@@ -1919,16 +1888,33 @@ function parseJsonResponse(text) {
 
 function isShortWordOrPhrase(text) {
   const s = String(text || "").trim();
-  if (!s || s.length > 60 || /\n/.test(s)) return false;
+  if (!s || s.length > 80 || /\n/.test(s)) return false;
   const words = s.split(/\s+/).filter(Boolean);
   if (/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s)) {
-    return Array.from(s).length <= 12;
+    return Array.from(s).length <= 16;
   }
-  return words.length <= 5;
+  return words.length <= 6;
 }
 
 function shouldShowExamplesForResult(result, inputText = "") {
   return isShortWordOrPhrase(result?.translation || "") || isShortWordOrPhrase(inputText || "");
+}
+
+function normalizeExampleItem(ex) {
+  if (!ex) return null;
+  if (typeof ex === "string") {
+    const parts = ex.split(" - ").map(s => s.trim()).filter(Boolean);
+    return {
+      sentence: parts[0] || ex.trim(),
+      reading: "",
+      meaning: parts.slice(1).join(" - ")
+    };
+  }
+  return {
+    sentence: String(ex.sentence || ex.text || ex.example || "").trim(),
+    reading: String(ex.reading || ex.pinyin || ex.pronunciation || "").trim(),
+    meaning: String(ex.meaning || ex.translation || ex.gloss || "").trim()
+  };
 }
 
 function translationPrompt({ extraContext = "", fromOverride = "", toOverride = "", sampleText = "" } = {}) {
@@ -1943,7 +1929,7 @@ function translationPrompt({ extraContext = "", fromOverride = "", toOverride = 
 - Giao tiếp: dùng sắc thái lịch sự, tự nhiên.
 - Luôn điền "pronunciation": cách đọc / phiên âm chuẩn của kết quả ở ${to} (VD tiếng Anh: IPA như "həˈlō"; tiếng Trung: Pinyin có dấu thanh như "Nǐ hǎo"; tiếng Nhật/Hàn/khác: phiên âm/cách đọc rõ ràng). Nếu là tiếng Trung cũng điền "pinyin".
 ${shortWord
-  ? `- BẮT BUỘC vì đầu vào là từ hoặc cụm từ ngắn: hãy điền ĐỦ 3 phần tử trong mảng "examples" (mỗi phần tử minh họa từ/cụm từ đó trong một câu hoàn chỉnh bằng ${to}, kèm "reading" là cách đọc/phiên âm câu đó, và "meaning" là nghĩa tiếng ${meaningLang}).`
+  ? `- BẮT BUỘC vì đầu vào là từ hoặc cụm từ ngắn: hãy điền ĐỦ 3 phần tử trong mảng "examples" (mỗi phần tử minh họa từ/cụm từ đó trong một câu hoàn chỉnh bằng ${to}, kèm "reading" là cách đọc/phiên âm câu đó, và "meaning" là nghĩa tiếng ${meaningLang}). Không được để "examples" rỗng.`
   : `- Văn bản dài hoặc đoạn văn: KHÔNG cần tạo ví dụ, đặt "examples" là mảng rỗng [].`}
 - Giữ explanation/alternatives ngắn gọn.
 ${extraContext}
@@ -1998,7 +1984,7 @@ ${shortWord
   : `- Văn bản dài: đặt "examples" là [].`}
 Trả về JSON đúng schema.`,
             temperature: 0.1,
-            maxOutputTokens: 1100,
+            maxOutputTokens: 1200,
             requireTranslation: true
           }
         );
@@ -2022,7 +2008,7 @@ Trả về JSON đúng schema.`,
       {
         systemInstruction: translationPrompt({ sampleText: input }),
         temperature: 0.1,
-        maxOutputTokens: 1800,
+        maxOutputTokens: 2000,
         requireTranslation: true
       }
     );
@@ -2140,7 +2126,7 @@ async function translateDrawing() {
         { text: prompt },
         { inlineData: { mimeType: "image/png", data: base64Data } }
       ],
-      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 1800, requireTranslation: true }
+      { systemInstruction: "Nhận dạng chữ viết tay và dịch nhanh. Trả về JSON.", temperature: 0.1, maxOutputTokens: 2000, requireTranslation: true }
     );
     if (!shouldShowExamplesForResult(result, "")) {
       result.examples = [];
@@ -2156,13 +2142,13 @@ async function translateDrawing() {
 function renderExamples(result) {
   el.examplesList.replaceChildren();
   const showEx = shouldShowExamplesForResult(result, result?._sourceSample || "");
-  const list = showEx && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [];
+  const rawList = showEx && Array.isArray(result?.examples) ? result.examples.slice(0, 3) : [];
+  const list = rawList.map(normalizeExampleItem).filter(ex => ex && (ex.sentence || ex.meaning));
   if (!list.length) {
     el.examplesBox.style.display = "none";
     return;
   }
   list.forEach((ex, idx) => {
-    if (!ex || (!ex.sentence && !ex.meaning)) return;
     const card = document.createElement("div");
     card.className = "example-item";
 
@@ -2312,6 +2298,8 @@ $("drawToggle").addEventListener("click", () => {
   el.drawPanel.style.display = show ? "flex" : "none";
   if (show) {
     el.imagePanel.style.display = "none";
+    el.livePanel.style.display = "none";
+    $("liveToggle").classList.remove("active-tool");
     requestAnimationFrame(resizeCanvas);
   }
 });
@@ -2320,7 +2308,11 @@ $("drawToggle").addEventListener("click", () => {
 $("imageToggle").addEventListener("click", () => {
   const show = el.imagePanel.style.display !== "flex";
   el.imagePanel.style.display = show ? "flex" : "none";
-  if (show) el.drawPanel.style.display = "none";
+  if (show) {
+    el.drawPanel.style.display = "none";
+    el.livePanel.style.display = "none";
+    $("liveToggle").classList.remove("active-tool");
+  }
 });
 $("chooseImageBtn").addEventListener("click", () => $("imageFile").click());
 $("imageFile").addEventListener("change", async e => {
@@ -2720,7 +2712,7 @@ $("liveToggle").addEventListener("click", () => {
   closeLangMenu();
   const show = el.livePanel.style.display !== "flex";
   el.livePanel.style.display = show ? "flex" : "none";
-  $("liveToggle").classList.toggle("active", show);
+  $("liveToggle").classList.toggle("active-tool", show);
   if (show) {
     el.drawPanel.style.display = "none";
     el.imagePanel.style.display = "none";
@@ -2918,7 +2910,7 @@ function resetApp() {
   el.drawPanel.style.display = "none";
   el.imagePanel.style.display = "none";
   el.livePanel.style.display = "none";
-  $("liveToggle").classList.remove("active");
+  $("liveToggle").classList.remove("active-tool");
   el.liveFeed.replaceChildren();
   const empty = document.createElement("div");
   empty.className = "small";
