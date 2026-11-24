@@ -12,7 +12,10 @@
 <link id="faviconLink" rel="icon" type="image/png" sizes="512x512">
 <link id="appleTouchIconLink" rel="apple-touch-icon" sizes="512x512">
 <link id="manifestLink" rel="manifest">
-<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<link rel="preconnect" href="https://generativelanguage.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/pinyin-pro@3/dist/index.js"></script>
 <style>
 :root{
   color-scheme:dark;--bg:#101418;--panel:#192127;--panel2:#202b33;--panel3:#27343d;
@@ -381,6 +384,10 @@ a{color:var(--accent)}
       <div class="result-head">
         <span class="result-label" id="resultLabel">Bản dịch</span>
         <div class="tools">
+          <button class="btn icon-only" id="examplesBtn" aria-label="Xem ví dụ" title="Xem ví dụ" style="display:none">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+            <i class="spinner" id="exSpin"></i>
+          </button>
           <button class="btn icon-only" id="backTranslateBtn" aria-label="Dịch ngược" title="Dịch ngược">
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></span>
             <i class="spinner" id="backSpin"></i>
@@ -585,11 +592,11 @@ function buildAppIconDataUrl(size = 512) {
   g.textAlign = "center";
   g.textBaseline = "middle";
   g.fillStyle = "#8ecbff";
-  g.font = `800 ${Math.round(size * 0.21)}px system-ui, -apple-system, sans-serif`;
+  g.font = `800 ${Math.round(size \* 0.21)}px system-ui, -apple-system, sans-serif`;
   g.fillText("A", size * 0.34, size * 0.38);
 
   g.fillStyle = "#e6f6ff";
-  g.font = `700 ${Math.round(size * 0.19)}px "PingFang SC", "Microsoft YaHei", system-ui, sans-serif`;
+  g.font = `700 ${Math.round(size \* 0.19)}px "PingFang SC", "Microsoft YaHei", system-ui, sans-serif`;
   g.fillText("文", size * 0.66, size * 0.63);
 
   g.strokeStyle = "#8fe0b0";
@@ -681,19 +688,27 @@ function createFlagElement(flagCode) {
 const CONFIG = {
   apiBase: "https://generativelanguage.googleapis.com/v1beta/models/",
   requestTimeoutMs: 40000,
+  maxTimeoutMs: 120000,
   maxImageBytes: 12 * 1024 * 1024,
-  maxImageDimension: 1280,
+  maxImageDimension: 1024,
   maxAudioBytes: 18 * 1024 * 1024,
+  maxWavSeconds: 300,
   defaultModel: "gemini-3.5-flash-lite",
   maxHistory: 5,
-  maxCacheEntries: 80,
+  maxCacheEntries: 150,
+  maxCachePersistChars: 40000,
+  cacheTtlMs: 30 * 24 * 3600 * 1000,
   modelCooldownMs: 60000,
-  quotaCooldownMs: 60000,
+  dailyQuotaCooldownMs: 30 * 60 * 1000,
+  defaultQuotaWaitMs: 15000,
+  maxQuotaWaitMs: 20000,
   maxQueuedRequests: 3,
   maxSameModelRetries: 1,
   maxFallbackModels: 1,
-  cachePrefix: "st_c_v5_",
-  cacheIndexKey: "st_cache_index_v5"
+  chunkThreshold: 5000,
+  chunkSize: 3500,
+  cachePrefix: "st_c_v6_",
+  cacheIndexKey: "st_cache_index_v6"
 };
 
 const FALLBACK_MODELS = [
@@ -702,13 +717,19 @@ const FALLBACK_MODELS = [
 ];
 
 const CHINESE_CODES = ["Chinese", "Traditional Chinese"];
+const NON_LATIN_ROMAN_TARGETS = ["Japanese", "Korean", "Thai", "Russian", "Arabic", "Hindi"];
+const CJK_JOIN_TARGETS = ["Chinese", "Traditional Chinese", "Japanese"];
+const HANZI_RE = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/;
+const SUPPORTED_AUDIO_MIME = ["audio/webm", "audio/mp4", "audio/m4a", "audio/ogg", "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"];
+const OCR_TAG = "Read all text visible in the image, then translate it.";
+const HANDWRITING_TAG = "Read the handwritten text in the image, then translate it.";
 
 const LANGUAGES = [
   { code: "auto", flag: null, label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "auto", speech: "vi-VN" },
   { code: "Vietnamese", flag: "vn", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "VI", speech: "vi-VN" },
   { code: "Chinese", flag: "cn", label: { vi: "Tiếng Trung Giản thể", en: "Simplified Chinese", zh: "简体中文" }, prompt: "ZH-CN", speech: "zh-CN" },
   { code: "Traditional Chinese", flag: "tw", label: { vi: "Tiếng Trung Phồn thể", en: "Traditional Chinese", zh: "繁体中文" }, prompt: "ZH-TW", speech: "zh-TW" },
-  { code: "English", flag: "us", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prompt: "EN", speech: "en-US" },
+  { code: "English", flag: "us", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prech: "en-US" },
   { code: "Japanese", flag: "jp", label: { vi: "Tiếng Nhật", en: "Japanese", zh: "日语" }, prompt: "JA", speech: "ja-JP" },
   { code: "Korean", flag: "kr", label: { vi: "Tiếng Hàn", en: "Korean", zh: "韩语" }, prompt: "KO", speech: "ko-KR" },
   { code: "French", flag: "fr", label: { vi: "Tiếng Pháp", en: "French", zh: "法语" }, prompt: "FR", speech: "fr-FR" },
@@ -726,7 +747,8 @@ const LANGUAGES = [
 const I18N = {
   vi: {
     pageTitle: "AI Translation", ready: "Sẵn sàng", noKey: "Chưa có API Key",
-    tryingFallback: "Đang thử lại / đổi model...", switchedModel: m => `Đã tự động đổi sang model ${m}.`,
+    tryingFallback: "Đang thử lại / đổi model...", switchedModel: m => `Đã tạm dùng model ${m} cho yêu cầu này.`,
+    translatingPart: (i, n) => `Đang dịch phần ${i}/${n}…`,
     sameChineseNotice: "Ngôn ngữ nguồn và đích cùng là tiếng Trung: giữ nguyên chữ, không tốn token dịch.",
     placeholder: "Nhập nội dung cần dịch...", clear: "Xóa", paste: "Dán", draw: "Viết tay",
     image: "Ảnh", liveBtn: "Hội thoại", micChip: "Mic", charCount: n => `${n.toLocaleString("vi-VN")} ký tự`,
@@ -734,6 +756,7 @@ const I18N = {
     translateDraw: "Dịch chữ viết", chooseImage: "Chọn ảnh", removeImage: "Bỏ ảnh", translateImage: "Dịch nội dung ảnh",
     imageHint: "Hỗ trợ PNG, JPG, WebP, GIF. Tối đa 12 MB.", resultLabel: "Bản dịch",
     pronunciationPrefix: r => `Cách đọc: ${r}`, backTranslate: "Dịch ngược", backTransLabel: "Kiểm tra dịch ngược",
+    examplesBtn: "Xem ví dụ",
     hanziTitle: "Cách viết Hán tự", hanziLoading: "Đang tải nét viết...",
     hanziStrokeStep: (c, n) => `Nét ${c} / ${n}`, hanziDone: n => `Hoàn tất ${n} nét • Chạm để xem lại`,
     hanziUnavailable: "Không có dữ liệu nét viết cho ký tự này.", hanziReplay: "Viết lại",
@@ -766,7 +789,8 @@ const I18N = {
   },
   en: {
     pageTitle: "AI Translation", ready: "Ready", noKey: "No API Key",
-    tryingFallback: "Retrying / switching model...", switchedModel: m => `Switched to working model ${m}.`,
+    tryingFallback: "Retrying / switching model...", switchedModel: m => `Temporarily used model ${m} for this request.`,
+    translatingPart: (i, n) => `Translating part ${i}/${n}…`,
     sameChineseNotice: "Source and target are both Chinese: kept as-is without translation tokens.",
     placeholder: "Enter text to translate...", clear: "Clear", paste: "Paste", draw: "Draw",
     image: "Image", liveBtn: "Live", micChip: "Mic", charCount: n => `${n.toLocaleString("en-US")} chars`,
@@ -774,6 +798,7 @@ const I18N = {
     translateDraw: "Translate handwriting", chooseImage: "Choose image", removeImage: "Remove image", translateImage: "Translate image",
     imageHint: "Supports PNG, JPG, WebP, GIF. Up to 12 MB.", resultLabel: "Translation",
     pronunciationPrefix: r => `Reading: ${r}`, backTranslate: "Back-translate", backTransLabel: "Back-translation check",
+    examplesBtn: "Show examples",
     hanziTitle: "Stroke order", hanziLoading: "Loading strokes...",
     hanziStrokeStep: (c, n) => `Stroke ${c} / ${n}`, hanziDone: n => `${n} strokes • Tap to replay`,
     hanziUnavailable: "Stroke data unavailable for this character.", hanziReplay: "Replay",
@@ -806,7 +831,8 @@ const I18N = {
   },
   zh: {
     pageTitle: "AI Translation", ready: "就绪", noKey: "未设置 API Key",
-    tryingFallback: "正在重试 / 切换模型...", switchedModel: m => `已自动切换至可用模型 ${m}。`,
+    tryingFallback: "正在重试 / 切换模型...", switchedModel: m => `本次请求已临时使用模型 ${m}。`,
+    translatingPart: (i, n) => `正在翻译第 ${i}/${n} 部分…`,
     sameChineseNotice: "源语言和目标语言同为中文：直接保留原文，不消耗翻译 Token。",
     placeholder: "输入要翻译的内容...", clear: "清空", paste: "粘贴", draw: "手写",
     image: "图片", liveBtn: "对话", micChip: "麦克风", charCount: n => `${n.toLocaleString("zh-CN")} 字`,
@@ -814,6 +840,7 @@ const I18N = {
     translateDraw: "翻译手写", chooseImage: "选择图片", removeImage: "移除图片", translateImage: "翻译图片内容",
     imageHint: "支持 PNG、JPG、WebP、GIF，最大 12 MB。", resultLabel: "译文",
     pronunciationPrefix: r => `读音：${r}`, backTranslate: "回译校验", backTransLabel: "回译核对",
+    examplesBtn: "查看例句",
     hanziTitle: "汉字笔画顺序", hanziLoading: "正在加载笔画...",
     hanziStrokeStep: (c, n) => `第 ${c} / ${n} 画`, hanziDone: n => `共 ${n} 画 • 点击重播`,
     hanziUnavailable: "暂无该字的笔画数据。", hanziReplay: "重播",
@@ -916,6 +943,7 @@ const el = {
   liveStatus: $("liveStatus"), mic: $("micBtn"), speakSourceBtn: $("speakSourceBtn"),
   drawToggle: $("drawToggle"), imageToggle: $("imageToggle"), liveToggle: $("liveToggle"),
   copyBtn: $("copyBtn"), backTranslateBtn: $("backTranslateBtn"), speakBtn: $("speakBtn"),
+  examplesBtn: $("examplesBtn"),
   clearTextBtn: $("clearTextBtn"), pasteBtn: $("pasteBtn")
 };
 
@@ -935,6 +963,17 @@ const targetLang = () => state.targetLang;
 const langPrompt = value => getLangObj(value)?.prompt || value;
 const escapeText = value => String(value ?? "").replace(/\u0000/g, "");
 const meaningLangCode = () => state.uiLang === "en" ? "EN" : state.uiLang === "zh" ? "ZH-CN" : "VI";
+const isChineseTarget = (code = targetLang()) => CHINESE_CODES.includes(code);
+const normalizeForCache = value => String(value ?? "").replace(/\r\n?/g, "\n").replace(/[ \t]+/g, " ").trim();
+
+// Short guard against accidental double-taps on mobile.
+let lastTapAt = 0;
+const tapGuard = () => {
+  const now = Date.now();
+  if (now - lastTapAt < 400) return false;
+  lastTapAt = now;
+  return true;
+};
 
 function setToggleButtonState(btn, active) {
   if (!btn) return;
@@ -1035,6 +1074,7 @@ function applyUILanguage() {
   el.mic.title = el.mic.ariaLabel = t("micChip");
   el.copyBtn.title = el.copyBtn.ariaLabel = t("copy");
   el.backTranslateBtn.title = el.backTranslateBtn.ariaLabel = t("backTranslate");
+  el.examplesBtn.title = el.examplesBtn.ariaLabel = t("examplesBtn");
   el.speakBtn.title = el.speakBtn.ariaLabel = t("speak");
 
   $("brushThinOpt").textContent = t("thin");
@@ -1078,6 +1118,31 @@ function applyUILanguage() {
   syncToolStates();
   if (state.lastResult) renderResult(state.lastResult, false);
   syncVisualViewport();
+}
+
+/* ============================ LOCAL PINYIN (pinyin-pro) ============================ */
+const hasLocalPinyin = () => typeof window.pinyinPro?.pinyin === "function";
+
+function localPinyin(text) {
+  try {
+    if (!hasLocalPinyin()) return "";
+    return String(text || "").split("\n").map(line => {
+      if (!line.trim()) return "";
+      return window.pinyinPro.pinyin(line, { toneType: "symbol" })
+        .replace(/\s+/g, " ")
+        .replace(/\s+([，。！？；：、,.!?;:）)」』”’》】])/g, "$1")
+        .replace(/([（(「『“‘《【])\s+/g, "$1")
+        .trim();
+    }).join("\n").trim();
+  } catch (_) {
+    return "";
+  }
+}
+
+// True when the model must also return a reading/romanization (costs extra output tokens).
+function needsAIRomanization(tgt) {
+  if (NON_LATIN_ROMAN_TARGETS.includes(tgt)) return true;
+  return CHINESE_CODES.includes(tgt) && !hasLocalPinyin();
 }
 
 /* ============================ HANZI STROKE ORDER (1 CHAR) ============================ */
@@ -1154,7 +1219,7 @@ function refreshHanziStrokeBox(translationText) {
 el.hanziReplayBtn.addEventListener("click", e => { e.stopPropagation(); playHanziStrokeAnimation(); });
 el.hanziGridWrap.addEventListener("click", playHanziStrokeAnimation);
 
-/* ============================ UI HELPERS & CACHE ============================ */
+/* ============================ UI HELPERS ============================ */
 function showNotice(message) {
   if (state.noticeTimer) clearTimeout(state.noticeTimer);
   el.notice.textContent = String(message || "");
@@ -1186,7 +1251,7 @@ function setStatus() {
 function setBusy(busy, spinnerId) {
   state.isBusy = busy;
   if (spinnerId && $(spinnerId)) $(spinnerId).style.display = busy ? "inline-block" : "none";
-  ["translateBtn", "translateDrawBtn", "translateImageBtn", "backTranslateBtn"].forEach(id => {
+  ["translateBtn", "translateDrawBtn", "translateImageBtn", "backTranslateBtn", "examplesBtn"].forEach(id => {
     if ($(id)) $(id).disabled = busy;
   });
 }
@@ -1213,16 +1278,24 @@ function ensureConfig() {
 const stopStream = stream => stream?.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function cacheStorageKey(key) {
-  // Short deterministic key: never put full user text into sessionStorage key names.
-  let h1 = 0x811c9dc5, h2 = 0x9e3779b9;
-  const value = String(key || "");
-  for (let i = 0; i < value.length; i++) {
-    const c = value.charCodeAt(i);
-    h1 = Math.imul(h1 ^ c, 0x01000193);
-    h2 = Math.imul(h2 ^ c, 0x85ebca6b);
+/* ============================ PERSISTENT CACHE (localStorage, LRU + TTL) ============================ */
+// cyrb53 hash: 53-bit, far lower collision risk than the old 2x32-bit scheme.
+function hash53(str, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
   }
-  return CONFIG.cachePrefix + (h1 >>> 0).toString(36) + (h2 >>> 0).toString(36);
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+function cacheStorageKey(key) {
+  // Short deterministic key: never put full user text into storage key names.
+  const value = String(key || "");
+  return CONFIG.cachePrefix + hash53(value, 0).toString(36) + hash53(value, 1).toString(36) + value.length.toString(36);
 }
 
 function touchCacheKey(storageKey) {
@@ -1230,20 +1303,27 @@ function touchCacheKey(storageKey) {
   state.cacheIndex.push(storageKey);
 }
 
+function removeStoredCache(storageKey) {
+  state.cacheIndex = state.cacheIndex.filter(k => k !== storageKey);
+  state.cache.delete(storageKey);
+  try { localStorage.removeItem(storageKey); } catch (_) {}
+}
+
 function loadCacheIndex() {
-  try {
-    // Remove legacy entries whose storage keys contained the complete user text.
-    for (let i = sessionStorage.length - 1; i >= 0; i--) {
-      const key = sessionStorage.key(i);
-      if (key && key.startsWith("st_c_") && !key.startsWith(CONFIG.cachePrefix)) {
-        sessionStorage.removeItem(key);
+  // Drop legacy cache entries (older prefixes) from both storages.
+  [localStorage, sessionStorage].forEach(store => {
+    try {
+      for (let i = store.length - 1; i >= 0; i--) {
+        const key = store.key(i);
+        if (key && key.startsWith("st_c_") && !key.startsWith(CONFIG.cachePrefix)) store.removeItem(key);
       }
-    }
-  } catch (_) {}
+      store.removeItem("st_cache_index_v5");
+    } catch (_) {}
+  });
   try {
-    const parsed = JSON.parse(sessionStorage.getItem(CONFIG.cacheIndexKey) || "[]");
+    const parsed = JSON.parse(localStorage.getItem(CONFIG.cacheIndexKey) || "[]");
     state.cacheIndex = Array.isArray(parsed)
-      ? parsed.filter(k => typeof k === "string" && k.startsWith(CONFIG.cachePrefix) && sessionStorage.getItem(k) !== null).slice(-CONFIG.maxCacheEntries)
+      ? parsed.filter(k => typeof k === "string" && k.startsWith(CONFIG.cachePrefix) && localStorage.getItem(k) !== null).slice(-CONFIG.maxCacheEntries)
       : [];
   } catch (_) {
     state.cacheIndex = [];
@@ -1251,7 +1331,7 @@ function loadCacheIndex() {
 }
 
 function persistCacheIndex() {
-  try { sessionStorage.setItem(CONFIG.cacheIndexKey, JSON.stringify(state.cacheIndex)); } catch (_) {}
+  try { localStorage.setItem(CONFIG.cacheIndexKey, JSON.stringify(state.cacheIndex)); } catch (_) {}
 }
 
 function readCached(key) {
@@ -1265,16 +1345,19 @@ function readCached(key) {
     return value;
   }
   try {
-    const raw = sessionStorage.getItem(storageKey);
+    const raw = localStorage.getItem(storageKey);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") return null;
-    state.cache.set(storageKey, parsed);
+    const fresh = parsed && typeof parsed === "object" && parsed.v && typeof parsed.v === "object" &&
+      (Date.now() - Number(parsed.t || 0)) < CONFIG.cacheTtlMs;
+    if (!fresh) { removeStoredCache(storageKey); return null; }
+    state.cache.set(storageKey, parsed.v);
+    while (state.cache.size > CONFIG.maxCacheEntries) state.cache.delete(state.cache.keys().next().value);
     touchCacheKey(storageKey);
     persistCacheIndex();
-    return parsed;
+    return parsed.v;
   } catch (_) {
-    try { sessionStorage.removeItem(storageKey); } catch (__) {}
+    removeStoredCache(storageKey);
     return null;
   }
 }
@@ -1289,43 +1372,46 @@ function writeCached(key, val) {
   while (state.cacheIndex.length > CONFIG.maxCacheEntries) {
     const oldest = state.cacheIndex.shift();
     state.cache.delete(oldest);
-    try { sessionStorage.removeItem(oldest); } catch (_) {}
+    try { localStorage.removeItem(oldest); } catch (_) {}
   }
   while (state.cache.size > CONFIG.maxCacheEntries) {
-    const oldest = state.cache.keys().next().value;
-    state.cache.delete(oldest);
+    state.cache.delete(state.cache.keys().next().value);
+  }
+
+  let serialized;
+  try { serialized = JSON.stringify({ t: Date.now(), v: val }); } catch (_) { return; }
+  if (serialized.length > CONFIG.maxCachePersistChars) {
+    // Too large to persist: keep in memory only.
+    state.cacheIndex = state.cacheIndex.filter(k => k !== storageKey);
+    return;
   }
 
   try {
-    sessionStorage.setItem(storageKey, JSON.stringify(val));
+    localStorage.setItem(storageKey, serialized);
     persistCacheIndex();
   } catch (_) {
-    // Storage may be disabled/full. Memory cache remains usable.
+    // Storage may be full. Evict the oldest entries (never the one just added) and retry once.
     try {
-      const oldest = state.cacheIndex.shift();
-      if (oldest) {
+      for (let i = 0; i < 5 && state.cacheIndex.length > 1; i++) {
+        const oldest = state.cacheIndex.shift();
+        if (oldest === storageKey) { state.cacheIndex.push(oldest); break; }
         state.cache.delete(oldest);
-        sessionStorage.removeItem(oldest);
+        localStorage.removeItem(oldest);
       }
-      sessionStorage.setItem(storageKey, JSON.stringify(val));
+      localStorage.setItem(storageKey, serialized);
       persistCacheIndex();
     } catch (__) {}
   }
 }
 
+/* ============================ MODEL ROUTING HELPERS ============================ */
 function markModelCoolingDown(modelName, durationMs = CONFIG.modelCooldownMs) {
   if (!modelName) return;
   state.modelCooldownUntil[modelName] = Date.now() + Math.max(1000, durationMs);
 }
 
-function canonicalModelName(modelName) {
-  const name = String(modelName || "").trim();
-  const aliases = {
-    "gemini-3.5-flash": "gemini-3.6-flash",
-    "gemini-3.7-flash": "gemini-3.8-flash"
-  };
-  return aliases[name] || name;
-}
+// No silent aliasing: the model the user selects is the model that is called.
+const canonicalModelName = modelName => String(modelName || "").trim();
 
 function orderModelsForRequest() {
   const preferred = canonicalModelName(state.model);
@@ -1334,15 +1420,12 @@ function orderModelsForRequest() {
   return all.filter(m => (state.modelCooldownUntil[m] || 0) <= now);
 }
 
-function persistModelSelection(newModel) {
-  const clean = newModel.trim();
-  if (!clean) return;
-  delete state.modelCooldownUntil[clean];
-  const prev = state.model.trim();
-  state.model = clean;
-  try { localStorage.setItem("smart_translate_model_v5", clean); } catch (_) {}
-  setStatus();
-  if (prev !== clean) showNotice(t("switchedModel", clean));
+function thinkingConfigFor(modelName) {
+  const m = String(modelName || "").trim().toLowerCase();
+  if (/^gemini-2\.5-flash/.test(m)) return { thinkingBudget: 0 };
+  if (/^gemini-3\.(5|6)-flash/.test(m)) return { thinkingLevel: "minimal" };
+  if (/^gemini-3\.\d+-flash/.test(m)) return { thinkingLevel: "low" };
+  return null;
 }
 
 function pushHistory(result) {
@@ -1354,7 +1437,9 @@ function pushHistory(result) {
     examples: Array.isArray(result.examples) ? result.examples.slice(0, 3) : [],
     explanation: result.explanation || "",
     alternatives: Array.isArray(result.alternatives) ? result.alternatives.slice(0, 3) : [],
-    _sourceSample: result._sourceSample || ""
+    _sourceSample: result._sourceSample || "",
+    _src: result._src || "",
+    _tgt: result._tgt || ""
   };
   state.history = [entry, ...state.history.filter(h => h.translation !== entry.translation)].slice(0, CONFIG.maxHistory);
   renderHistory();
@@ -1423,6 +1508,22 @@ function parseRetryAfter(response) {
   return Number.isFinite(date) ? Math.max(0, Math.min(date - Date.now(), 120000)) : 0;
 }
 
+// Gemini reports the wait time and the exceeded quota inside the JSON body (error.details), not in headers.
+function parseQuotaInfo(data) {
+  let retryMs = 0, perDay = false;
+  const details = Array.isArray(data?.error?.details) ? data.error.details : [];
+  for (const d of details) {
+    if (typeof d?.retryDelay === "string") {
+      const sec = parseFloat(d.retryDelay);
+      if (Number.isFinite(sec) && sec > 0) retryMs = Math.round(sec * 1000);
+    }
+    for (const v of Array.isArray(d?.violations) ? d.violations : []) {
+      if (/PerDay/i.test(String(v?.quotaId || ""))) perDay = true;
+    }
+  }
+  return { retryMs: Math.min(retryMs, 300000), perDay };
+}
+
 function retryDelay(attempt, serverDelay = 0, base = 900) {
   const exponential = Math.min(15000, base * (2 ** attempt));
   return Math.max(serverDelay, Math.round(exponential + Math.random() * 250));
@@ -1432,21 +1533,19 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
   const {
     systemInstruction = "",
     temperature = 0.1,
-    maxOutputTokens = 360,
+    maxOutputTokens = 600,
     timeoutMs = CONFIG.requestTimeoutMs,
     expectJson = true
   } = options;
 
+  const model = modelName.trim();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
-  const url = `${CONFIG.apiBase}${encodeURIComponent(modelName.trim())}:generateContent`;
+  const url = `${CONFIG.apiBase}${encodeURIComponent(model)}:generateContent`;
   const generationConfig = { temperature, maxOutputTokens };
   if (expectJson) generationConfig.responseMimeType = "application/json";
-  if (["gemini-3.5-flash-lite", "gemini-3.6-flash"].includes(modelName.trim())) {
-    generationConfig.thinkingConfig = { thinkingLevel: "minimal" };
-  } else if (modelName.trim() === "gemini-3.8-flash") {
-    generationConfig.thinkingConfig = { thinkingLevel: "low" };
-  }
+  const thinking = thinkingConfigFor(model);
+  if (thinking) generationConfig.thinkingConfig = thinking;
 
   const payload = {
     contents: [{ role: "user", parts }],
@@ -1497,9 +1596,11 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
 
   if (!response.ok) {
     const msg = data?.error?.message || `HTTP ${response.status}`;
-    // 429 is often project/API-key quota, not a model-specific failure.
     const retryable = [429, 500, 502, 503, 504].includes(response.status);
-    throw makeRetryError(msg, retryable, response.status, parseRetryAfter(response));
+    const quota = response.status === 429 ? parseQuotaInfo(data) : { retryMs: 0, perDay: false };
+    const err = makeRetryError(msg, retryable, response.status, quota.retryMs || parseRetryAfter(response));
+    if (quota.perDay) err.perDay = true;
+    throw err;
   }
 
   if (data.promptFeedback?.blockReason) {
@@ -1510,7 +1611,9 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
   if (!candidate) throw makeRetryError("Gemini không trả về kết quả.", true);
   if (candidate.finishReason === "SAFETY") throw new Error("Nội dung bị bộ lọc an toàn chặn.");
   if (candidate.finishReason === "MAX_TOKENS") {
-    throw makeRetryError("Kết quả bị cắt do giới hạn token đầu ra. Hãy chia nhỏ nội dung.", false);
+    const err = makeRetryError("Kết quả bị cắt do giới hạn token đầu ra. Hãy chia nhỏ nội dung.", false);
+    err.maxTokens = true;
+    throw err;
   }
 
   const output = (candidate.content?.parts || []).map(p => p.text || "").join("").trim();
@@ -1547,8 +1650,7 @@ function normalizePinyinToneNumbers(value) {
     const output = lower.slice(0, idx) + marked + lower.slice(idx + 1);
     return /^[A-Z]/.test(syllable) ? output.charAt(0).toUpperCase() + output.slice(1) : output;
   };
-  // Gemini sometimes returns numbered Pinyin (e.g. you3, bu4). Convert each
-  // whitespace-delimited syllable while preserving punctuation and spacing.
+  // Gemini sometimes returns numbered Pinyin (e.g. you3, bu4). Convert each syllable while preserving punctuation.
   return value.replace(/[A-Za-zÜüVv]+[1-5]/g, token => {
     const match = token.match(/^([A-Za-zÜüVv]+)([1-5])$/);
     return match ? convertSyllable(match[1], match[2]) : token;
@@ -1577,8 +1679,10 @@ function normalizeModelPayload(rawObj) {
 }
 
 function parseModelOutput(text, expectJson) {
-  if (!expectJson) return { translation: text.trim() };
-  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  if (!expectJson) {
+    return { translation: text.trim().replace(/^```[a-z]\*\s\*/i, "").replace(/\s\*```$/, "").trim() };
+  }
+  const cleaned = text.trim().replace(/^```(?:json)?\s\*/i, "").replace(/\s\*```$/, "");
   try {
     return normalizeModelPayload(JSON.parse(cleaned));
   } catch (_) {
@@ -1598,55 +1702,58 @@ async function performGeminiRequest(parts, options = {}) {
 
   if (state.globalCooldownUntil > now) {
     const wait = Math.ceil((state.globalCooldownUntil - now) / 1000);
-    throw new Error(`Gemini đang tạm giới hạn quota. Vui lòng thử lại sau ${wait} giây.`);
+    throw new Error(`Gemini đang tạm giới hạn tốc độ. Vui lòng thử lại sau ${wait} giây.`);
   }
 
-  const candidates = orderModelsForRequest();
-  const preferredReady = (state.modelCooldownUntil[preferred] || 0) <= now;
-  const ordered = preferredReady
-    ? [preferred, ...candidates.filter(m => m !== preferred)]
-    : candidates;
-  const models = ordered.slice(0, 1 + CONFIG.maxFallbackModels);
-
+  const models = orderModelsForRequest().slice(0, 1 + CONFIG.maxFallbackModels);
+  const maxRetries = CONFIG.maxSameModelRetries;
   let lastError = null;
   let lastModel = preferred;
 
   for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
     const modelName = models[modelIndex];
-    // Never deliberately call a model while its cooldown is active.
-    if (modelIndex > 0 && (state.modelCooldownUntil[modelName] || 0) > Date.now()) continue;
     lastModel = modelName;
+    let opts = { ...options, expectJson };
+    let tryNextModel = false;
 
-    const maxRetries = CONFIG.maxSameModelRetries;
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const rawOutput = await rawGeminiRequest(modelName, parts, { ...options, expectJson });
+        const rawOutput = await rawGeminiRequest(modelName, parts, opts);
         const parsed = parseModelOutput(rawOutput, expectJson);
         if (options.requireTranslation !== false && !parsed.translation) {
           throw makeRetryError("Không có trường bản dịch hợp lệ.", false);
         }
-        if (state.model.trim() !== modelName) persistModelSelection(modelName);
-        else setStatus();
         delete state.modelCooldownUntil[modelName];
+        // Fallback is per-request only: never overwrite the model the user selected.
+        if (modelName !== preferred) showNotice(t("switchedModel", modelName));
+        setStatus();
         return parsed;
       } catch (err) {
         lastError = err;
         const status = Number(err?.status || 0);
 
+        // Output was truncated (often because thinking tokens eat the budget): retry once with a bigger budget.
+        if (err?.maxTokens && attempt < maxRetries) {
+          opts = { ...opts, maxOutputTokens: Math.min(16384, Math.round((opts.maxOutputTokens || 600) * 2)) };
+          continue;
+        }
+
         if (status === 400 || status === 401 || status === 403) break;
 
         if (status === 429) {
-          const delay = Math.max(
-            retryDelay(attempt, err.retryAfterMs, 1500),
-            err.retryAfterMs || CONFIG.quotaCooldownMs
-          );
-          state.globalCooldownUntil = Date.now() + delay;
-          // Quota is commonly project-wide: do not spray the same key across fallback models.
-          if (attempt < maxRetries) {
+          // Daily quota is tracked per model on the free tier: block this model and try the fallback.
+          if (err.perDay) {
+            markModelCoolingDown(modelName, CONFIG.dailyQuotaCooldownMs);
+            tryNextModel = true;
+            break;
+          }
+          const wait = err.retryAfterMs || CONFIG.defaultQuotaWaitMs;
+          if (attempt < maxRetries && wait <= CONFIG.maxQuotaWaitMs) {
             el.status.textContent = t("tryingFallback");
-            await sleep(delay);
+            await sleep(wait + Math.round(Math.random() * 300));
             continue;
           }
+          state.globalCooldownUntil = Date.now() + Math.max(wait, 5000);
           break;
         }
 
@@ -1658,6 +1765,13 @@ async function performGeminiRequest(parts, options = {}) {
             await sleep(delay);
             continue;
           }
+          tryNextModel = true;
+          break;
+        }
+
+        if (status === 404) {
+          markModelCoolingDown(modelName, 10 * 60 * 1000);
+          tryNextModel = true;
           break;
         }
 
@@ -1672,23 +1786,22 @@ async function performGeminiRequest(parts, options = {}) {
       }
     }
 
-    // Only model-specific availability/not-found/server errors justify one fallback.
-    if (modelIndex === 0 && lastError &&
-        ([404, 500, 502, 503, 504].includes(Number(lastError.status || 0)))) {
-      continue;
-    }
-    break;
+    if (!tryNextModel) break;
   }
 
   setStatus();
-  if (!lastError) throw new Error("Không có model khả dụng ngoài thời gian cooldown.");
+  if (!lastError) throw new Error("Không có model khả dụng ngoài thời gian cooldown. Vui lòng thử lại sau ít phút.");
   const statusTag = lastError.status ? ` (${lastError.status})` : "";
   const detail = lastError.message ? `: ${lastError.message}` : "";
-  if (lastError.status === 503) {
-    throw new Error(`Gemini đang quá tải${statusTag} trên ${lastModel}${detail}. Vui lòng thử lại sau.`);
+  if (lastError.status === 429 && lastError.perDay) {
+    throw new Error(`Đã hết quota theo ngày của ${lastModel}. Quota miễn phí reset khoảng 14:00–15:00 (giờ Việt Nam). Bạn có thể chọn model khác trong Cài đặt.`);
   }
   if (lastError.status === 429) {
-    throw new Error(`Gemini đã chạm giới hạn quota/tốc độ${statusTag}${detail}. Không chuyển model để tránh tiếp tục tiêu hao quota.`);
+    const wait = Math.max(1, Math.ceil((state.globalCooldownUntil - Date.now()) / 1000));
+    throw new Error(`Gemini đã chạm giới hạn tốc độ${statusTag}. Vui lòng thử lại sau khoảng ${wait} giây.`);
+  }
+  if (lastError.status === 503) {
+    throw new Error(`Gemini đang quá tải${statusTag} trên ${lastModel}${detail}. Vui lòng thử lại sau.`);
   }
   throw new Error(`Lỗi Gemini API${statusTag} [${lastModel}]${detail}`);
 }
@@ -1726,6 +1839,7 @@ function geminiRequest(parts, options = {}) {
   return enqueueGeminiRequest(parts, options);
 }
 
+/* ============================ PROMPTS & TRANSLATION PIPELINE ============================ */
 function isShortWordOrPhrase(text) {
   const s = String(text || "").trim();
   if (!s || s.length > 90 || /\n/.test(s)) return false;
@@ -1749,106 +1863,181 @@ function normalizeExampleItem(ex) {
   };
 }
 
-function isChineseTarget(code = targetLang()) {
-  return CHINESE_CODES.includes(code);
-}
-
-function buildLeanPrompt({ fromOverride = "", toOverride = "", sampleText = "", forceExamples = false, extraTag = "" } = {}) {
-  const from = fromOverride || langPrompt(sourceLang());
-  const to = toOverride || langPrompt(targetLang());
-  const needExamples = forceExamples || isShortWordOrPhrase(sampleText);
-  const meaning = meaningLangCode();
-  const chineseTarget = CHINESE_CODES.includes(toOverride || targetLang());
-  const sourceRule = from === "auto" ? "Identify the input language from the text itself." : `Source: ${from}.`;
-  const semanticRule = `Translate the input accurately into ${to}. ${sourceRule} Use the full context when available. For isolated words, choose the most natural common equivalent; if context cannot distinguish senses, choose one primary sense rather than listing unrelated alternatives. Preserve intent, tone, names, numbers and formatting. Do not add, omit or explain content.`;
-  const readingRule = chineseTarget
-    ? "Write tr in Chinese characters only. Put complete tone-marked Hanyu Pinyin for exactly tr in pr and py; never mix Pinyin into tr."
-    : `Write tr in the target language's native script. For non-Latin scripts, put the complete standard romanization of tr in pr; for Latin scripts, leave pr and py empty.`;
-  const examplesRule = needExamples
-    ? chineseTarget
-      ? `Give up to 3 short, natural examples of the same sense. Each ex.s is Chinese characters only; ex.r is exact complete tone-marked Pinyin for ex.s; ex.m is its meaning in ${meaning}. Keep all three aligned and do not introduce another sense.`
-      : `Give up to 3 short, natural examples of the same sense. Each ex.s uses the target's native script; ex.r is its complete standard romanization when applicable (otherwise empty); ex.m is its meaning in ${meaning}.`
-    : "Set ex to [].";
-  const schema = chineseTarget
-    ? `JSON: {"tr":"Chinese characters","pr":"tone-marked Pinyin","py":"same Pinyin","ex":[{"s":"Chinese sentence","r":"matching Pinyin","m":"meaning"}]}.`
-    : `JSON: {"tr":"native-script translation","pr":"romanization or empty","py":"empty","ex":[{"s":"native-script sentence","r":"romanization or empty","m":"meaning"}]}.`;
-  return `${extraTag ? extraTag + ". " : ""}${semanticRule} ${readingRule} ${examplesRule} ${schema} Return compact valid JSON only.`;
-}
-
-function buildSameChineseLeanPrompt(_input, toCode) {
-  const needExamples = isShortWordOrPhrase(_input);
-  const examplesRule = needExamples
-    ? `Give up to 3 short examples that preserve the input's sense. Each s is Chinese characters only, r is exact complete tone-marked Hanyu Pinyin, and m is the meaning in ${meaningLangCode()}.`
-    : "Set ex to [].";
-  return `The input is already Chinese. Keep tr exactly as supplied. Put complete tone-marked Hanyu Pinyin matching tr in both pr and py. ${examplesRule} Return compact valid JSON only: {"tr":"Chinese characters","pr":"tone-marked Pinyin","py":"same Pinyin","ex":[{"s":"Chinese sentence","r":"matching Pinyin","m":"meaning"}]}.`;
-}
-
-function buildLongTranslationPrompt() {
-  const from = langPrompt(sourceLang()), to = langPrompt(targetLang());
-  const chineseTarget = isChineseTarget();
-  const sourceRule = from === "auto" ? "Identify the source language from the text itself." : `Source: ${from}.`;
-  const targetRule = chineseTarget
-    ? "tr uses Chinese characters only; pr and py contain complete tone-marked Hanyu Pinyin matching tr exactly."
-    : "tr uses the target's native script; pr contains complete standard romanization for non-Latin scripts and is empty for Latin scripts; py is empty.";
-  return `Translate accurately from ${from} to ${to}. ${sourceRule} Preserve meaning, tone, names, numbers, formatting and units. Use context; do not invent, omit, explain or add content. ${targetRule} Return compact valid JSON only: {"tr":"native-script translation","pr":"romanization or empty","py":"Pinyin only for Chinese, otherwise empty","ex":[]}.`;
-}
-
-function validateTranslationPayload(result, target = targetLang()) {
-  if (!result || !String(result.translation || "").trim()) throw new Error("AI không trả về nội dung dịch hợp lệ. Vui lòng thử lại.");
-  if (!CHINESE_CODES.includes(target)) return result;
-  const hasHanzi = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/.test(result.translation);
-  const hasLatin = /[A-Za-z]/.test(result.translation);
-  if (!hasHanzi || hasLatin) {
-    throw new Error("AI trả về sai định dạng tiếng Trung (thiếu Hán tự hoặc trộn Pinyin vào bản dịch). Hãy thử dịch lại.");
+// One prompt for words, sentences, long text, OCR and handwriting.
+// Plain-text output unless the model must also return a romanization (then compact JSON).
+function buildPrompt({ src = sourceLang(), tgt = targetLang(), extraTag = "" } = {}) {
+  const from = langPrompt(src), to = langPrompt(tgt);
+  const sourceRule = from === "auto" ? "Detect the source language automatically." : `Source: ${from}.`;
+  const core = `${extraTag ? extraTag + " " : ""}Translate accurately into ${to}. ${sourceRule} Use full context. For an isolated word choose the most natural common equivalent (one primary sense, no alternatives). Preserve meaning, tone, names, numbers, units and line breaks. Never add, omit or explain anything.`;
+  if (!needsAIRomanization(tgt)) {
+    const script = isChineseTarget(tgt) ? "Use Chinese characters only; do not write Pinyin." : "Use the target language's native script.";
+    return `${core} ${script} Output the translation text only, with no quotes, labels or markdown.`;
   }
-  const reading = normalizePinyinToneNumbers(String(result.pinyin || result.pronunciation || "").trim());
-  if (!reading || /[\u3400-\u4DBF\u4E00-\u9FFF]/.test(reading)) {
-    throw new Error("AI chưa trả về Pinyin hợp lệ cho Hán tự. Hãy thử dịch lại.");
+  const readingRule = isChineseTarget(tgt)
+    ? "tr uses Chinese characters only; pr is the complete tone-marked Hanyu Pinyin of tr."
+    : "tr uses the target language's native script; pr is the complete standard romanization of tr.";
+  return `${core} ${readingRule} Return compact valid JSON only: {"tr":"translation","pr":"romanization"}.`;
+}
+
+function buildExamplesPrompt(word, sample, tgt) {
+  const to = langPrompt(tgt);
+  const roman = needsAIRomanization(tgt);
+  const ctx = sample && sample !== word ? ` It is the translation of ${JSON.stringify(sample)}.` : "";
+  const script = isChineseTarget(tgt) ? "Chinese characters only, no Pinyin" : "the target language's native script";
+  const romanRule = roman ? " Give its complete standard romanization (tone-marked Pinyin for Chinese) in r." : "";
+  const schema = roman
+    ? `{"ex":[{"s":"sentence","r":"romanization","m":"meaning"}]}`
+    : `{"ex":[{"s":"sentence","m":"meaning"}]}`;
+  return `Write exactly 3 short, natural example sentences in ${to} using ${JSON.stringify(word)} in the same sense.${ctx} Each sentence s uses ${script}.${romanRule} Give its meaning in ${meaningLangCode()} in m. Return compact valid JSON only: ${schema}.`;
+}
+
+function outputBudgetFor(text, json) {
+  return Math.min(12288, Math.max(600, Math.ceil(String(text || "").length * (json ? 1.2 : 0.6)) + 260));
+}
+const timeoutForBudget = budget => Math.min(CONFIG.maxTimeoutMs, Math.max(CONFIG.requestTimeoutMs, Math.round(budget * 10)));
+
+function finalizeTranslation(result, tgt) {
+  const tr = String(result?.translation || "").trim();
+  if (!tr) throw new Error("AI không trả về nội dung dịch hợp lệ. Vui lòng thử lại.");
+  result.translation = tr;
+  result.examples = [];
+  if (isChineseTarget(tgt)) {
+    // Only reject answers that contain no Chinese at all but do contain real words (e.g. the model refused / answered in English).
+    if (!HANZI_RE.test(tr) && /[A-Za-z]{3,}/.test(tr)) {
+      throw new Error("AI trả về sai định dạng tiếng Trung (không có Hán tự). Hãy thử dịch lại.");
+    }
+    let reading = hasLocalPinyin()
+      ? localPinyin(tr)
+      : normalizePinyinToneNumbers(String(result.pinyin || result.pronunciation || "").trim());
+    if (HANZI_RE.test(reading)) reading = "";
+    result.pronunciation = reading;
+    result.pinyin = reading;
   }
-  result.pronunciation = reading;
-  result.pinyin = reading;
-  result.examples = (Array.isArray(result.examples) ? result.examples : []).filter(ex => {
-    const sentence = String(ex?.sentence || "");
-    const roman = String(ex?.reading || "").trim();
-    return /[\u3400-\u4DBF\u4E00-\u9FFF]/.test(sentence) && !/[A-Za-z]/.test(sentence) && roman.length > 0;
-  });
   return result;
 }
 
-async function runTranslationTask({
-  spinnerId, parts, systemInstruction = "", maxOutputTokens = 420,
-  sourceSample = "", forceExamples = false, expectJson = true, cacheKey = ""
-}) {
+async function requestTranslation(parts, tgt, { systemInstruction = "", maxOutputTokens = 600 } = {}) {
+  const result = await geminiRequest(parts, {
+    systemInstruction,
+    temperature: 0,
+    maxOutputTokens,
+    timeoutMs: timeoutForBudget(maxOutputTokens),
+    requireTranslation: true,
+    expectJson: needsAIRomanization(tgt)
+  });
+  return finalizeTranslation(result, tgt);
+}
+
+function requestTextPiece(text, src, tgt) {
+  return requestTranslation([{ text }], tgt, {
+    systemInstruction: buildPrompt({ src, tgt }),
+    maxOutputTokens: outputBudgetFor(text, needsAIRomanization(tgt))
+  });
+}
+
+function splitLongLine(line, maxLen) {
+  if (line.length <= maxLen) return [line];
+  const parts = line.match(/(?:[^。！？!?.；;]*[。！？!?.；;]+|[^。！？!?.；;]+)[”"')\]）」』]*\s*/g);
+  const sentences = parts && parts.join("") === line ? parts : [line];
+  const out = [];
+  sentences.forEach(s => {
+    while (s.length > maxLen) { out.push(s.slice(0, maxLen)); s = s.slice(maxLen); }
+    if (s) out.push(s);
+  });
+  return out;
+}
+
+function splitIntoChunks(text, maxLen) {
+  if (text.length <= maxLen) return [text];
+  const lines = text.match(/[^\n]*\n|[^\n]+$/g) || [text];
+  const chunks = [];
+  let cur = "";
+  lines.forEach(line => {
+    splitLongLine(line, maxLen).forEach(unit => {
+      if (cur && cur.length + unit.length > maxLen) { chunks.push(cur); cur = ""; }
+      cur += unit;
+    });
+  });
+  if (cur) chunks.push(cur);
+  return chunks.filter(c => c.trim());
+}
+
+function mergeChunkResults(items, tgt) {
+  const cjk = CJK_JOIN_TARGETS.includes(tgt);
+  const sepFor = text => /\n\s*$/.test(text) ? "\n" : (cjk ? "" : " ");
+  let translation = "", reading = "";
+  items.forEach(({ r }, i) => {
+    if (i > 0) {
+      const sep = sepFor(items[i - 1].text);
+      translation += sep;
+      reading += sep === "" ? " " : sep;
+    }
+    translation += r.translation;
+    reading += r.pronunciation || r.pinyin || "";
+  });
+  const merged = reading.trim();
+  return { translation, pronunciation: merged, pinyin: isChineseTarget(tgt) ? merged : "", examples: [] };
+}
+
+async function runTranslationTask({ spinnerId, sourceSample = "", cacheKey = "", src = sourceLang(), tgt = targetLang(), produce }) {
   if (state.isBusy || state.liveRecorder || state.liveStarting) return showError(t("errBusy"));
   clearError();
+  const meta = { _sourceSample: sourceSample, _src: src, _tgt: tgt };
 
   if (cacheKey) {
     const hit = readCached(cacheKey);
     if (hit) {
-      renderResult({ ...hit, _sourceSample: sourceSample || hit._sourceSample || "" }, true);
+      renderResult({ ...hit, ...meta }, true);
       return;
     }
   }
 
   try {
     setBusy(true, spinnerId);
-    const result = await geminiRequest(parts, {
-      systemInstruction,
-      temperature: 0,
-      maxOutputTokens,
-      requireTranslation: true,
-      expectJson
-    });
-    if (expectJson) validateTranslationPayload(result, targetLang());
-    if (sourceSample) result._sourceSample = sourceSample;
-    if (!forceExamples && !shouldShowExamplesForResult(result, sourceSample)) result.examples = [];
+    const result = await produce();
     if (cacheKey) writeCached(cacheKey, result);
-    renderResult(result, true);
+    renderResult({ ...result, ...meta }, true);
   } catch (e) {
     showError(e.message || e);
   } finally {
     setBusy(false, spinnerId);
+    setStatus();
   }
+}
+
+async function translateSameChinese(input, src, tgt) {
+  const local = hasLocalPinyin() ? localPinyin(input) : "";
+  const base = {
+    translation: input, pronunciation: local, pinyin: local, examples: [], explanation: "", alternatives: [],
+    _sourceSample: input, _src: src, _tgt: tgt
+  };
+  renderResult(base, true);
+  showNotice(t("sameChineseNotice"));
+
+  // Normal path: pinyin is generated locally, so no API request is needed at all.
+  if (local || !state.apiKey.trim() || Array.from(input).length > 90) return;
+
+  const ck = `zh6|${normalizeForCache(input)}`;
+  let reading = String(readCached(ck)?.pinyin || "");
+  if (!reading) {
+    try {
+      setBusy(true, "translateSpinner");
+      const meta = await geminiRequest([{ text: input }], {
+        systemInstruction: `The input is already Chinese. Return compact valid JSON only: {"pr":"complete tone-marked Hanyu Pinyin of the input"}`,
+        temperature: 0, maxOutputTokens: 400, timeoutMs: CONFIG.requestTimeoutMs,
+        requireTranslation: false, expectJson: true
+      });
+      reading = String(meta.pinyin || meta.pronunciation || "").trim();
+      if (!reading || HANZI_RE.test(reading)) throw new Error("AI chưa trả về Pinyin hợp lệ. Hãy thử lại.");
+      writeCached(ck, { pinyin: reading });
+    } catch (error) {
+      showError(error.message || error);
+      return;
+    } finally {
+      setBusy(false, "translateSpinner");
+    }
+  }
+  renderResult({ ...base, pronunciation: reading, pinyin: reading }, true);
 }
 
 async function translateText(inputOverride = null) {
@@ -1861,74 +2050,82 @@ async function translateText(inputOverride = null) {
     return showError(t("errSameLang"));
   }
 
-  if (isSameChinesePair()) {
-    const shortWord = isShortWordOrPhrase(input);
-    const localResult = { translation: input, pronunciation: "", pinyin: "", examples: [], explanation: "", alternatives: [], _sourceSample: input };
-    renderResult(localResult, true);
-    showNotice(t("sameChineseNotice"));
+  // Capture the language pair once so a mid-request change cannot mix chunks.
+  const src = sourceLang(), tgt = targetLang();
 
-    if (state.apiKey.trim() && Array.from(input).length <= 90) {
-      const ck = `prompt_v5|zh_same|${targetLang()}|${meaningLangCode()}|${input}`;
-      const cached = readCached(ck);
-      if (cached) {
-        renderResult({ ...localResult, ...cached, translation: input, _sourceSample: input }, false);
-        return;
-      }
-      try {
-        setBusy(true, "translateSpinner");
-        const meta = await geminiRequest([{ text: input }], {
-          systemInstruction: buildSameChineseLeanPrompt(input, langPrompt(targetLang())),
-          temperature: 0, maxOutputTokens: shortWord ? 300 : 120,
-          requireTranslation: true, expectJson: true
-        });
-        const sameReading = String(meta.pinyin || meta.pronunciation || "").trim();
-        if (!sameReading || /[\u3400-\u4DBF\u4E00-\u9FFF]/.test(sameReading)) {
-          throw new Error("AI chưa trả về Pinyin hợp lệ. Hãy thử lại.");
-        }
-        const merged = {
-          pronunciation: sameReading,
-          pinyin: sameReading,
-          examples: shortWord && Array.isArray(meta.examples) ? meta.examples.filter(ex => /[\u3400-\u4DBF\u4E00-\u9FFF]/.test(String(ex?.s || ex?.sentence || "")) && String(ex?.r || ex?.reading || "").trim()).slice(0, 3) : []
-        };
-        writeCached(ck, merged);
-        renderResult({ ...localResult, ...merged, translation: input, _sourceSample: input }, false);
-      } catch (error) {
-        showError(error.message || error);
-      } finally {
-        setBusy(false, "translateSpinner");
-      }
-    }
+  if (isSameChinesePair()) {
+    await translateSameChinese(input, src, tgt);
     return;
   }
 
-  const shortWord = isShortWordOrPhrase(input);
-  const cacheKey = `prompt_v5|${sourceLang()}|${targetLang()}|${meaningLangCode()}|${input}`;
+  const produce = async () => {
+    if (input.length <= CONFIG.chunkThreshold) return requestTextPiece(input, src, tgt);
+    const chunks = splitIntoChunks(input, CONFIG.chunkSize);
+    const items = [];
+    for (let i = 0; i < chunks.length; i++) {
+      el.status.textContent = t("translatingPart", i + 1, chunks.length);
+      const key = `p6|${src}|${tgt}|${normalizeForCache(chunks[i])}`;
+      let r = readCached(key);
+      if (!r) {
+        r = await requestTextPiece(chunks[i], src, tgt);
+        writeCached(key, r); // finished chunks survive a later failure, so a retry costs fewer requests
+      }
+      items.push({ r, text: chunks[i] });
+    }
+    return mergeChunkResults(items, tgt);
+  };
 
-  if (shortWord) {
-    await runTranslationTask({
-      spinnerId: "translateSpinner",
-      parts: [{ text: input }],
-      systemInstruction: buildLeanPrompt({ sampleText: input }),
-      maxOutputTokens: 360,
-      sourceSample: input,
-      forceExamples: false,
-      expectJson: true,
-      cacheKey
-    });
-  } else {
-    const needsRomanization = ["Chinese", "Traditional Chinese", "Japanese", "Korean", "Thai", "Russian", "Arabic", "Hindi"].includes(targetLang());
-    const outputBudget = Math.min(12288, Math.max(384, Math.ceil(input.length * (needsRomanization ? 1.2 : 0.5)) + 220));
-    await runTranslationTask({
-      spinnerId: "translateSpinner",
-      parts: [{ text: input }],
-      systemInstruction: buildLongTranslationPrompt(),
-      maxOutputTokens: outputBudget,
-      sourceSample: input,
-      forceExamples: false,
-      expectJson: true,
-      cacheKey
-    });
+  await runTranslationTask({
+    spinnerId: "translateSpinner",
+    sourceSample: input,
+    cacheKey: `p6|${src}|${tgt}|${normalizeForCache(input)}`,
+    src, tgt, produce
+  });
+}
+
+async function loadExamples() {
+  if (state.isBusy || state.liveRecorder || state.liveStarting) return showError(t("errBusy"));
+  const res = state.lastResult;
+  const word = String(res?.translation || "").trim();
+  if (!word) return;
+  clearError();
+
+  const tgt = res._tgt || targetLang();
+  const sample = String(res._sourceSample || "").trim();
+  const ck = `ex6|${tgt}|${meaningLangCode()}|${normalizeForCache(word)}`;
+  let list = Array.isArray(readCached(ck)?.examples) ? readCached(ck).examples : null;
+
+  if (!list) {
+    try {
+      setBusy(true, "exSpin");
+      const data = await geminiRequest([{ text: word }], {
+        systemInstruction: buildExamplesPrompt(word, sample, tgt),
+        temperature: 0.3, maxOutputTokens: 900, timeoutMs: CONFIG.requestTimeoutMs,
+        requireTranslation: false, expectJson: true
+      });
+      list = (Array.isArray(data.examples) ? data.examples : [])
+        .filter(ex => ex.sentence && (!isChineseTarget(tgt) || HANZI_RE.test(ex.sentence)))
+        .slice(0, 3)
+        .map(ex => ({
+          sentence: ex.sentence,
+          reading: isChineseTarget(tgt) && hasLocalPinyin() ? localPinyin(ex.sentence) : ex.reading,
+          meaning: ex.meaning
+        }));
+      if (!list.length) throw new Error("AI không trả về ví dụ hợp lệ. Hãy thử lại.");
+      writeCached(ck, { examples: list });
+    } catch (e) {
+      showError(e.message || e);
+      return;
+    } finally {
+      setBusy(false, "exSpin");
+    }
   }
+
+  if (state.lastResult !== res) return; // user moved on to another result
+  res.examples = list;
+  const h = state.history.find(x => x.translation === res.translation);
+  if (h) h.examples = list.slice(0, 3);
+  renderResult(res, false);
 }
 
 async function backTranslateResult() {
@@ -1937,19 +2134,21 @@ async function backTranslateResult() {
   if (!translated) return showError(t("errNoResultToBack"));
   clearError();
 
-  const srcCode = sourceLang(), tgtCode = targetLang();
+  const srcCode = state.lastResult?._src || sourceLang();
+  const tgtCode = state.lastResult?._tgt || targetLang();
   const fallbackLang = state.uiLang === "zh" ? "ZH-CN" : state.uiLang === "en" ? "EN" : "VI";
   const backTarget = srcCode === "auto" ? fallbackLang : langPrompt(srcCode);
   const backSource = langPrompt(tgtCode);
-  const cacheKey = `bt|${backSource}|${backTarget}|${translated}`;
+  const cacheKey = `bt6|${backSource}|${backTarget}|${normalizeForCache(translated)}`;
 
   try {
     setBusy(true, "backSpin");
     let outText = readCached(cacheKey)?.translation;
     if (!outText) {
+      const budget = Math.min(8192, Math.max(600, Math.ceil(translated.length * 1.5) + 200));
       const res = await geminiRequest(
         [{ text: `Translate ${backSource} to ${backTarget}. Output translation only.\n${translated}` }],
-        { systemInstruction: "", temperature: 0.1, maxOutputTokens: 320, requireTranslation: true, expectJson: false }
+        { systemInstruction: "", temperature: 0.1, maxOutputTokens: budget, timeoutMs: timeoutForBudget(budget), requireTranslation: true, expectJson: false }
       );
       outText = res.translation || "";
       if (outText) writeCached(cacheKey, { translation: outText });
@@ -1962,36 +2161,75 @@ async function backTranslateResult() {
     showError(e.message || e);
   } finally {
     setBusy(false, "backSpin");
+    setStatus();
   }
 }
 
 async function translateImage() {
   if (!state.imageData) return showError(t("errNoImage"));
+  const src = sourceLang(), tgt = targetLang();
+  const data = state.imageData.split(",")[1] || "";
   await runTranslationTask({
     spinnerId: "imageSpinner",
-    parts: [
-      { text: buildLeanPrompt({ sampleText: "", forceExamples: false, extraTag: "OCR" }) },
-      { inlineData: { mimeType: "image/jpeg", data: state.imageData.split(",")[1] } }
-    ],
-    systemInstruction: "",
-    maxOutputTokens: 360,
-    forceExamples: false,
-    expectJson: true
+    cacheKey: `img6|${src}|${tgt}|${data.length}|${hash53(data)}`,
+    src, tgt,
+    produce: () => requestTranslation(
+      [
+        { text: buildPrompt({ src, tgt, extraTag: OCR_TAG }) },
+        { inlineData: { mimeType: "image/jpeg", data } }
+      ],
+      tgt,
+      { systemInstruction: "", maxOutputTokens: 2048 }
+    )
   });
+}
+
+// Crop to the inked area, downscale and send as JPEG: far fewer image tokens than the full 2x-DPR PNG.
+function exportDrawingJpegBase64() {
+  const W = el.canvas.width, H = el.canvas.height;
+  const dpr = state.canvasDpr || 1;
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  state.strokes.forEach(s => s.points.forEach(p => {
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.y > maxY) maxY = p.y;
+  }));
+  if (!W || !H || !Number.isFinite(minX)) return el.canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
+
+  const pad = 14 * dpr, minSide = 96 * dpr;
+  const x0 = minX - pad, x1 = maxX + pad, y0 = minY - pad, y1 = maxY + pad;
+  const w = Math.min(W, Math.max(x1 - x0, minSide));
+  const h = Math.min(H, Math.max(y1 - y0, minSide));
+  const sx = Math.min(Math.max(0, (x0 + x1) / 2 - w / 2), W - w);
+  const sy = Math.min(Math.max(0, (y0 + y1) / 2 - h / 2), H - h);
+  const scale = Math.min(1, 640 / Math.max(w, h));
+
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(w * scale));
+  c.height = Math.max(1, Math.round(h * scale));
+  const g = c.getContext("2d");
+  g.fillStyle = "#ffffff";
+  g.fillRect(0, 0, c.width, c.height);
+  g.drawImage(el.canvas, sx, sy, w, h, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.85).split(",")[1];
 }
 
 async function translateDrawing() {
   if (!state.strokes.length) return showError(t("errNoDraw"));
+  const src = sourceLang(), tgt = targetLang();
+  const data = exportDrawingJpegBase64();
   await runTranslationTask({
     spinnerId: "drawSpinner",
-    parts: [
-      { text: buildLeanPrompt({ sampleText: "", forceExamples: false, extraTag: "Handwriting" }) },
-      { inlineData: { mimeType: "image/png", data: el.canvas.toDataURL("image/png").split(",")[1] } }
-    ],
-    systemInstruction: "",
-    maxOutputTokens: 360,
-    forceExamples: false,
-    expectJson: true
+    src, tgt, // handwriting is never pixel-identical, so it is not cached
+    produce: () => requestTranslation(
+      [
+        { text: buildPrompt({ src, tgt, extraTag: HANDWRITING_TAG }) },
+        { inlineData: { mimeType: "image/jpeg", data } }
+      ],
+      tgt,
+      { systemInstruction: "", maxOutputTokens: 700 }
+    )
   });
 }
 
@@ -2023,6 +2261,12 @@ function renderResult(result, saveToHistory = false) {
 
   refreshHanziStrokeBox(result.translation || "");
   renderExamples(result);
+
+  // "Show examples" appears only for short words/phrases that have no examples yet (examples are generated on demand).
+  const canLoadExamples = Boolean(result.translation) &&
+    !(Array.isArray(result.examples) && result.examples.length) &&
+    shouldShowExamplesForResult(result, result._sourceSample || "");
+  setShow(el.examplesBtn, canLoadExamples, "inline-flex");
 
   el.explanation.textContent = result.explanation || "";
   setShow(el.explanation, Boolean(result.explanation), "block");
@@ -2147,9 +2391,10 @@ $("removeImageBtn").addEventListener("click", () => {
   $("imagePreview").removeAttribute("src");
   setShow($("imagePreviewWrap"), false);
 });
-$("translateImageBtn").addEventListener("click", translateImage);
-$("translateDrawBtn").addEventListener("click", translateDrawing);
-$("backTranslateBtn").addEventListener("click", backTranslateResult);
+$("translateImageBtn").addEventListener("click", () => { if (tapGuard()) translateImage(); });
+$("translateDrawBtn").addEventListener("click", () => { if (tapGuard()) translateDrawing(); });
+$("backTranslateBtn").addEventListener("click", () => { if (tapGuard()) backTranslateResult(); });
+el.examplesBtn.addEventListener("click", () => { if (tapGuard()) loadExamples(); });
 
 $("copyBtn").addEventListener("click", async () => {
   const text = state.lastResult?.translation;
@@ -2214,7 +2459,7 @@ function speak(text, lang, trackSource = false) {
     finishSpeak();
   }
 }
-$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, targetLang(), false));
+$("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, state.lastResult?._tgt || targetLang(), false));
 el.speakSourceBtn.addEventListener("click", () => speak(el.source.value, sourceLang() === "auto" ? "Vietnamese" : sourceLang(), true));
 
 /* ============================ SPEECH & LIVE CONVERSATION ============================ */
@@ -2280,10 +2525,16 @@ function addBubble(text, side, translation) {
   el.liveFeed.scrollTop = el.liveFeed.scrollHeight;
 }
 
+// Person B speaks the target language and is translated back to the source language
+// (Vietnamese when the source is "auto"), instead of the invalid "translate to auto".
 const liveLanguages = side => {
-  const src = sourceLang() === "auto" ? "auto" : langPrompt(sourceLang());
-  const tgt = langPrompt(targetLang());
-  return side === "A" ? { from: src, to: tgt } : { from: tgt, to: src };
+  const srcCode = sourceLang(), tgtCode = targetLang();
+  const srcPrompt = srcCode === "auto" ? "auto" : langPrompt(srcCode);
+  const tgtPrompt = langPrompt(tgtCode);
+  const backCode = srcCode === "auto" ? "Vietnamese" : srcCode;
+  return side === "A"
+    ? { from: srcPrompt, to: tgtPrompt, targetCode: tgtCode }
+    : { from: tgtPrompt, to: langPrompt(backCode), targetCode: backCode };
 };
 
 const supportedRecorderMime = () => !window.MediaRecorder ? "" :
@@ -2374,30 +2625,84 @@ function blobToBase64(blob) {
   });
 }
 
+function encodeWav16(samples, rate) {
+  const buf = new ArrayBuffer(44 + samples.length * 2);
+  const v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + samples.length * 2, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, "data"); v.setUint32(40, samples.length * 2, true);
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+  }
+  return new Blob([buf], { type: "audio/wav" });
+}
+
+// WAV is an officially documented Gemini audio format; webm/mp4 from MediaRecorder is not guaranteed.
+// 16 kHz mono keeps the file small. Any failure falls back to the original recording.
+async function blobToWav16k(blob) {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if (!AC || !OAC) throw new Error("no-webaudio");
+  const decodeCtx = new AC();
+  try {
+    const decoded = await decodeCtx.decodeAudioData(await blob.arrayBuffer());
+    if (!decoded || decoded.duration > CONFIG.maxWavSeconds) throw new Error("audio-too-long");
+    const rate = 16000;
+    const offline = new OAC(1, Math.max(1, Math.ceil(decoded.duration * rate)), rate);
+    const node = offline.createBufferSource();
+    node.buffer = decoded;
+    node.connect(offline.destination);
+    node.start();
+    const rendered = await offline.startRendering();
+    return encodeWav16(rendered.getChannelData(0), rate);
+  } finally {
+    try { decodeCtx.close?.(); } catch (_) {}
+  }
+}
+
 async function processLiveAudio(blob, mime, side) {
   if (state.isBusy) return showError(t("errBusy"));
   setBusy(true);
   try {
-    const { from, to } = liveLanguages(side);
-    const safeMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
-    const supported = ["audio/webm", "audio/mp4", "audio/m4a", "audio/ogg", "audio/wav", "audio/mpeg", "audio/mp3", "audio/aac", "audio/flac"];
-    if (!supported.includes(safeMime)) throw new Error("Định dạng âm thanh " + (safeMime || "không rõ") + " chưa được hỗ trợ.");
+    const { from, to, targetCode } = liveLanguages(side);
+    let sendBlob = blob;
+    let sendMime = (mime || blob.type || "").split(";")[0].trim().toLowerCase();
 
     el.liveStatus.textContent = "Đang nhận dạng và dịch…";
-    const b64 = await blobToBase64(blob);
-    const prompt = `Transcribe ${from} and translate to ${to}. Keep transcript and translation in native script. If target uses a non-Latin script, include complete standard romanization in pr (Hanyu Pinyin with tones for Chinese, Hepburn for Japanese, Revised Romanization for Korean); otherwise leave pr empty. JSON only:{"src":"transcript","tr":"translation","pr":"romanization","py":"Hanyu Pinyin if Chinese"}`;
+    try {
+      sendBlob = await blobToWav16k(blob);
+      sendMime = "audio/wav";
+    } catch (_) { /* keep the original recording */ }
+    if (!SUPPORTED_AUDIO_MIME.includes(sendMime)) {
+      throw new Error("Định dạng âm thanh " + (sendMime || "không rõ") + " chưa được hỗ trợ.");
+    }
+
+    const b64 = await blobToBase64(sendBlob);
+    const wantRoman = needsAIRomanization(targetCode);
+    const fromText = from === "auto" ? "the spoken language" : from;
+    const romanRule = wantRoman
+      ? " Put the complete standard romanization of the translation in pr (Hanyu Pinyin with tones for Chinese, Hepburn for Japanese, Revised Romanization for Korean)."
+      : "";
+    const schema = wantRoman
+      ? `{"src":"transcript","tr":"translation","pr":"romanization"}`
+      : `{"src":"transcript","tr":"translation"}`;
+    const prompt = `Transcribe ${fromText} and translate to ${to}. Keep transcript and translation in native script.${romanRule} JSON only: ${schema}`;
 
     const result = await geminiRequest(
-      [{ text: prompt }, { inlineData: { mimeType: safeMime, data: b64 } }],
-      { systemInstruction: "", temperature: 0.1, maxOutputTokens: 360, timeoutMs: 50000, requireTranslation: false, expectJson: true }
+      [{ text: prompt }, { inlineData: { mimeType: sendMime, data: b64 } }],
+      { systemInstruction: "", temperature: 0.1, maxOutputTokens: 800, timeoutMs: 60000, requireTranslation: false, expectJson: true }
     );
     if (!result.transcript && !result.translation) throw new Error("Không nhận dạng được lời nói.");
 
     const transcript = result.transcript || "(...)";
     const translation = result.translation || "";
     addBubble(transcript, side, translation);
-    const targetCode = side === "A" ? targetLang() : (sourceLang() === "auto" ? "Vietnamese" : sourceLang());
-    const liveReading = result.pronunciation || result.pinyin || "";
+    const liveReading = (isChineseTarget(targetCode) && hasLocalPinyin() && translation)
+      ? localPinyin(translation)
+      : (result.pronunciation || result.pinyin || "");
     if (liveReading) addBubble((CHINESE_CODES.includes(targetCode) ? "Pinyin: " : "Reading: ") + liveReading, side, "");
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
     if (translation) speak(translation, targetCode, false);
@@ -2406,6 +2711,7 @@ async function processLiveAudio(blob, mime, side) {
     el.liveStatus.textContent = "Dịch thất bại. Bạn có thể ghi âm lại.";
   } finally {
     setBusy(false);
+    setStatus();
   }
 }
 
@@ -2444,6 +2750,9 @@ $("saveSettings").addEventListener("click", () => {
   state.uiLang = I18N[nextUi] ? nextUi : "vi";
   state.apiKey = key;
   state.model = model;
+  // A new key/model must not inherit cooldowns that belonged to the previous one.
+  state.globalCooldownUntil = 0;
+  state.modelCooldownUntil = {};
   try {
     localStorage.setItem("smart_translate_ui_lang_v1", state.uiLang);
     localStorage.setItem("smart_translate_key_v5", key);
@@ -2464,12 +2773,14 @@ function handleLangSelectionChanged() {
 
   if (isSameChinesePair() && el.source.value.trim()) {
     const sameText = el.source.value.trim();
+    const prev = state.lastResult?.translation === sameText ? state.lastResult : null;
+    const reading = hasLocalPinyin() ? localPinyin(sameText) : (prev?.pronunciation || prev?.pinyin || "");
     renderResult({
       translation: sameText,
-      pronunciation: state.lastResult?.pronunciation || state.lastResult?.pinyin || "",
-      pinyin: state.lastResult?.pinyin || "",
-      examples: isShortWordOrPhrase(sameText) && Array.isArray(state.lastResult?.examples) ? state.lastResult.examples.slice(0, 3) : [],
-      explanation: "", alternatives: [], _sourceSample: sameText
+      pronunciation: reading,
+      pinyin: reading,
+      examples: isShortWordOrPhrase(sameText) && Array.isArray(prev?.examples) ? prev.examples.slice(0, 3) : [],
+      explanation: "", alternatives: [], _sourceSample: sameText, _src: sourceLang(), _tgt: targetLang()
     }, false);
     showNotice(t("sameChineseNotice"));
   } else if (state.lastResult?.translation) {
@@ -2512,7 +2823,7 @@ $("swapBtn").addEventListener("click", () => {
   syncVisualViewport();
 });
 
-$("translateBtn").addEventListener("click", () => translateText());
+$("translateBtn").addEventListener("click", () => { if (tapGuard()) translateText(); });
 el.source.addEventListener("input", () => {
   updateCount();
   if (state.speakingSource) stopSpeaking();
