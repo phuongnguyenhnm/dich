@@ -75,8 +75,13 @@ header{
 .langrow{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);align-items:center;gap:6px;flex-shrink:0}
 .lang{
   width:100%;min-width:0;border:1px solid var(--line);border-radius:11px;
-  padding:7px 8px;background:var(--panel2);color:var(--text);font-size:12.5px;appearance:none
+  padding:7px 24px 7px 9px;background:var(--panel2);color:var(--text);font-size:12.5px;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aabb5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
+.lang:focus{outline:none;border-color:var(--accent)}
 .swap{
   width:36px;height:36px;border:1px solid var(--line);border-radius:50%;
   background:var(--panel3);color:var(--accent);display:grid;place-items:center;flex-shrink:0;padding:0
@@ -619,22 +624,22 @@ const FALLBACK_MODELS = [
 ];
 
 const LANGUAGES = [
-  { code: "auto", label: { vi: "Tự động nhận diện", en: "Auto Detect", zh: "自动检测" }, prompt: "ngôn ngữ tự động nhận diện", speech: "vi-VN" },
-  { code: "Vietnamese", label: { vi: "Tiếng Việt", en: "Vietnamese", zh: "越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
-  { code: "Chinese", label: { vi: "Tiếng Trung", en: "Chinese", zh: "中文" }, prompt: "tiếng Trung", speech: "zh-CN" },
-  { code: "English", label: { vi: "Tiếng Anh", en: "English", zh: "英语" }, prompt: "tiếng Anh", speech: "en-US" },
-  { code: "Japanese", label: { vi: "Tiếng Nhật", en: "Japanese", zh: "日语" }, prompt: "tiếng Nhật", speech: "ja-JP" },
-  { code: "Korean", label: { vi: "Tiếng Hàn", en: "Korean", zh: "韩语" }, prompt: "tiếng Hàn", speech: "ko-KR" },
-  { code: "French", label: { vi: "Tiếng Pháp", en: "French", zh: "法语" }, prompt: "tiếng Pháp", speech: "fr-FR" },
-  { code: "German", label: { vi: "Tiếng Đức", en: "German", zh: "德语" }, prompt: "tiếng Đức", speech: "de-DE" },
-  { code: "Spanish", label: { vi: "Tiếng Tây Ban Nha", en: "Spanish", zh: "西班牙语" }, prompt: "tiếng Tây Ban Nha", speech: "es-ES" },
-  { code: "Thai", label: { vi: "Tiếng Thái", en: "Thai", zh: "泰语" }, prompt: "tiếng Thái", speech: "th-TH" },
-  { code: "Russian", label: { vi: "Tiếng Nga", en: "Russian", zh: "俄语" }, prompt: "tiếng Nga", speech: "ru-RU" },
-  { code: "Italian", label: { vi: "Tiếng Ý", en: "Italian", zh: "意大利语" }, prompt: "tiếng Ý", speech: "it-IT" },
-  { code: "Portuguese", label: { vi: "Tiếng Bồ Đào Nha", en: "Portuguese", zh: "葡萄牙语" }, prompt: "tiếng Bồ Đào Nha", speech: "pt-PT" },
-  { code: "Arabic", label: { vi: "Tiếng Ả Rập", en: "Arabic", zh: "阿拉伯语" }, prompt: "tiếng Ả Rập", speech: "ar-SA" },
-  { code: "Indonesian", label: { vi: "Tiếng Indonesia", en: "Indonesian", zh: "印尼语" }, prompt: "tiếng Indonesia", speech: "id-ID" },
-  { code: "Hindi", label: { vi: "Tiếng Hindi", en: "Hindi", zh: "印地语" }, prompt: "tiếng Hindi", speech: "hi-IN" }
+  { code: "auto", label: { vi: "✦ Tự động nhận diện", en: "✦ Auto Detect", zh: "✦ 自动检测" }, prompt: "ngôn ngữ tự động nhận diện", speech: "vi-VN" },
+  { code: "Vietnamese", label: { vi: "VI · Tiếng Việt", en: "VI · Vietnamese", zh: "VI · 越南语" }, prompt: "tiếng Việt", speech: "vi-VN" },
+  { code: "Chinese", label: { vi: "ZH · Tiếng Trung", en: "ZH · Chinese", zh: "ZH · 中文" }, prompt: "tiếng Trung", speech: "zh-CN" },
+  { code: "English", label: { vi: "EN · Tiếng Anh", en: "EN · English", zh: "EN · 英语" }, prompt: "tiếng Anh", speech: "en-US" },
+  { code: "Japanese", label: { vi: "JA · Tiếng Nhật", en: "JA · Japanese", zh: "JA · 日语" }, prompt: "tiếng Nhật", speech: "ja-JP" },
+  { code: "Korean", label: { vi: "KO · Tiếng Hàn", en: "KO · Korean", zh: "KO · 韩语" }, prompt: "tiếng Hàn", speech: "ko-KR" },
+  { code: "French", label: { vi: "FR · Tiếng Pháp", en: "FR · French", zh: "FR · 法语" }, prompt: "tiếng Pháp", speech: "fr-FR" },
+  { code: "German", label: { vi: "DE · Tiếng Đức", en: "DE · German", zh: "DE · 德语" }, prompt: "tiếng Đức", speech: "de-DE" },
+  { code: "Spanish", label: { vi: "ES · Tiếng Tây Ban Nha", en: "ES · Spanish", zh: "ES · 西班牙语" }, prompt: "tiếng Tây Ban Nha", speech: "es-ES" },
+  { code: "Thai", label: { vi: "TH · Tiếng Thái", en: "TH · Thai", zh: "TH · 泰语" }, prompt: "tiếng Thái", speech: "th-TH" },
+  { code: "Russian", label: { vi: "RU · Tiếng Nga", en: "RU · Russian", zh: "RU · 俄语" }, prompt: "tiếng Nga", speech: "ru-RU" },
+  { code: "Italian", label: { vi: "IT · Tiếng Ý", en: "IT · Italian", zh: "IT · 意大利语" }, prompt: "tiếng Ý", speech: "it-IT" },
+  { code: "Portuguese", label: { vi: "PT · Tiếng Bồ Đào Nha", en: "PT · Portuguese", zh: "PT · 葡萄牙语" }, prompt: "tiếng Bồ Đào Nha", speech: "pt-PT" },
+  { code: "Arabic", label: { vi: "AR · Tiếng Ả Rập", en: "AR · Arabic", zh: "AR · 阿拉伯语" }, prompt: "tiếng Ả Rập", speech: "ar-SA" },
+  { code: "Indonesian", label: { vi: "ID · Tiếng Indonesia", en: "ID · Indonesian", zh: "ID · 印尼语" }, prompt: "tiếng Indonesia", speech: "id-ID" },
+  { code: "Hindi", label: { vi: "HI · Tiếng Hindi", en: "HI · Hindi", zh: "HI · 印地语" }, prompt: "tiếng Hindi", speech: "hi-IN" }
 ];
 
 const I18N = {
