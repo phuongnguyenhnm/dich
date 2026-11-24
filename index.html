@@ -299,13 +299,11 @@ a{color:var(--accent)}
 
     <div class="row">
       <div class="tools">
-        <button class="btn" id="clearTextBtn">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
-          <span class="btn-label">Xóa</span>
+        <button class="btn icon-only" id="clearTextBtn" aria-label="Xóa" title="Xóa">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
         </button>
-        <button class="btn" id="pasteBtn">
-          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
-          <span class="btn-label">Dán</span>
+        <button class="btn icon-only" id="pasteBtn" aria-label="Dán" title="Dán">
+          <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
         </button>
         <button class="btn icon-only mode-toggle" id="speakSourceBtn" aria-label="Đọc" title="Đọc" aria-pressed="false">
           <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
@@ -387,16 +385,11 @@ a{color:var(--accent)}
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></span>
             <i class="spinner" id="backSpin"></i>
           </button>
-          <button class="btn" id="useResultBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
-            <span class="btn-label">Đưa lên</span>
-          </button>
           <button class="btn icon-only" id="copyBtn" aria-label="Sao chép" title="Sao chép">
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
           </button>
-          <button class="btn" id="speakBtn">
-            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
-            <span class="btn-label">Đọc</span>
+          <button class="btn icon-only" id="speakBtn" aria-label="Đọc" title="Đọc">
+            <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
           </button>
         </div>
       </div>
@@ -741,7 +734,7 @@ const I18N = {
     hanziTitle: "Cách viết Hán tự", hanziLoading: "Đang tải nét viết...",
     hanziStrokeStep: (c, n) => `Nét ${c} / ${n}`, hanziDone: n => `Hoàn tất ${n} nét • Chạm để xem lại`,
     hanziUnavailable: "Không có dữ liệu nét viết cho ký tự này.", hanziReplay: "Viết lại",
-    examplesTitle: "3 ví dụ dùng từ trong câu", useResult: "Đưa lên", copy: "Sao chép", copied: "Đã sao chép ✓",
+    examplesTitle: "3 ví dụ dùng từ trong câu", copy: "Sao chép", copied: "Đã sao chép ✓",
     speak: "Đọc", liveTitle: "Hội thoại trực tiếp", clearLive: "Xóa hội thoại",
     liveDesc: "Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.",
     liveEmpty: "Chưa có nội dung hội thoại.", personA: "Người A", personB: "Người B", autoLabel: "Tự động",
@@ -781,7 +774,7 @@ const I18N = {
     hanziTitle: "Stroke order", hanziLoading: "Loading strokes...",
     hanziStrokeStep: (c, n) => `Stroke ${c} / ${n}`, hanziDone: n => `${n} strokes • Tap to replay`,
     hanziUnavailable: "Stroke data unavailable for this character.", hanziReplay: "Replay",
-    examplesTitle: "3 usage examples in sentences", useResult: "To input", copy: "Copy", copied: "Copied ✓",
+    examplesTitle: "3 usage examples in sentences", copy: "Copy", copied: "Copied ✓",
     speak: "Speak", liveTitle: "Live Conversation", clearLive: "Clear chat",
     liveDesc: "Pick a speaker. The app records, transcribes, and translates into the other language. Tap again to stop.",
     liveEmpty: "No conversation yet.", personA: "Person A", personB: "Person B", autoLabel: "Auto",
@@ -821,7 +814,7 @@ const I18N = {
     hanziTitle: "汉字笔画顺序", hanziLoading: "正在加载笔画...",
     hanziStrokeStep: (c, n) => `第 ${c} / ${n} 画`, hanziDone: n => `共 ${n} 画 • 点击重播`,
     hanziUnavailable: "暂无该字的笔画数据。", hanziReplay: "重播",
-    examplesTitle: "3 个句中用法示例", useResult: "上屏", copy: "复制", copied: "已复制 ✓",
+    examplesTitle: "3 个句中用法示例", copy: "复制", copied: "已复制 ✓",
     speak: "朗读", liveTitle: "实时对话翻译", clearLive: "清空对话",
     liveDesc: "选择说话方进行录音、识别并翻译为对方语言；再次点击正在录音的按钮即可停止。",
     liveEmpty: "暂无对话内容。", personA: "说话方 A", personB: "说话方 B", autoLabel: "自动",
@@ -914,7 +907,8 @@ const el = {
   canvas: $("drawCanvas"), livePanel: $("livePanel"), liveFeed: $("liveFeed"),
   liveStatus: $("liveStatus"), mic: $("micBtn"), speakSourceBtn: $("speakSourceBtn"),
   drawToggle: $("drawToggle"), imageToggle: $("imageToggle"), liveToggle: $("liveToggle"),
-  copyBtn: $("copyBtn"), backTranslateBtn: $("backTranslateBtn")
+  copyBtn: $("copyBtn"), backTranslateBtn: $("backTranslateBtn"), speakBtn: $("speakBtn"),
+  clearTextBtn: $("clearTextBtn"), pasteBtn: $("pasteBtn")
 };
 
 const setBtnLabel = (btnId, text) => {
@@ -1017,15 +1011,15 @@ function applyUILanguage() {
   el.source.placeholder = t("placeholder");
 
   const labels = {
-    clearTextBtn: "clear", pasteBtn: "paste", undoDraw: "undo",
-    clearDraw: "clearDraw", translateDrawBtn: "translateDraw", chooseImageBtn: "chooseImage",
-    removeImageBtn: "removeImage", translateImageBtn: "translateImage",
-    useResultBtn: "useResult", speakBtn: "speak", clearLiveBtn: "clearLive",
-    stopLiveBtn: "stopLive", translateBtn: "translateBtn", closeInfoBtn: "close",
-    cancelSettings: "close", saveSettings: "save"
+    undoDraw: "undo", clearDraw: "clearDraw", translateDrawBtn: "translateDraw",
+    chooseImageBtn: "chooseImage", removeImageBtn: "removeImage", translateImageBtn: "translateImage",
+    clearLiveBtn: "clearLive", stopLiveBtn: "stopLive", translateBtn: "translateBtn",
+    closeInfoBtn: "close", cancelSettings: "close", saveSettings: "save"
   };
   Object.entries(labels).forEach(([id, key]) => setBtnLabel(id, t(key)));
 
+  el.clearTextBtn.title = el.clearTextBtn.ariaLabel = t("clear");
+  el.pasteBtn.title = el.pasteBtn.ariaLabel = t("paste");
   el.speakSourceBtn.title = el.speakSourceBtn.ariaLabel = t("speak");
   el.drawToggle.title = el.drawToggle.ariaLabel = t("draw");
   el.imageToggle.title = el.imageToggle.ariaLabel = t("image");
@@ -1033,6 +1027,7 @@ function applyUILanguage() {
   el.mic.title = el.mic.ariaLabel = t("micChip");
   el.copyBtn.title = el.copyBtn.ariaLabel = t("copy");
   el.backTranslateBtn.title = el.backTranslateBtn.ariaLabel = t("backTranslate");
+  el.speakBtn.title = el.speakBtn.ariaLabel = t("speak");
 
   $("brushThinOpt").textContent = t("thin");
   $("brushMedOpt").textContent = t("medium");
@@ -1832,16 +1827,6 @@ $("removeImageBtn").addEventListener("click", () => {
 $("translateImageBtn").addEventListener("click", translateImage);
 $("translateDrawBtn").addEventListener("click", translateDrawing);
 $("backTranslateBtn").addEventListener("click", backTranslateResult);
-
-$("useResultBtn").addEventListener("click", () => {
-  const text = state.lastResult?.translation;
-  if (!text) return;
-  el.source.value = text;
-  updateCount();
-  el.ioBox.scrollTop = 0;
-  el.source.focus();
-  syncVisualViewport();
-});
 
 $("copyBtn").addEventListener("click", async () => {
   const text = state.lastResult?.translation;
