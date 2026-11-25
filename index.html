@@ -119,12 +119,42 @@ textarea::placeholder{color:#81929c}
   color:var(--text);padding:5px 8.5px;font-size:11.5px;transition:all .15s;
   display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap
 }
+
+/* Nâng cấp style icon-only: mặc định trong suốt không nền, khi nhấn sáng nền */
 .btn.icon-only{
+  position:relative;
   width:30px;height:30px;padding:0;border-radius:50%;
+  background:transparent;border:1px solid transparent;
+  color:var(--muted);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0
 }
+.btn.icon-only .btn-ico{
+  width:100%;height:100%;display:inline-flex;align-items:center;justify-content:center
+}
+.btn.icon-only:hover{
+  background:var(--panel2);border-color:var(--line);color:var(--text)
+}
+.btn.icon-only:active,
+.btn.icon-only.is-active{
+  background:var(--accent)!important;
+  border-color:var(--accent2)!important;
+  color:#08243a!important;
+  font-weight:700;
+  box-shadow:0 0 0 2px #8ecbff33;
+}
+.btn.icon-only.is-active svg{
+  color:#08243a;
+}
+.btn.icon-only.is-loading .btn-ico{
+  display:none;
+}
+.btn.icon-only .spinner{
+  margin:0;
+}
+
 .btn:hover{border-color:#607988;background:var(--panel3)}
 .btn.primary{background:var(--accent);border-color:transparent;color:#08243a;font-weight:700}
 .btn.ghost{background:transparent}
+
 .btn.mode-toggle.is-active,
 .btn.mic-chip.is-active{
   background:var(--accent);
@@ -196,14 +226,21 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   padding:3px 9px;font-size:10.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 .chip:hover{color:var(--text);border-color:var(--accent)}
+
+/* Spinner hiệu ứng xoay tròn rõ nét */
 .spinner{
-  display:none;width:13px;height:13px;border:2px solid #092b4544;
-  border-top-color:#092b45;border-radius:50%;animation:spin .65s linear infinite
+  display:none;width:13px;height:13px;border:2px solid #edf3f633;
+  border-top-color:var(--accent);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0
 }
 .btn .spinner{
   border-color:#edf3f644;border-top-color:var(--accent);
 }
+.btn.primary .spinner{
+  width:16px;height:16px;border:2.5px solid rgba(8,36,58,0.28);
+  border-top-color:#08243a;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
+
 .feed{
   display:flex;flex-direction:column;gap:6px;max-height:110px;min-height:56px;
   overflow-y:auto;overflow-x:hidden;padding:7px;background:#10171c;border:1px solid var(--line);
@@ -291,7 +328,7 @@ a{color:var(--accent)}
     <div class="lang-picker" id="targetPicker">
       <button type="button" class="lang-btn" id="targetLangBtn" aria-label="Ngôn ngữ đích" aria-haspopup="listbox" aria-expanded="false">
         <span id="targetLangFlag"></span>
-        <span class="lang-btn-text" id="targetLangLabel">Tiếng Trung Giản thể</span>
+        <span class="lang-btn-text" id="targetLangLabel">Tiếng Anh</span>
       </button>
     </div>
   </div>
@@ -395,7 +432,7 @@ a{color:var(--accent)}
           <button class="btn icon-only" id="copyBtn" aria-label="Sao chép" title="Sao chép">
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
           </button>
-          <button class="btn icon-only" id="speakBtn" aria-label="Đọc" title="Đọc">
+          <button class="btn icon-only mode-toggle" id="speakBtn" aria-label="Đọc" title="Đọc">
             <span class="btn-ico"><svg class="ico" viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
           </button>
         </div>
@@ -438,7 +475,7 @@ a{color:var(--accent)}
 <div class="bottom">
   <div class="main-actions">
     <button class="btn primary" id="translateBtn">
-      <span class="btn-label">Dịch văn bản</span>
+      <span class="btn-label" id="translateBtnLabel">Dịch văn bản</span>
       <i class="spinner" id="translateSpinner"></i>
     </button>
   </div>
@@ -592,11 +629,11 @@ function buildAppIconDataUrl(size = 512) {
   g.textAlign = "center";
   g.textBaseline = "middle";
   g.fillStyle = "#8ecbff";
-  g.font = `800 ${Math.round(size * 0.21)}px system-ui, -apple-system, sans-serif`;
+  g.font = `800 ${Math.round(size \* 0.21)}px system-ui, -apple-system, sans-serif`;
   g.fillText("A", size * 0.34, size * 0.38);
 
   g.fillStyle = "#e6f6ff";
-  g.font = `700 ${Math.round(size * 0.19)}px "PingFang SC", "Microsoft YaHei", system-ui, sans-serif`;
+  g.font = `700 ${Math.round(size \* 0.19)}px "PingFang SC", "Microsoft YaHei", system-ui, sans-serif`;
   g.fillText("文", size * 0.66, size * 0.63);
 
   g.strokeStyle = "#8fe0b0";
@@ -765,6 +802,7 @@ const I18N = {
     liveDesc: "Chọn lượt nói. Ứng dụng ghi âm, nhận dạng và dịch sang ngôn ngữ còn lại. Chạm lại nút đang ghi để dừng.",
     liveEmpty: "Chưa có nội dung hội thoại.", personA: "Người A", personB: "Người B", autoLabel: "Tự động",
     liveWaiting: "Đang chờ người nói.", stopLive: "Dừng ghi âm", translateBtn: "Dịch văn bản",
+    translatingCancel: "Đang dịch… (Chạm để hủy)", translateCanceled: "Đã hủy lệnh dịch.",
     disclaimer: "Bản dịch AI có thể cần kiểm tra lại trong ngữ cảnh chuyên ngành.",
     infoTitle: "Thông tin tác giả", authorCtaText: "Mọi góp ý vui lòng liên hệ",
     fbTitle: "Facebook", zaloTitle: "Zalo", callTitle: "Gọi điện",
@@ -807,6 +845,7 @@ const I18N = {
     liveDesc: "Pick a speaker. The app records, transcribes, and translates into the other language. Tap again to stop.",
     liveEmpty: "No conversation yet.", personA: "Person A", personB: "Person B", autoLabel: "Auto",
     liveWaiting: "Waiting for speaker.", stopLive: "Stop recording", translateBtn: "Translate text",
+    translatingCancel: "Translating… (Tap to cancel)", translateCanceled: "Translation canceled.",
     disclaimer: "AI translations may need verification in specialized or technical contexts.",
     infoTitle: "Author Information", authorCtaText: "For any feedback, please contact",
     fbTitle: "Facebook", zaloTitle: "Zalo", callTitle: "Call",
@@ -849,6 +888,7 @@ const I18N = {
     liveDesc: "选择说话方进行录音、识别并翻译为对方语言；再次点击正在录音的按钮即可停止。",
     liveEmpty: "暂无对话内容。", personA: "说话方 A", personB: "说话方 B", autoLabel: "自动",
     liveWaiting: "等待说话。", stopLive: "停止录音", translateBtn: "翻译文本",
+    translatingCancel: "正在翻译…（点击取消）", translateCanceled: "已取消翻译。",
     disclaimer: "AI 译文在专业或技术场景下建议人工复核。",
     infoTitle: "作者信息", authorCtaText: "如有任何建议请联系",
     fbTitle: "Facebook", zaloTitle: "Zalo", callTitle: "拨打电话",
@@ -884,6 +924,10 @@ const setShow = (node, visible, display = "flex") => {
   if (node) node.style.display = visible ? display : "none";
 };
 
+// Đọc ngôn ngữ đã lưu lần cuối, mặc định lần đầu: sourceLang = auto, targetLang = English
+const savedSourceLang = localStorage.getItem("smart_translate_source_lang_v1");
+const savedTargetLang = localStorage.getItem("smart_translate_target_lang_v1");
+
 const state = {
   uiLang: localStorage.getItem("smart_translate_ui_lang_v1") || "vi",
   apiKey: localStorage.getItem("smart_translate_key_v5") || "",
@@ -895,8 +939,8 @@ const state = {
   requestQueueTail: Promise.resolve(),
   pendingRequests: 0,
   inFlightTextRequests: new Map(),
-  sourceLang: "auto",
-  targetLang: "Chinese",
+  sourceLang: savedSourceLang && LANGUAGES.some(l => l.code === savedSourceLang) ? savedSourceLang : "auto",
+  targetLang: savedTargetLang && LANGUAGES.some(l => l.code === savedTargetLang && l.code !== "auto") ? savedTargetLang : "English",
   openPickerType: null,
   lastResult: null,
   currentHanziChar: "",
@@ -905,6 +949,8 @@ const state = {
   history: [],
   imageData: null,
   isBusy: false,
+  activeAbortController: null,
+  persistentAudioStream: null,
   liveRecorder: null,
   liveStream: null,
   liveSide: null,
@@ -915,6 +961,7 @@ const state = {
   recognition: null,
   speechActive: false,
   speakingSource: false,
+  speakingTarget: false,
   strokes: [],
   currentStroke: null,
   canvasDpr: 1,
@@ -934,7 +981,8 @@ const el = {
   examplesTitle: $("examplesTitle"), examplesList: $("examplesList"),
   backTransBox: $("backTransBox"), backTransLabel: $("backTransLabel"), backTransText: $("backTransText"),
   explanation: $("explanation"), alternatives: $("alternatives"), historyBar: $("historyBar"),
-  translate: $("translateBtn"), translateSpin: $("translateSpinner"), backSpin: $("backSpin"),
+  translate: $("translateBtn"), translateLabel: $("translateBtnLabel"),
+  translateSpin: $("translateSpinner"), backSpin: $("backSpin"),
   sourceLangBtn: $("sourceLangBtn"), targetLangBtn: $("targetLangBtn"),
   sourceLangFlag: $("sourceLangFlag"), targetLangFlag: $("targetLangFlag"),
   sourceLangLabel: $("sourceLangLabel"), targetLangLabel: $("targetLangLabel"),
@@ -966,7 +1014,13 @@ const meaningLangCode = () => state.uiLang === "en" ? "EN" : state.uiLang === "z
 const isChineseTarget = (code = targetLang()) => CHINESE_CODES.includes(code);
 const normalizeForCache = value => String(value ?? "").replace(/\r\n?/g, "\n").replace(/[ \t]+/g, " ").trim();
 
-// Short guard against accidental double-taps on mobile.
+function saveSelectedLanguages() {
+  try {
+    localStorage.setItem("smart_translate_source_lang_v1", state.sourceLang);
+    localStorage.setItem("smart_translate_target_lang_v1", state.targetLang);
+  } catch (_) {}
+}
+
 let lastTapAt = 0;
 const tapGuard = () => {
   const now = Date.now();
@@ -988,6 +1042,7 @@ function syncToolStates() {
   const isMicActive = Boolean(state.liveRecorder?.state === "recording" || state.liveStarting || state.speechActive);
 
   setToggleButtonState(el.speakSourceBtn, state.speakingSource);
+  setToggleButtonState(el.speakBtn, state.speakingTarget);
   setToggleButtonState(el.drawToggle, isDrawOpen);
   setToggleButtonState(el.imageToggle, isImageOpen);
   setToggleButtonState(el.liveToggle, isLiveOpen);
@@ -996,7 +1051,7 @@ function syncToolStates() {
 
 function renderLangButton(type) {
   const isSource = type === "source";
-  const item = getLangObj(isSource ? state.sourceLang : state.targetLang) || LANGUAGES[1];
+  const item = getLangObj(isSource ? state.sourceLang : state.targetLang) || (isSource ? LANGUAGES[0] : LANGUAGES[4]);
   (isSource ? el.sourceLangFlag : el.targetLangFlag).replaceChildren(createFlagElement(item.flag));
   (isSource ? el.sourceLangLabel : el.targetLangLabel).textContent = item.label[state.uiLang] || item.label.vi;
 }
@@ -1038,6 +1093,7 @@ function openLangMenu(type) {
       e.stopPropagation();
       if (isSource) state.sourceLang = item.code;
       else state.targetLang = item.code;
+      saveSelectedLanguages();
       renderLangButton("source");
       renderLangButton("target");
       closeLangMenu();
@@ -1139,7 +1195,6 @@ function localPinyin(text) {
   }
 }
 
-// True when the model must also return a reading/romanization (costs extra output tokens).
 function needsAIRomanization(tgt) {
   if (NON_LATIN_ROMAN_TARGETS.includes(tgt)) return true;
   return CHINESE_CODES.includes(tgt) && !hasLocalPinyin();
@@ -1248,13 +1303,20 @@ function setStatus() {
   el.status.textContent = ready ? `${t("ready")} • ${state.model}` : t("noKey");
   el.keyDot.classList.toggle("ready", ready);
 }
+
 function setBusy(busy, spinnerId) {
   state.isBusy = busy;
-  if (spinnerId && $(spinnerId)) $(spinnerId).style.display = busy ? "inline-block" : "none";
-  ["translateBtn", "translateDrawBtn", "translateImageBtn", "backTranslateBtn", "examplesBtn"].forEach(id => {
+  if (spinnerId && $(spinnerId)) {
+    $(spinnerId).style.display = busy ? "inline-block" : "none";
+    const parentBtn = $(spinnerId).closest(".btn");
+    if (parentBtn) parentBtn.classList.toggle("is-loading", busy);
+  }
+  // Giữ translateBtn không bị disabled để người dùng có thể bấm vào hủy lệnh dịch
+  ["translateDrawBtn", "translateImageBtn", "backTranslateBtn", "examplesBtn"].forEach(id => {
     if ($(id)) $(id).disabled = busy;
   });
 }
+
 function openInfoModal() { closeLangMenu(); setShow($("infoModal"), true); }
 function closeInfoModal() { setShow($("infoModal"), false); syncVisualViewport(); }
 function openSettings() {
@@ -1275,11 +1337,9 @@ function ensureConfig() {
   if (!/^[a-zA-Z0-9._-]{2,100}$/.test(state.model.trim())) throw new Error(t("errBadModel"));
 }
 
-const stopStream = stream => stream?.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /* ============================ PERSISTENT CACHE (localStorage, LRU + TTL) ============================ */
-// cyrb53 hash: 53-bit, far lower collision risk than the old 2x32-bit scheme.
 function hash53(str, seed = 0) {
   let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
   for (let i = 0; i < str.length; i++) {
@@ -1293,7 +1353,6 @@ function hash53(str, seed = 0) {
 }
 
 function cacheStorageKey(key) {
-  // Short deterministic key: never put full user text into storage key names.
   const value = String(key || "");
   return CONFIG.cachePrefix + hash53(value, 0).toString(36) + hash53(value, 1).toString(36) + value.length.toString(36);
 }
@@ -1310,7 +1369,6 @@ function removeStoredCache(storageKey) {
 }
 
 function loadCacheIndex() {
-  // Drop legacy cache entries (older prefixes) from both storages.
   [localStorage, sessionStorage].forEach(store => {
     try {
       for (let i = store.length - 1; i >= 0; i--) {
@@ -1381,7 +1439,6 @@ function writeCached(key, val) {
   let serialized;
   try { serialized = JSON.stringify({ t: Date.now(), v: val }); } catch (_) { return; }
   if (serialized.length > CONFIG.maxCachePersistChars) {
-    // Too large to persist: keep in memory only.
     state.cacheIndex = state.cacheIndex.filter(k => k !== storageKey);
     return;
   }
@@ -1390,7 +1447,6 @@ function writeCached(key, val) {
     localStorage.setItem(storageKey, serialized);
     persistCacheIndex();
   } catch (_) {
-    // Storage may be full. Evict the oldest entries (never the one just added) and retry once.
     try {
       for (let i = 0; i < 5 && state.cacheIndex.length > 1; i++) {
         const oldest = state.cacheIndex.shift();
@@ -1410,7 +1466,6 @@ function markModelCoolingDown(modelName, durationMs = CONFIG.modelCooldownMs) {
   state.modelCooldownUntil[modelName] = Date.now() + Math.max(1000, durationMs);
 }
 
-// No silent aliasing: the model the user selects is the model that is called.
 const canonicalModelName = modelName => String(modelName || "").trim();
 
 function orderModelsForRequest() {
@@ -1508,7 +1563,6 @@ function parseRetryAfter(response) {
   return Number.isFinite(date) ? Math.max(0, Math.min(date - Date.now(), 120000)) : 0;
 }
 
-// Gemini reports the wait time and the exceeded quota inside the JSON body (error.details), not in headers.
 function parseQuotaInfo(data) {
   let retryMs = 0, perDay = false;
   const details = Array.isArray(data?.error?.details) ? data.error.details : [];
@@ -1535,12 +1589,25 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
     temperature = 0.1,
     maxOutputTokens = 600,
     timeoutMs = CONFIG.requestTimeoutMs,
-    expectJson = true
+    expectJson = true,
+    signal = null
   } = options;
 
   const model = modelName.trim();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  const abortHandler = () => controller.abort();
+  if (signal) {
+    if (signal.aborted) {
+      clearTimeout(timer);
+      const abortErr = new Error("Yêu cầu đã bị hủy.");
+      abortErr.name = "AbortError";
+      throw abortErr;
+    }
+    signal.addEventListener("abort", abortHandler);
+  }
+
   const url = `${CONFIG.apiBase}${encodeURIComponent(model)}:generateContent`;
   const generationConfig = { temperature, maxOutputTokens };
   if (expectJson) generationConfig.responseMimeType = "application/json";
@@ -1566,7 +1633,13 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
     });
   } catch (error) {
     clearTimeout(timer);
+    if (signal) signal.removeEventListener("abort", abortHandler);
     if (error?.name === "AbortError") {
+      if (signal?.aborted) {
+        const abortErr = new Error("Đã hủy yêu cầu.");
+        abortErr.name = "AbortError";
+        throw abortErr;
+      }
       throw makeRetryError("Yêu cầu quá thời gian chờ.", true);
     }
     if (!navigator.onLine) throw new Error("Thiết bị đang ngoại tuyến.");
@@ -1577,10 +1650,15 @@ async function rawGeminiRequest(modelName, parts, options = {}) {
   try {
     raw = await response.text();
   } catch (error) {
-    if (error?.name === "AbortError") throw makeRetryError("Đọc phản hồi quá thời gian chờ.", true);
+    if (signal?.aborted || error?.name === "AbortError") {
+      const abortErr = new Error("Đã hủy yêu cầu.");
+      abortErr.name = "AbortError";
+      throw abortErr;
+    }
     throw makeRetryError("Không đọc được phản hồi từ Gemini.", true);
   } finally {
     clearTimeout(timer);
+    if (signal) signal.removeEventListener("abort", abortHandler);
   }
 
   let data = {};
@@ -1650,7 +1728,6 @@ function normalizePinyinToneNumbers(value) {
     const output = lower.slice(0, idx) + marked + lower.slice(idx + 1);
     return /^[A-Z]/.test(syllable) ? output.charAt(0).toUpperCase() + output.slice(1) : output;
   };
-  // Gemini sometimes returns numbered Pinyin (e.g. you3, bu4). Convert each syllable while preserving punctuation.
   return value.replace(/[A-Za-zÜüVv]+[1-5]/g, token => {
     const match = token.match(/^([A-Za-zÜüVv]+)([1-5])$/);
     return match ? convertSyllable(match[1], match[2]) : token;
@@ -1680,9 +1757,9 @@ function normalizeModelPayload(rawObj) {
 
 function parseModelOutput(text, expectJson) {
   if (!expectJson) {
-    return { translation: text.trim().replace(/^```[a-z]\*\s\*/i, "").replace(/\s\*```$/, "").trim() };
+    return { translation: text.trim().replace(/^```[a-z]\\*\s\\*/i, "").replace(/\s\\*```$/, "").trim() };
   }
-  const cleaned = text.trim().replace(/^```(?:json)?\s\*/i, "").replace(/\s\*```$/, "");
+  const cleaned = text.trim().replace(/^```(?:json)?\s\\*/i, "").replace(/\s\\*```$/, "");
   try {
     return normalizeModelPayload(JSON.parse(cleaned));
   } catch (_) {
@@ -1717,6 +1794,12 @@ async function performGeminiRequest(parts, options = {}) {
     let tryNextModel = false;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      if (options.signal?.aborted) {
+        const ab = new Error("Yêu cầu đã bị hủy.");
+        ab.name = "AbortError";
+        throw ab;
+      }
+
       try {
         const rawOutput = await rawGeminiRequest(modelName, parts, opts);
         const parsed = parseModelOutput(rawOutput, expectJson);
@@ -1724,15 +1807,17 @@ async function performGeminiRequest(parts, options = {}) {
           throw makeRetryError("Không có trường bản dịch hợp lệ.", false);
         }
         delete state.modelCooldownUntil[modelName];
-        // Fallback is per-request only: never overwrite the model the user selected.
         if (modelName !== preferred) showNotice(t("switchedModel", modelName));
         setStatus();
         return parsed;
       } catch (err) {
+        if (err?.name === "AbortError" || options.signal?.aborted) {
+          throw err;
+        }
+
         lastError = err;
         const status = Number(err?.status || 0);
 
-        // Output was truncated (often because thinking tokens eat the budget): retry once with a bigger budget.
         if (err?.maxTokens && attempt < maxRetries) {
           opts = { ...opts, maxOutputTokens: Math.min(16384, Math.round((opts.maxOutputTokens || 600) * 2)) };
           continue;
@@ -1741,7 +1826,6 @@ async function performGeminiRequest(parts, options = {}) {
         if (status === 400 || status === 401 || status === 403) break;
 
         if (status === 429) {
-          // Daily quota is tracked per model on the free tier: block this model and try the fallback.
           if (err.perDay) {
             markModelCoolingDown(modelName, CONFIG.dailyQuotaCooldownMs);
             tryNextModel = true;
@@ -1775,13 +1859,11 @@ async function performGeminiRequest(parts, options = {}) {
           break;
         }
 
-        // Network/timeout failures are not model-specific; retry once, then stop.
         if (!status && err.retryable && attempt < maxRetries) {
           await sleep(retryDelay(attempt, 0, 900));
           continue;
         }
 
-        // Unknown/non-retryable errors must not trigger model fallback.
         break;
       }
     }
@@ -1806,10 +1888,9 @@ async function performGeminiRequest(parts, options = {}) {
   throw new Error(`Lỗi Gemini API${statusTag} [${lastModel}]${detail}`);
 }
 
-// A single FIFO queue serializes all API work, including OCR, back-translation and live audio.
 function enqueueGeminiRequest(parts, options = {}) {
   const textOnly = Array.isArray(parts) && parts.every(p => typeof p?.text === "string");
-  const signature = textOnly
+  const signature = textOnly && !options.signal
     ? JSON.stringify([parts, options.systemInstruction || "", options.expectJson !== false,
         options.requireTranslation !== false, options.maxOutputTokens || 0,
         options.temperature ?? 0.1, state.model])
@@ -1863,8 +1944,6 @@ function normalizeExampleItem(ex) {
   };
 }
 
-// One prompt for words, sentences, long text, OCR and handwriting.
-// Plain-text output unless the model must also return a romanization (then compact JSON).
 function buildPrompt({ src = sourceLang(), tgt = targetLang(), extraTag = "" } = {}) {
   const from = langPrompt(src), to = langPrompt(tgt);
   const sourceRule = from === "auto" ? "Detect the source language automatically." : `Source: ${from}.`;
@@ -1902,7 +1981,6 @@ function finalizeTranslation(result, tgt) {
   result.translation = tr;
   result.examples = [];
   if (isChineseTarget(tgt)) {
-    // Only reject answers that contain no Chinese at all but do contain real words (e.g. the model refused / answered in English).
     if (!HANZI_RE.test(tr) && /[A-Za-z]{3,}/.test(tr)) {
       throw new Error("AI trả về sai định dạng tiếng Trung (không có Hán tự). Hãy thử dịch lại.");
     }
@@ -1916,22 +1994,24 @@ function finalizeTranslation(result, tgt) {
   return result;
 }
 
-async function requestTranslation(parts, tgt, { systemInstruction = "", maxOutputTokens = 600 } = {}) {
+async function requestTranslation(parts, tgt, { systemInstruction = "", maxOutputTokens = 600, signal = null } = {}) {
   const result = await geminiRequest(parts, {
     systemInstruction,
     temperature: 0,
     maxOutputTokens,
     timeoutMs: timeoutForBudget(maxOutputTokens),
     requireTranslation: true,
-    expectJson: needsAIRomanization(tgt)
+    expectJson: needsAIRomanization(tgt),
+    signal
   });
   return finalizeTranslation(result, tgt);
 }
 
-function requestTextPiece(text, src, tgt) {
+function requestTextPiece(text, src, tgt, signal = null) {
   return requestTranslation([{ text }], tgt, {
     systemInstruction: buildPrompt({ src, tgt }),
-    maxOutputTokens: outputBudgetFor(text, needsAIRomanization(tgt))
+    maxOutputTokens: outputBudgetFor(text, needsAIRomanization(tgt)),
+    signal
   });
 }
 
@@ -1998,7 +2078,9 @@ async function runTranslationTask({ spinnerId, sourceSample = "", cacheKey = "",
     if (cacheKey) writeCached(cacheKey, result);
     renderResult({ ...result, ...meta }, true);
   } catch (e) {
-    showError(e.message || e);
+    if (e?.name !== "AbortError") {
+      showError(e.message || e);
+    }
   } finally {
     setBusy(false, spinnerId);
     setStatus();
@@ -2014,7 +2096,6 @@ async function translateSameChinese(input, src, tgt) {
   renderResult(base, true);
   showNotice(t("sameChineseNotice"));
 
-  // Normal path: pinyin is generated locally, so no API request is needed at all.
   if (local || !state.apiKey.trim() || Array.from(input).length > 90) return;
 
   const ck = `zh6|${normalizeForCache(input)}`;
@@ -2031,7 +2112,7 @@ async function translateSameChinese(input, src, tgt) {
       if (!reading || HANZI_RE.test(reading)) throw new Error("AI chưa trả về Pinyin hợp lệ. Hãy thử lại.");
       writeCached(ck, { pinyin: reading });
     } catch (error) {
-      showError(error.message || error);
+      if (error?.name !== "AbortError") showError(error.message || error);
       return;
     } finally {
       setBusy(false, "translateSpinner");
@@ -2040,9 +2121,21 @@ async function translateSameChinese(input, src, tgt) {
   renderResult({ ...base, pronunciation: reading, pinyin: reading }, true);
 }
 
+// Xử lý dịch văn bản có hỗ trợ hủy lệnh đang chạy khi ấn lại nút Dịch văn bản
 async function translateText(inputOverride = null) {
+  if (state.activeAbortController) {
+    state.activeAbortController.abort();
+    state.activeAbortController = null;
+    showNotice(t("translateCanceled"));
+    setBusy(false, "translateSpinner");
+    el.translateLabel.textContent = t("translateBtn");
+    setStatus();
+    return;
+  }
+
   if (state.isBusy || state.liveRecorder || state.liveStarting) return showError(t("errBusy"));
   clearError();
+
   const input = escapeText(inputOverride ?? el.source.value).trim();
   if (!input) return showError(t("errEmptyText"));
   if (input.length > 20000) return showError(t("errTooLong"));
@@ -2050,7 +2143,6 @@ async function translateText(inputOverride = null) {
     return showError(t("errSameLang"));
   }
 
-  // Capture the language pair once so a mid-request change cannot mix chunks.
   const src = sourceLang(), tgt = targetLang();
 
   if (isSameChinesePair()) {
@@ -2058,29 +2150,45 @@ async function translateText(inputOverride = null) {
     return;
   }
 
+  const controller = new AbortController();
+  state.activeAbortController = controller;
+  el.translateLabel.textContent = t("translatingCancel");
+
   const produce = async () => {
-    if (input.length <= CONFIG.chunkThreshold) return requestTextPiece(input, src, tgt);
+    if (input.length <= CONFIG.chunkThreshold) {
+      return requestTextPiece(input, src, tgt, controller.signal);
+    }
     const chunks = splitIntoChunks(input, CONFIG.chunkSize);
     const items = [];
     for (let i = 0; i < chunks.length; i++) {
+      if (controller.signal.aborted) {
+        const ab = new Error("Yêu cầu đã bị hủy.");
+        ab.name = "AbortError";
+        throw ab;
+      }
       el.status.textContent = t("translatingPart", i + 1, chunks.length);
       const key = `p6|${src}|${tgt}|${normalizeForCache(chunks[i])}`;
       let r = readCached(key);
       if (!r) {
-        r = await requestTextPiece(chunks[i], src, tgt);
-        writeCached(key, r); // finished chunks survive a later failure, so a retry costs fewer requests
+        r = await requestTextPiece(chunks[i], src, tgt, controller.signal);
+        writeCached(key, r);
       }
       items.push({ r, text: chunks[i] });
     }
     return mergeChunkResults(items, tgt);
   };
 
-  await runTranslationTask({
-    spinnerId: "translateSpinner",
-    sourceSample: input,
-    cacheKey: `p6|${src}|${tgt}|${normalizeForCache(input)}`,
-    src, tgt, produce
-  });
+  try {
+    await runTranslationTask({
+      spinnerId: "translateSpinner",
+      sourceSample: input,
+      cacheKey: `p6|${src}|${tgt}|${normalizeForCache(input)}`,
+      src, tgt, produce
+    });
+  } finally {
+    state.activeAbortController = null;
+    el.translateLabel.textContent = t("translateBtn");
+  }
 }
 
 async function loadExamples() {
@@ -2114,14 +2222,14 @@ async function loadExamples() {
       if (!list.length) throw new Error("AI không trả về ví dụ hợp lệ. Hãy thử lại.");
       writeCached(ck, { examples: list });
     } catch (e) {
-      showError(e.message || e);
+      if (e?.name !== "AbortError") showError(e.message || e);
       return;
     } finally {
       setBusy(false, "exSpin");
     }
   }
 
-  if (state.lastResult !== res) return; // user moved on to another result
+  if (state.lastResult !== res) return;
   res.examples = list;
   const h = state.history.find(x => x.translation === res.translation);
   if (h) h.examples = list.slice(0, 3);
@@ -2158,7 +2266,7 @@ async function backTranslateResult() {
     setShow(el.backTransBox, true);
     el.ioBox.scrollTop = el.ioBox.scrollHeight;
   } catch (e) {
-    showError(e.message || e);
+    if (e?.name !== "AbortError") showError(e.message || e);
   } finally {
     setBusy(false, "backSpin");
     setStatus();
@@ -2184,7 +2292,6 @@ async function translateImage() {
   });
 }
 
-// Crop to the inked area, downscale and send as JPEG: far fewer image tokens than the full 2x-DPR PNG.
 function exportDrawingJpegBase64() {
   const W = el.canvas.width, H = el.canvas.height;
   const dpr = state.canvasDpr || 1;
@@ -2221,7 +2328,7 @@ async function translateDrawing() {
   const data = exportDrawingJpegBase64();
   await runTranslationTask({
     spinnerId: "drawSpinner",
-    src, tgt, // handwriting is never pixel-identical, so it is not cached
+    src, tgt,
     produce: () => requestTranslation(
       [
         { text: buildPrompt({ src, tgt, extraTag: HANDWRITING_TAG }) },
@@ -2262,7 +2369,6 @@ function renderResult(result, saveToHistory = false) {
   refreshHanziStrokeBox(result.translation || "");
   renderExamples(result);
 
-  // "Show examples" appears only for short words/phrases that have no examples yet (examples are generated on demand).
   const canLoadExamples = Boolean(result.translation) &&
     !(Array.isArray(result.examples) && result.examples.length) &&
     shouldShowExamplesForResult(result, result._sourceSample || "");
@@ -2419,16 +2525,17 @@ $("copyBtn").addEventListener("click", async () => {
 
 function stopSpeaking() {
   state.speakingSource = false;
+  state.speakingTarget = false;
   if ("speechSynthesis" in window) {
     try { speechSynthesis.cancel(); } catch (_) {}
   }
   syncToolStates();
 }
 
-function speak(text, lang, trackSource = false) {
+function speak(text, lang, isSource = false) {
   if (!("speechSynthesis" in window)) return showError("Trình duyệt không hỗ trợ đọc văn bản.");
   if (!text) return;
-  if (trackSource && state.speakingSource) {
+  if ((isSource && state.speakingSource) || (!isSource && state.speakingTarget)) {
     stopSpeaking();
     return;
   }
@@ -2441,15 +2548,14 @@ function speak(text, lang, trackSource = false) {
   const voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
   if (voice) u.voice = voice;
 
-  if (trackSource) {
-    state.speakingSource = true;
-    syncToolStates();
-  }
+  if (isSource) state.speakingSource = true;
+  else state.speakingTarget = true;
+  syncToolStates();
+
   const finishSpeak = () => {
-    if (trackSource) {
-      state.speakingSource = false;
-      syncToolStates();
-    }
+    if (isSource) state.speakingSource = false;
+    else state.speakingTarget = false;
+    syncToolStates();
   };
   u.onend = finishSpeak;
   u.onerror = finishSpeak;
@@ -2459,6 +2565,7 @@ function speak(text, lang, trackSource = false) {
     finishSpeak();
   }
 }
+
 $("speakBtn").addEventListener("click", () => speak(state.lastResult?.translation, state.lastResult?._tgt || targetLang(), false));
 el.speakSourceBtn.addEventListener("click", () => speak(el.source.value, sourceLang() === "auto" ? "Vietnamese" : sourceLang(), true));
 
@@ -2525,8 +2632,6 @@ function addBubble(text, side, translation) {
   el.liveFeed.scrollTop = el.liveFeed.scrollHeight;
 }
 
-// Person B speaks the target language and is translated back to the source language
-// (Vietnamese when the source is "auto"), instead of the invalid "translate to auto".
 const liveLanguages = side => {
   const srcCode = sourceLang(), tgtCode = targetLang();
   const srcPrompt = srcCode === "auto" ? "auto" : langPrompt(srcCode);
@@ -2540,8 +2645,26 @@ const liveLanguages = side => {
 const supportedRecorderMime = () => !window.MediaRecorder ? "" :
   ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac", "audio/ogg;codecs=opus"].find(m => MediaRecorder.isTypeSupported?.(m)) || "";
 
+// Quản lý Microphone liên tục: chỉ yêu cầu cấp quyền 1 lần duy nhất, tái sử dụng luồng âm thanh
+async function getPersistentMicrophoneStream() {
+  if (state.persistentAudioStream && state.persistentAudioStream.active) {
+    const tracks = state.persistentAudioStream.getAudioTracks();
+    if (tracks.length > 0 && tracks[0].readyState === "live") {
+      tracks.forEach(tr => { tr.enabled = true; });
+      return state.persistentAudioStream;
+    }
+  }
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+  });
+  state.persistentAudioStream = stream;
+  return stream;
+}
+
 function clearLiveState() {
-  stopStream(state.liveStream);
+  if (state.persistentAudioStream) {
+    state.persistentAudioStream.getAudioTracks().forEach(tr => { tr.enabled = false; });
+  }
   state.liveStream = state.liveRecorder = state.liveSide = state.startingSide = null;
   state.liveStarting = false;
   updateLiveButtons();
@@ -2574,13 +2697,16 @@ async function beginLiveRecording(side) {
   state.startingSide = side;
   const token = ++state.liveStartToken;
   updateLiveButtons();
-  el.liveStatus.textContent = "Đang xin quyền microphone…";
+  el.liveStatus.textContent = "Đang chuẩn bị micro…";
   clearError();
 
   let stream;
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
-    if (!state.liveStarting || token !== state.liveStartToken) return stopStream(stream);
+    stream = await getPersistentMicrophoneStream();
+    if (!state.liveStarting || token !== state.liveStartToken) {
+      stream.getAudioTracks().forEach(tr => { tr.enabled = false; });
+      return;
+    }
 
     const mime = supportedRecorderMime();
     const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
@@ -2606,7 +2732,6 @@ async function beginLiveRecording(side) {
     el.liveStatus.textContent = "Đang nghe… Chạm lại để dừng.";
     updateLiveButtons();
   } catch (e) {
-    stopStream(stream);
     clearLiveState();
     showError("Không thể truy cập microphone: " + (e.message || e));
     el.liveStatus.textContent = "Không bật được microphone.";
@@ -2640,8 +2765,6 @@ function encodeWav16(samples, rate) {
   return new Blob([buf], { type: "audio/wav" });
 }
 
-// WAV is an officially documented Gemini audio format; webm/mp4 from MediaRecorder is not guaranteed.
-// 16 kHz mono keeps the file small. Any failure falls back to the original recording.
 async function blobToWav16k(blob) {
   const AC = window.AudioContext || window.webkitAudioContext;
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
@@ -2675,7 +2798,7 @@ async function processLiveAudio(blob, mime, side) {
     try {
       sendBlob = await blobToWav16k(blob);
       sendMime = "audio/wav";
-    } catch (_) { /* keep the original recording */ }
+    } catch (_) {}
     if (!SUPPORTED_AUDIO_MIME.includes(sendMime)) {
       throw new Error("Định dạng âm thanh " + (sendMime || "không rõ") + " chưa được hỗ trợ.");
     }
@@ -2707,7 +2830,7 @@ async function processLiveAudio(blob, mime, side) {
     el.liveStatus.textContent = "Xong. Chọn người nói tiếp theo.";
     if (translation) speak(translation, targetCode, false);
   } catch (e) {
-    showError(e.message || e);
+    if (e?.name !== "AbortError") showError(e.message || e);
     el.liveStatus.textContent = "Dịch thất bại. Bạn có thể ghi âm lại.";
   } finally {
     setBusy(false);
@@ -2750,7 +2873,6 @@ $("saveSettings").addEventListener("click", () => {
   state.uiLang = I18N[nextUi] ? nextUi : "vi";
   state.apiKey = key;
   state.model = model;
-  // A new key/model must not inherit cooldowns that belonged to the previous one.
   state.globalCooldownUntil = 0;
   state.modelCooldownUntil = {};
   try {
@@ -2808,6 +2930,7 @@ $("swapBtn").addEventListener("click", () => {
   if (a === "auto") return showError(t("errSwapAuto"));
   state.sourceLang = b;
   state.targetLang = a;
+  saveSelectedLanguages();
   renderLangButton("source");
   renderLangButton("target");
   clearBackTranslation();
@@ -2823,18 +2946,28 @@ $("swapBtn").addEventListener("click", () => {
   syncVisualViewport();
 });
 
-$("translateBtn").addEventListener("click", () => { if (tapGuard()) translateText(); });
+$("translateBtn").addEventListener("click", () => { translateText(); });
+
 el.source.addEventListener("input", () => {
   updateCount();
   if (state.speakingSource) stopSpeaking();
 });
 el.source.addEventListener("focus", () => { closeLangMenu(); setTimeout(syncVisualViewport, 120); });
 el.source.addEventListener("blur", () => setTimeout(syncVisualViewport, 120));
-$("clearTextBtn").addEventListener("click", () => {
+
+// Giữ bàn phím không bị ẩn khi bấm nút Xóa bằng cách chặn mất focus (preventDefault trên pointerdown/mousedown/touchstart)
+const handleClearText = e => {
+  e.preventDefault();
   stopSpeaking();
   el.source.value = "";
   updateCount();
-});
+  el.source.focus();
+};
+
+el.clearTextBtn.addEventListener("pointerdown", e => e.preventDefault());
+el.clearTextBtn.addEventListener("mousedown", e => e.preventDefault());
+el.clearTextBtn.addEventListener("touchstart", handleClearText, { passive: false });
+el.clearTextBtn.addEventListener("click", handleClearText);
 
 $("pasteBtn").addEventListener("click", async () => {
   try {
@@ -2856,7 +2989,10 @@ window.addEventListener("pagehide", () => {
   stopSpeaking();
   stopSpeechInput();
   if (state.liveRecorder && state.liveRecorder.state !== "inactive") { try { state.liveRecorder.stop(); } catch (_) {} }
-  stopStream(state.liveStream);
+  if (state.persistentAudioStream) {
+    state.persistentAudioStream.getTracks().forEach(tr => { try { tr.stop(); } catch (_) {} });
+    state.persistentAudioStream = null;
+  }
   if (manifestBlobUrl && window.URL?.revokeObjectURL) {
     try { URL.revokeObjectURL(manifestBlobUrl); } catch (_) {}
     manifestBlobUrl = null;
