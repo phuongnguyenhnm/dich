@@ -275,56 +275,44 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   display:flex;flex-direction:column;align-items:center;text-align:center;
   gap:10px;padding:14px 12px;margin:10px 0 12px;border:1px solid var(--line);border-radius:14px;background:#111a20
 }
-/* Logo nguyên độ sáng làm nền cho toàn bộ phần tác giả */
-.author-box{
-  position:relative;
-  overflow:hidden;
-  isolation:isolate;
-  background:transparent;
-}
 
+/* Vùng ảnh lớn; chỉ hiển thị phần Trái Đất của SVG */
 .author-logo-frame{
-  position:absolute;
-  inset:0;
-  z-index:0;
+  position:relative;
+  width:100%;
+  height:190px;
   overflow:hidden;
-  border-radius:inherit;
-  pointer-events:none;
+  flex-shrink:0;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#10171c;
+  pointer-events:none
 }
 
 .author-logo-frame iframe{
   position:absolute;
-  top:50%;
-  left:50%;
   display:block;
-  width:1200px;
-  height:750px;
+  width:900px;
+  height:562.5px;
+  left:calc(50% - 720px);
+  top:calc(50% - 281.25px);
   border:0;
-  transform:translate(-50%,-50%) scale(var(--author-logo-scale, .3));
-  transform-origin:center;
-  pointer-events:none;
-}
-
-/* Nội dung hiển thị trên ảnh; nền chữ trong suốt */
-.author-box > :not(.author-logo-frame){
-  position:relative;
-  z-index:2;
+  pointer-events:none
 }
 
 .author-name,
-.author-cta{
-  text-shadow:0 2px 8px #000, 0 0 18px #000b;
+.author-cta,
+.social-icons{
+  position:relative;
+  z-index:1
 }
 
-/* Nút liên hệ hòa với ảnh nhưng vẫn nổi rõ và bấm được */
-.author-box .social-btn{
-  position:relative;
-  z-index:3;
-  background:#10232dcc;
-  border-color:#a8d8f080;
-  box-shadow:0 4px 14px #0008;
-  backdrop-filter:blur(5px);
-  -webkit-backdrop-filter:blur(5px);
+.author-name{
+  text-shadow:0 2px 8px #000
+}
+
+.author-cta{
+  text-shadow:0 1px 6px #000
 }
 
 .author-name{font-size:16px;font-weight:700;color:var(--text)}
@@ -539,15 +527,16 @@ a{color:var(--accent)}
  <div class="modalbox">
   <h2 id="infoTitle">Thông tin tác giả</h2>
   <div class="author-box">
-     <div class="author-logo-frame" aria-hidden="true">
-    <iframe
-      src="./phuongnguyen.svg"
-      title="Logo tác giả"
-      loading="lazy"
-      referrerpolicy="no-referrer"
-      sandbox>
-    </iframe>
-  </div>
+
+       <div class="author-logo-frame" aria-hidden="true">
+      <iframe
+        src="./phuongnguyen.svg"
+        title="Logo Nguyễn Văn Phương"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+        sandbox>
+      </iframe>
+    </div>
     <div class="author-name">Nguyễn Văn Phương</div>
     <div class="author-cta" id="authorCtaText">Mọi góp ý vui lòng liên hệ</div>
     <div class="social-icons">
@@ -3059,31 +3048,6 @@ window.addEventListener("pagehide", () => {
     manifestBlobUrl = null;
   }
 });
-
-/* ============================ AUTHOR LOGO BACKGROUND ============================ */
-function resizeAuthorLogo() {
-  const box = document.querySelector(".author-box");
-  const frame = document.querySelector(".author-logo-frame");
-  if (!box || !frame) return;
-
-  const width = box.clientWidth;
-  const height = box.clientHeight;
-  if (!width || !height) return;
-
-  const scale = Math.max(width / 1200, height / 750);
-  frame.style.setProperty("--author-logo-scale", String(scale));
-}
-
-const authorBoxForLogo = document.querySelector(".author-box");
-
-if (window.ResizeObserver && authorBoxForLogo) {
-  new ResizeObserver(resizeAuthorLogo).observe(authorBoxForLogo);
-}
-
-window.addEventListener("resize", resizeAuthorLogo, { passive: true });
-requestAnimationFrame(resizeAuthorLogo);
-
-  
 
 /* ============================ INIT ============================ */
 loadCacheIndex();
