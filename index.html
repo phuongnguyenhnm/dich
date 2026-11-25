@@ -275,21 +275,49 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   display:flex;flex-direction:column;align-items:center;text-align:center;
   gap:10px;padding:14px 12px;margin:10px 0 12px;border:1px solid var(--line);border-radius:14px;background:#111a20
 }
-.author-logo-frame{
-  width:min(100%,320px);
-  aspect-ratio:8/5;
+/* Logo chìm phủ nền hộp thông tin tác giả */
+.author-box{
+  position:relative;
   overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:#10171c;
-  box-shadow:0 6px 18px #0005;
-  flex-shrink:0
+  isolation:isolate;
+  background:transparent
 }
+
+.author-logo-frame{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  overflow:hidden;
+  border-radius:inherit;
+  opacity:.20;
+  pointer-events:none
+}
+
+.author-logo-frame::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:rgba(16,20,24,.38);
+  pointer-events:none
+}
+
 .author-logo-frame iframe{
+  position:absolute;
+  top:50%;
+  left:50%;
   display:block;
-  width:100%;
-  height:100%;
-  border:0
+  width:1200px;
+  height:750px;
+  border:0;
+  transform:translate(-50%,-50%) scale(var(--author-logo-scale,.3));
+  transform-origin:center;
+  pointer-events:none
+}
+
+.author-box>:not(.author-logo-frame){
+  position:relative;
+  z-index:2
 }
 
 .author-name{font-size:16px;font-weight:700;color:var(--text)}
@@ -504,15 +532,15 @@ a{color:var(--accent)}
  <div class="modalbox">
   <h2 id="infoTitle">Thông tin tác giả</h2>
   <div class="author-box">
-    <div class="author-logo-frame">
-      <iframe
-        src="./phuongnguyen.svg"
-        title="Logo Nguyễn Văn Phương"
-        loading="lazy"
-        referrerpolicy="no-referrer"
-        sandbox>
-      </iframe>
-    </div>
+    <div class="author-logo-frame" aria-hidden="true">
+    <iframe
+      src="./phuongnguyen.svg"
+      title="Logo tác giả"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      sandbox>
+    </iframe>
+  </div>
     <div class="author-name">Nguyễn Văn Phương</div>
     <div class="author-cta" id="authorCtaText">Mọi góp ý vui lòng liên hệ</div>
     <div class="social-icons">
@@ -3024,6 +3052,31 @@ window.addEventListener("pagehide", () => {
     manifestBlobUrl = null;
   }
 });
+
+/* ============================ AUTHOR LOGO BACKGROUND ============================ */
+function resizeAuthorLogo() {
+  const box = document.querySelector(".author-box");
+  const frame = document.querySelector(".author-logo-frame");
+  if (!box || !frame) return;
+
+  const width = box.clientWidth;
+  const height = box.clientHeight;
+  if (!width || !height) return;
+
+  // Thu phóng đủ để ảnh SVG tỷ lệ 1200 × 750 phủ kín hộp tác giả.
+  const scale = Math.max(width / 1200, height / 750);
+  frame.style.setProperty("--author-logo-scale", String(scale));
+}
+
+const authorBoxForLogo = document.querySelector(".author-box");
+
+if (window.ResizeObserver && authorBoxForLogo) {
+  new ResizeObserver(resizeAuthorLogo).observe(authorBoxForLogo);
+}
+
+window.addEventListener("resize", resizeAuthorLogo, { passive: true });
+requestAnimationFrame(resizeAuthorLogo);
+
 
 /* ============================ INIT ============================ */
 loadCacheIndex();
