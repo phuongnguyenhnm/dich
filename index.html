@@ -961,6 +961,7 @@ const state = {
   recognition: null,
   speechActive: false,
   speechStopping: false,
+  speechRestartRequested: false,
   speakingSource: false,
   speakingTarget: false,
   strokes: [],
@@ -2614,8 +2615,11 @@ function startSpeechInput() {
 
   // Đợi phiên cũ kết thúc hoàn toàn rồi mới cho bắt đầu phiên mới.
   if (state.speechStopping) {
-    return showNotice("Micro đang dừng, vui lòng chạm lại sau một chút.");
+  state.speechRestartRequested = true;
+  showNotice("Đang bật lại micro…");
+  return;
   }
+
 
   // Nếu mic đang chạy, lần bấm này yêu cầu dừng.
   if (state.speechActive && state.recognition) {
@@ -2673,14 +2677,25 @@ function startSpeechInput() {
   };
 
   rec.onend = () => {
-    // Không để sự kiện của phiên cũ ghi đè trạng thái phiên mới.
-    if (state.recognition !== rec) return;
+  // Chỉ cập nhật trạng thái nếu đây vẫn là phiên nhận dạng hiện tại.
+  if (state.recognition !== rec) return;
 
-    state.recognition = null;
-    state.speechActive = false;
-    state.speechStopping = false;
-    syncToolStates();
+  state.recognition = null;
+  state.speechActive = false;
+  state.speechStopping = false;
+
+  const shouldRestart = state.speechRestartRequested;
+  state.speechRestartRequested = false;
+
+  syncToolStates();
+
+  // Nếu người dùng đã bấm mic lần nữa khi phiên cũ đang dừng,
+  // bắt đầu phiên mới sau khi phiên cũ kết thúc.
+  if (shouldRestart) {
+    setTimeout(() => startSpeechInput(), 100);
+    }
   };
+
 
   try {
     rec.start();
