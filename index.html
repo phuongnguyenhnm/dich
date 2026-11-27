@@ -960,6 +960,7 @@ const state = {
   startingSide: null,
   recognition: null,
   speechActive: false,
+  speechStopping: false,
   speakingSource: false,
   speakingTarget: false,
   strokes: [],
@@ -2571,49 +2572,131 @@ el.speakSourceBtn.addEventListener("click", () => speak(el.source.value, sourceL
 
 /* ============================ SPEECH & LIVE CONVERSATION ============================ */
 function stopSpeechInput() {
+  const rec = state.recognition;
+
+  if (!rec) {
+    state.speechActive = false;
+    state.speechStopping = false;
+    syncToolStates();
+    return;
+  }
+
+  if (state.speechStopping) return;
+
+  // Chờ sự kiện onend xác nhận phiên nhận dạng đã dừng.
+  state.speechStopping = true;
   state.speechActive = false;
-  if (state.recognition) { try { state.recognition.stop(); } catch (_) {} state.recognition = null; }
+
+  try {
+    rec.stop();
+  } catch (_) {
+    if (state.recognition === rec) {
+      state.recognition = null;
+      state.speechStopping = false;
+    }
+  }
+
   syncToolStates();
 }
 
 function startSpeechInput() {
-  if (state.liveRecorder || state.liveStarting) return stopLiveRecording();
+  if (state.liveRecorder || state.liveStarting) {
+    return stopLiveRecording();
+  }
+
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return showError("Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini.");
-  if (state.speechActive && state.recognition) return stopSpeechInput();
+
+  if (!SR) {
+    return showError(
+      "Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini."
+    );
+  }
+
+  // Đợi phiên cũ kết thúc hoàn toàn rồi mới cho bắt đầu phiên mới.
+  if (state.speechStopping) {
+    return showNotice("Micro đang dừng, vui lòng chạm lại sau một chút.");
+  }
+
+  // Nếu mic đang chạy, lần bấm này yêu cầu dừng.
+  if (state.speechActive && state.recognition) {
+    return stopSpeechInput();
+  }
+
+  // Tránh tạo phiên mới khi phiên cũ chưa kết thúc.
+  if (state.recognition) {
+    return showNotice("Phiên nhận dạng trước chưa kết thúc, vui lòng thử lại.");
+  }
 
   stopSpeaking();
+
   const rec = new SR();
   state.recognition = rec;
   state.speechActive = true;
+
   const info = getLangObj(sourceLang());
-  rec.lang = (info && info.code !== "auto") ? info.speech : (state.uiLang === "zh" ? "zh-CN" : state.uiLang === "en" ? "en-US" : "vi-VN");
+  rec.lang = (info && info.code !== "auto")
+    ? info.speech
+    : (state.uiLang === "zh"
+        ? "zh-CN"
+        : state.uiLang === "en"
+          ? "en-US"
+          : "vi-VN");
+
   rec.interimResults = true;
   rec.continuous = false;
 
-  let finalText = el.source.value ? el.source.value.trim() + " " : "";
+  let finalText = el.source.value
+    ? el.source.value.trim() + " "
+    : "";
+
   rec.onresult = e => {
     let interim = "";
+
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const val = e.results[i][0].transcript;
-      if (e.results[i].isFinal) finalText += val + " ";
-      else interim += val;
+
+      if (e.results[i].isFinal) {
+        finalText += val + " ";
+      } else {
+        interim += val;
+      }
     }
+
     el.source.value = (finalText + interim).trim();
     updateCount();
   };
-  rec.onerror = e => { if (!["aborted", "no-speech"].includes(e.error)) showError("Lỗi nhận dạng giọng nói: " + e.error); };
-  rec.onend = () => { if (state.recognition === rec) state.recognition = null; state.speechActive = false; syncToolStates(); };
+
+  rec.onerror = e => {
+    if (!["aborted", "no-speech"].includes(e.error)) {
+      showError("Lỗi nhận dạng giọng nói: " + e.error);
+    }
+  };
+
+  rec.onend = () => {
+    // Không để sự kiện của phiên cũ ghi đè trạng thái phiên mới.
+    if (state.recognition !== rec) return;
+
+    state.recognition = null;
+    state.speechActive = false;
+    state.speechStopping = false;
+    syncToolStates();
+  };
+
   try {
     rec.start();
     syncToolStates();
   } catch (e) {
-    state.recognition = null;
-    state.speechActive = false;
+    if (state.recognition === rec) {
+      state.recognition = null;
+      state.speechActive = false;
+      state.speechStopping = false;
+    }
+
     syncToolStates();
     showError("Không thể bắt đầu nhận dạng: " + e.message);
   }
 }
+
 el.mic.addEventListener("click", startSpeechInput);
 
 function updateLiveLabels() {
