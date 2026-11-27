@@ -2574,141 +2574,122 @@ el.speakSourceBtn.addEventListener("click", () => speak(el.source.value, sourceL
 /* ============================ SPEECH & LIVE CONVERSATION ============================ */
 function stopSpeechInput() {
   const rec = state.recognition;
-
-  if (!rec) {
-    state.speechActive = false;
-    state.speechStopping = false;
-    syncToolStates();
-    return;
-  }
-
-  if (state.speechStopping) return;
-
-  // Chờ sự kiện onend xác nhận phiên nhận dạng đã dừng.
-  state.speechStopping = true;
   state.speechActive = false;
+  state.speechStopping = false;
+  state.speechRestartRequested = false;
 
-  try {
-    rec.stop();
-  } catch (_) {
-    if (state.recognition === rec) {
-      state.recognition = null;
-      state.speechStopping = false;
-    }
+  if (rec) {
+    try {
+      // Dùng abort() để giải phóng micro ngay lập tức thay vì chờ đệm như stop()
+      rec.abort();
+    } catch (_) {}
+    state.recognition = null;
   }
-
   syncToolStates();
 }
 
 function startSpeechInput() {
+  // Nếu tính năng Hội thoại đang chạy, dừng lại trước
   if (state.liveRecorder || state.liveStarting) {
-    return stopLiveRecording();
+    stopLiveRecording();
   }
 
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  // Tắt loa phát âm thanh nếu đang đọc để tránh mic thu lại tiếng máy
+  stopSpeaking();
 
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
     return showError(
-      "Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp bằng Gemini."
+      "Trình duyệt này không hỗ trợ Web Speech API. Bạn có thể mở mục Hội thoại để ghi âm và dịch trực tiếp."
     );
   }
 
-  // Đợi phiên cũ kết thúc hoàn toàn rồi mới cho bắt đầu phiên mới.
-  if (state.speechStopping) {
-  state.speechRestartRequested = true;
-  showNotice("Đang bật lại micro…");
-  return;
+  // Nếu đang bật mic mà bấm lại -> Dừng lại
+  if (state.speechActive || state.recognition) {
+    stopSpeechInput();
+    return;
   }
 
-
-  // Nếu mic đang chạy, lần bấm này yêu cầu dừng.
-  if (state.speechActive && state.recognition) {
-    return stopSpeechInput();
-  }
-
-  // Tránh tạo phiên mới khi phiên cũ chưa kết thúc.
+  // Đảm bảo phiên trước được hủy hoàn toàn
   if (state.recognition) {
-    return showNotice("Phiên nhận dạng trước chưa kết thúc, vui lòng thử lại.");
+    try { state.recognition.abort(); } catch (_) {}
+    state.recognition = null;
   }
 
-  stopSpeaking();
+  let rec;
+  try {
+    rec = new SR();
+  } catch (err) {
+    showError("Không thể khởi tạo nhận dạng giọng nói: " + err.message);
+    return;
+  }
 
-  const rec = new SR();
   state.recognition = rec;
   state.speechActive = true;
+  state.speechStopping = false;
 
   const info = getLangObj(sourceLang());
   rec.lang = (info && info.code !== "auto")
     ? info.speech
-    : (state.uiLang === "zh"
-        ? "zh-CN"
-        : state.uiLang === "en"
-          ? "en-US"
-          : "vi-VN");
+    : (state.uiLang === "zh" ? "zh-CN" : state.uiLang === "en" ? "en-US" : "vi-VN");
 
   rec.interimResults = true;
-  rec.continuous = false;
+  rec.continuous = false; // Nhận diện xong 1 câu/đoạn sẽ tự dừng
 
-  let finalText = el.source.value
-    ? el.source.value.trim() + " "
-    : "";
+  let baseText = el.source.value ? el.source.value.trim() + " " : "";
+
+  rec.onstart = () => {
+    state.speechActive = true;
+    syncToolStates();
+  };
 
   rec.onresult = e => {
     let interim = "";
-
+    let finalChunk = "";
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const val = e.results[i][0].transcript;
-
       if (e.results[i].isFinal) {
-        finalText += val + " ";
+        finalChunk += val + " ";
       } else {
         interim += val;
       }
     }
-
-    el.source.value = (finalText + interim).trim();
+    if (finalChunk) {
+      baseText += finalChunk;
+    }
+    el.source.value = (baseText + interim).trim();
     updateCount();
   };
 
   rec.onerror = e => {
-    if (!["aborted", "no-speech"].includes(e.error)) {
-      showError("Lỗi nhận dạng giọng nói: " + e.error);
+    // Bỏ qua các sự kiện ngắt chủ động hoặc người dùng không nói
+    if (e.error !== "no-speech" && e.error !== "aborted") {
+      showError("Lỗi nhận dạng: " + e.error);
     }
+    // Dọn cờ trạng thái ngay khi có lỗi
+    state.speechActive = false;
+    syncToolStates();
   };
 
   rec.onend = () => {
-  // Chỉ cập nhật trạng thái nếu đây vẫn là phiên nhận dạng hiện tại.
-  if (state.recognition !== rec) return;
-
-  state.recognition = null;
-  state.speechActive = false;
-  state.speechStopping = false;
-
-  const shouldRestart = state.speechRestartRequested;
-  state.speechRestartRequested = false;
-
-  syncToolStates();
-
-  // Nếu người dùng đã bấm mic lần nữa khi phiên cũ đang dừng,
-  // bắt đầu phiên mới sau khi phiên cũ kết thúc.
-  if (shouldRestart) {
-    setTimeout(() => startSpeechInput(), 100);
+    // Giải phóng hoàn toàn đối tượng để sẵn sàng cho lần bấm tiếp theo
+    if (state.recognition === rec) {
+      state.recognition = null;
     }
+    state.speechActive = false;
+    state.speechStopping = false;
+    syncToolStates();
   };
-
 
   try {
     rec.start();
     syncToolStates();
   } catch (e) {
-    if (state.recognition === rec) {
-      state.recognition = null;
-      state.speechActive = false;
-      state.speechStopping = false;
-    }
-
+    state.recognition = null;
+    state.speechActive = false;
+    state.speechStopping = false;
     syncToolStates();
-    showError("Không thể bắt đầu nhận dạng: " + e.message);
+    showError("Không thể bật micro: " + e.message);
   }
 }
 
